@@ -1,419 +1,246 @@
-# 🩸 Hemobit
-
-> **Uma plataforma facilitadora que conecta hospitais e centros de hemocomponentes, tornando a consulta, solicitação e distribuição mais simples, rápida e eficiente.**
-
-## 📌 Sobre o projeto
-
-O **Hemobit** é um projeto desenvolvido como parte do **Projeto Integrador Interno 3 (PI3)** do curso de **Análise e Desenvolvimento de Sistemas (ADS)**.
+🩸 Hemobit
 
-A proposta surgiu a partir do desafio de tornar mais simples e eficiente a comunicação entre **hospitais, profissionais solicitantes e centros de hemocomponentes**, facilitando o acesso às informações necessárias para consulta, solicitação e acompanhamento de hemocomponentes.
+Uma plataforma facilitadora que conecta hospitais e centros de
+hemocomponentes, tornando a consulta, solicitação, distribuição e
+acompanhamento mais simples, rápida e eficiente.
 
-Mais do que um sistema de gerenciamento de estoque, o Hemobit busca atuar como uma **plataforma facilitadora**, utilizando tecnologia, dados e estatística para reduzir a complexidade do processo e apoiar a tomada de decisões.
+📌 Sobre o projeto
 
----
+O Hemobit é uma plataforma facilitadora desenvolvida como parte do
+Projeto Integrador Interno 3 (PI3) do 3º semestre de Análise e
+Desenvolvimento de Sistemas (ADS).
 
-## 🎯 Objetivo
+A proposta é simplificar a comunicação e a operação entre hospitais e
+centros de hemocomponentes, centralizando informações de estoque,
+requisições, compatibilidade, validade, distribuição e transporte.
 
-O principal objetivo do Hemobit é **facilitar e agilizar o processo de consulta, solicitação e distribuição de hemocomponentes**.
+💡 Proposta
 
-A plataforma busca centralizar e integrar informações relacionadas a:
+O Hemobit concentra a complexidade operacional em uma plataforma,
+enquanto oferece ao profissional uma interação simples por meio de um
+chatbot integrado à própria aplicação web.
 
-* 🩸 Estoque de hemocomponentes;
-* 🏥 Solicitações hospitalares;
-* 🧬 Compatibilidade ABO/Rh;
-* 📦 Priorização de bolsas por validade (FEFO);
-* 🚚 Rotas de distribuição;
-* ⏱️ Tempo estimado de atendimento e entrega;
-* 📊 Demanda e indicadores estatísticos;
-* ⚠️ Identificação de possíveis riscos de desabastecimento;
-* 📈 Monitoramento da operação.
+O chatbot não será um canal externo aberto: o acesso ocorre dentro da
+aplicação, com autenticação, cadastro e permissões definidos pelo
+sistema.
 
----
+🩸 Hemocomponentes
 
-## 💡 A ideia
-
-A principal característica do Hemobit é ser uma **facilitadora do processo**.
+A doação de sangue não se resume ao sangue total. Após a coleta, a bolsa
+pode ser processada em diferentes componentes.
 
-Um profissional de saúde poderia utilizar uma interface simples, inicialmente pensada como uma **interface conversacional via WhatsApp**, para consultar informações e iniciar uma solicitação.
+Para o MVP, o Hemobit considera:
 
-Por exemplo:
+Concentrado de Hemácias (CH)
 
-```text
-Médico:
-Preciso de 3 bolsas de concentrado de hemácias O+.
-Tem disponível?
+Concentrado de Plaquetas (CP)
 
-Hemobit:
-🔎 Consultando disponibilidade...
+Plasma Fresco Congelado (PFC)
 
-🩸 Concentrado de hemácias O+
-📦 Disponíveis: 7 bolsas
-📋 Solicitadas: 3 bolsas
-⏱️ Tempo estimado: 35 minutos
+Outros componentes poderão ser incluídos conforme a evolução do escopo.
+O sistema trata estoque e solicitações por tipo de hemocomponente.
 
-Deseja iniciar a solicitação?
-```
+🔄 Fluxo principal
 
-A interface conversacional seria a **porta de entrada** para o usuário, enquanto toda a lógica de gestão, análise e integração ficaria concentrada na plataforma.
+Necessidade → Chatbot → Solicitação → Consulta de estoque →
+Compatibilidade didática → FEFO → Separação → Transporte → Monitoramento
+→ Entrega → Dados/Estatística
 
-> **A experiência para o usuário deve ser simples; a complexidade fica por trás do Hemobit.**
+⚙️ Funcionalidades propostas
 
----
+Cadastro e autenticação de usuários e hospitais.
 
-## 🔄 Fluxo conceitual
+Chatbot integrado à aplicação web.
 
-O funcionamento esperado do projeto pode ser representado da seguinte maneira:
+Gestão de estoque por hemocomponente, tipo sanguíneo, quantidade,
+validade e status.
 
-```text
-                    NECESSIDADE
-                         │
-                         ▼
-                 💬 SOLICITAÇÃO
-                         │
-                         ▼
-                  🔎 CONSULTA
-                         │
-             ┌───────────┴───────────┐
-             ▼                       ▼
-        DISPONÍVEL?              INDISPONÍVEL
-             │                       │
-             ▼                       ▼
-       COMPATIBILIDADE          ALERTA / ALTERNATIVA
-             │
-             ▼
-            FEFO
-             │
-             ▼
-           ROTA
-             │
-             ▼
-        DISTRIBUIÇÃO
-             │
-             ▼
-        ACOMPANHAMENTO
-             │
-             ▼
-            DADOS
-             │
-             ▼
-       📊 ESTATÍSTICA
-             │
-             ▼
-       MELHORES DECISÕES
-```
+Registro e acompanhamento de requisições.
 
----
+Verificação didática de compatibilidade ABO/Rh.
 
-## 🧩 Principais funcionalidades propostas
+Priorização FEFO (First Expire, First Out).
 
-### 💬 Interface facilitadora
+Roteirização por grafo.
 
-* Consulta de disponibilidade;
-* Início de solicitações;
-* Acompanhamento de solicitações;
-* Identificação do profissional previamente cadastrado;
-* Comunicação de status.
+Monitoramento simulado do transporte.
 
-### 🩸 Gestão de estoque
+Dashboard operacional e indicadores estatísticos.
 
-* Cadastro de hemocomponentes;
-* Tipo sanguíneo;
-* Quantidade disponível;
-* Data de validade;
-* Controle de estoque;
-* Alertas de estoque baixo.
+Alertas de estoque baixo, validade, atraso, rota e temperatura.
 
-### 📋 Requisições
+🚚 Monitoramento do transporte
 
-* Registro de solicitações;
-* Identificação do hospital;
-* Identificação do profissional solicitante;
-* Quantidade solicitada;
-* Hemocomponente solicitado;
-* Acompanhamento do status;
-* Histórico de solicitações.
+Cada transporte possui um identificador e pode ser acompanhado pelo
+dashboard. No protótipo, a telemetria será simulada.
 
-### 🧬 Compatibilidade e priorização
+📍 GPS/localização e progresso da rota.
 
-* Verificação didática de compatibilidade ABO/Rh;
-* Priorização de bolsas por validade;
-* Aplicação do conceito **FEFO (First Expire, First Out)**.
+🌡️ Temperatura e histórico de leituras.
 
-### 🚚 Distribuição
+⏱️ Timestamp, tempo decorrido e previsão de chegada.
 
-* Representação dos hospitais e centros como nós de um grafo;
-* Cálculo de rotas;
-* Estimativa de tempo;
-* Acompanhamento da distribuição;
-* Simulação de telemetria.
+🚚 Status: aguardando coleta → preparação → em transporte → próximo
+do destino → entregue.
 
-### 📊 Estatística e indicadores
+⚠️ Alertas de atraso, desvio de rota, temperatura fora do limite
+configurado e falha de telemetria.
 
-Os dados gerados pela operação poderão ser utilizados para:
+Os parâmetros de temperatura são configurações do cenário acadêmico. O
+sistema não decide sozinho sobre utilização ou descarte de um
+hemocomponente.
 
-* Análise de estoque;
-* Análise de demanda;
-* Tempo médio de atendimento;
-* Taxa de descarte por vencimento;
-* Probabilidade de desabastecimento;
-* Identificação de tendências;
-* Apoio à tomada de decisões.
+📊 Estatística
 
----
+Os dados produzidos pelo Hemobit serão utilizados para transformar
+informações operacionais em indicadores e análises:
 
-# 📊 Estatística no Hemobit
+Demanda por hemocomponente e período.
 
-A Estatística não será utilizada apenas para gerar gráficos.
+Tempo médio de atendimento e entrega.
 
-A proposta é utilizar os dados produzidos pelo sistema para **transformar informações operacionais em indicadores capazes de apoiar decisões**.
+Taxa de descarte e unidades próximas do vencimento.
 
-Por exemplo:
+Percentual de entregas dentro do prazo.
 
-> O Hemobit identifica que determinado hemocomponente apresenta estoque reduzido e demanda elevada.
+Desempenho e ocorrências dos transportes.
 
-A partir do histórico de dados, o sistema pode calcular uma estimativa de risco de desabastecimento e apresentar um alerta.
+Risco/probabilidade estimada de desabastecimento.
 
-### Exemplos de perguntas que os dados podem responder
+Possíveis tendências de demanda.
 
-* Qual hemocomponente possui maior demanda?
-* Qual hospital realiza mais solicitações?
-* Qual é o tempo médio de atendimento?
-* Quantas bolsas são descartadas por vencimento?
-* Existe tendência de aumento da demanda?
-* Qual a probabilidade de desabastecimento de determinado tipo?
+🔄 CRISP-DM
 
-Os dados utilizados no projeto serão **sintéticos**, conforme as diretrizes do Projeto Integrador.
+O desenvolvimento orientado a dados será organizado pelo CRISP-DM
+(Cross-Industry Standard Process for Data Mining):
 
----
+Business Understanding --- entender o problema de comunicação,
+gestão e distribuição.
 
-# 🔄 CRISP-DM
+Data Understanding --- compreender dados de estoque, demanda,
+requisições e transporte.
 
-O desenvolvimento orientado a dados do Hemobit será estruturado utilizando o **CRISP-DM (Cross-Industry Standard Process for Data Mining)**.
+Data Preparation --- preparar dados sintéticos e telemetria
+simulada.
 
-O CRISP-DM é uma metodologia que organiza projetos de dados em um ciclo composto por seis etapas.
+Modeling --- aplicar estatística, probabilidade,
+compatibilidade, FEFO e roteirização.
 
-## 1. Business Understanding — Entendimento do negócio
+Evaluation --- avaliar indicadores, rotas, alertas e cenários.
 
-Identificar o problema e os objetivos do Hemobit.
+Deployment --- disponibilizar aplicação web, chatbot e módulos
+de gestão/monitoramento.
 
-**Problema:** tornar mais simples, rápido e eficiente o processo de consulta, solicitação e distribuição de hemocomponentes.
+📋 POP --- Procedimento Operacional Padrão
 
----
+O fluxo operacional do funcionário é organizado em:
 
-## 2. Data Understanding — Entendimento dos dados
+Autenticar → Conferir solicitação → Consultar estoque → Verificar
+compatibilidade didática → Aplicar FEFO → Separar → Preparar transporte
+→ Iniciar telemetria → Monitorar → Registrar entrega → Encerrar
+operação
 
-Identificar e compreender os dados necessários para o projeto.
+O POP do projeto detalha as etapas, exceções, alertas e dados gerados
+pela operação.
 
-Exemplos:
+🧩 Integração das disciplinas
 
-* Estoque;
-* Demanda;
-* Solicitações;
-* Validade;
-* Hospitais;
-* Tempos de atendimento;
-* Distribuição.
+Disciplina                          Participação
 
----
+Programação Orientada a Objetos     Backend, aplicação web e regras de
+negócio
 
-## 3. Data Preparation — Preparação dos dados
+Algoritmos e Estruturas de Dados    Grafos, rotas, estoque e FEFO
 
-Organizar, estruturar e preparar os dados sintéticos que serão utilizados pelo sistema e pelas análises estatísticas.
+Estatística e Probabilidade         Indicadores, demanda, risco e
+análise de transporte
 
----
+Infraestrutura de Software          Concorrência, CI/CD, deploy e
+operação
 
-## 4. Modeling — Modelagem
+Infraestrutura de Comunicação       APIs, comunicação e telemetria
+simulada
 
-Aplicar métodos, algoritmos e análises para solucionar os problemas identificados.
+Projeto Integrador                  Planejamento e integração
 
-No Hemobit:
+🚀 MVP
 
-* Estatística descritiva;
-* Probabilidade;
-* Compatibilidade ABO/Rh;
-* FEFO;
-* Grafos;
-* Caminho mínimo;
-* Roteirização.
+Cadastro de usuários, hospitais e hemocomponentes
 
----
+Estoque e validade
 
-## 5. Evaluation — Avaliação
+Chatbot dentro da aplicação
 
-Verificar se as soluções desenvolvidas realmente atendem aos objetivos do projeto.
+Requisições e acompanhamento
 
-Serão considerados cenários simulados para avaliar, por exemplo:
+Compatibilidade ABO/Rh didática e FEFO
 
-* Disponibilidade de estoque;
-* Risco de desabastecimento;
-* Eficiência das rotas;
-* Priorização de bolsas;
-* Tempo de atendimento;
-* Indicadores estatísticos.
+Grafo de rotas limitado
 
----
+GPS, temperatura, timestamp e status simulados
 
-## 6. Deployment — Implantação
+Dashboard com indicadores e alertas
 
-Disponibilizar a solução desenvolvida, considerando a aplicação web, a interface conversacional e a infraestrutura necessária para sua execução.
+⚠️ Limites do projeto
 
-O CRISP-DM será tratado como um **ciclo**, permitindo que resultados das avaliações levem a novos ajustes nos dados, modelos ou objetivos.
+Projeto acadêmico e didático.
 
----
+Uso exclusivo de dados sintéticos.
 
-# 🏗️ Integração das disciplinas
+Não diagnostica pacientes nem decide indicação de transfusão.
 
-O Hemobit foi pensado para integrar as diferentes disciplinas do **Projeto Integrador Interno 3**.
+Compatibilidade ABO/Rh é didática.
 
-| Disciplina                           | Participação no Hemobit                                                                    |
-| ------------------------------------ | ------------------------------------------------------------------------------------------ |
-| **Programação Orientada a Objetos**  | Desenvolvimento da aplicação web em Java/Spring Boot e implementação das regras de negócio |
-| **Algoritmos e Estruturas de Dados** | Grafos, caminhos mínimos, compatibilidade, estoque e FEFO                                  |
-| **Estatística e Probabilidade**      | Indicadores, análise descritiva, probabilidade de desabastecimento e análise da demanda    |
-| **Infraestrutura de Software**       | Concorrência, CI/CD, deploy e operação da aplicação                                        |
-| **Infraestrutura de Comunicação**    | APIs, arquitetura de comunicação, rede e telemetria                                        |
-| **Projeto Integrador**               | Organização, planejamento, acompanhamento e integração das entregas                        |
+GPS, temperatura e telemetria são simulados.
 
----
+Não substitui protocolos clínicos ou procedimentos oficiais de
+hemoterapia.
 
-# 🚀 MVP
+👥 Equipe
 
-Para manter o projeto dentro de um escopo controlado, a primeira versão do Hemobit deverá priorizar:
+Membro
 
-* [ ] Cadastro de profissionais;
-* [ ] Cadastro de hospitais;
-* [ ] Cadastro e gerenciamento de estoque;
-* [ ] Consulta de disponibilidade;
-* [ ] Registro de requisições;
-* [ ] Compatibilidade ABO/Rh didática;
-* [ ] Priorização FEFO;
-* [ ] Grafo de rotas limitado;
-* [ ] Dashboard com indicadores;
-* [ ] Dados sintéticos;
-* [ ] Protótipo de interface conversacional.
+Davi Magno
+Breno Cruz
+Lucas Felipe Barreto
+Lucas Segundo
+Mateus Valerino
+Letícia Gomes
+Lauan Gonçalves
 
-Funcionalidades mais avançadas poderão ser avaliadas posteriormente conforme o andamento do projeto e as necessidades das disciplinas.
+🎓 Informações acadêmicas
 
----
+Projeto: Hemobit
 
-# ⚠️ Limites do projeto
+Projeto Integrador: Interno 3 --- PI3
 
-O Hemobit é um **projeto acadêmico e didático**.
+Curso: Análise e Desenvolvimento de Sistemas (ADS)
 
-Portanto:
+Semestre: 3º semestre
 
-* Utilizaremos exclusivamente **dados sintéticos**;
-* Não serão utilizados dados reais de pacientes ou doadores;
-* A compatibilidade ABO/Rh será implementada de forma didática;
-* O sistema não realizará diagnóstico médico;
-* O sistema não decidirá se um paciente deve receber uma transfusão;
-* O sistema não substituirá protocolos clínicos;
-* A telemetria de temperatura/GPS será simulada;
-* O projeto não representa uma integração real com sistemas oficiais da rede de sangue.
+Período: 2026.2
 
----
+🛠️ Tecnologias
 
-# 👥 Equipe
+A stack definitiva será definida pela equipe. A arquitetura prevista
+contempla aplicação web, backend, banco de dados, APIs, chatbot,
+estruturas de dados, infraestrutura, CI/CD e monitoramento.
 
-| Membro                   |
-| ------------------------ |
-| **Davi Magno**           |
-| **Breno Cruz**           |
-| **Lucas Felipe Barreto** |
-| **Lucas Segundo**        |
-| **Mateus Valerino**      |
-| **Letícia Gomes**        |
-| **Lauan Gonçalves**      |
+📈 Roadmap
 
----
+🟢 Planejamento: conceito, escopo e requisitos.
 
-# 🎓 Informações acadêmicas
+🟡 Modelagem: domínio, banco, APIs, dados sintéticos e
+indicadores.
 
-**Projeto:** Hemobit
-**Projeto Integrador:** Interno 3 — PI3
-**Curso:** Análise e Desenvolvimento de Sistemas (ADS)
-**Semestre:** 3º semestre
-**Período:** 2026.2
+🟠 Desenvolvimento: backend, banco, algoritmos, dashboard,
+chatbot e infraestrutura.
 
-O projeto integra conteúdos de diferentes disciplinas técnicas do período, buscando desenvolver uma solução única a partir da colaboração entre as áreas.
+🔵 Integração e testes: módulos, algoritmos, comunicação e
+cenários.
 
----
+🟣 Deploy e apresentação: CI/CD, deploy, documentação e
+demonstração.
 
-# 🛠️ Tecnologias
-
-As tecnologias serão definidas e implementadas ao longo do desenvolvimento do projeto.
-
-A arquitetura prevista deverá contemplar, conforme as necessidades das disciplinas:
-
-* **Java / Spring Boot**
-* **APIs**
-* **Banco de dados**
-* **Aplicação Web**
-* **Interface conversacional**
-* **Estruturas de dados e algoritmos**
-* **Infraestrutura em nuvem**
-* **CI/CD**
-* **Monitoramento**
-
-> A stack definitiva será documentada conforme as decisões técnicas da equipe.
-
----
-
-# 📈 Roadmap
-
-### 🟢 Fase 1 — Planejamento
-
-* [x] Definição inicial do conceito;
-* [x] Definição do nome Hemobit;
-* [x] Criação do repositório;
-* [ ] Definição do escopo;
-* [ ] Levantamento de requisitos.
-
-### 🟡 Fase 2 — Modelagem
-
-* [ ] Modelagem do domínio;
-* [ ] Modelagem do banco de dados;
-* [ ] Definição das APIs;
-* [ ] Definição dos dados sintéticos;
-* [ ] Definição dos indicadores estatísticos.
-
-### 🟠 Fase 3 — Desenvolvimento
-
-* [ ] Backend;
-* [ ] Banco de dados;
-* [ ] Algoritmos;
-* [ ] Dashboard;
-* [ ] Interface conversacional;
-* [ ] Infraestrutura.
-
-### 🔵 Fase 4 — Integração e testes
-
-* [ ] Integração entre os módulos;
-* [ ] Testes dos algoritmos;
-* [ ] Testes estatísticos;
-* [ ] Testes de comunicação;
-* [ ] Testes de cenários.
-
-### 🟣 Fase 5 — Deploy e apresentação
-
-* [ ] CI/CD;
-* [ ] Deploy;
-* [ ] Documentação;
-* [ ] Demonstração;
-* [ ] Apresentação final.
-
----
-
-# 📚 Referências do projeto
-
-O Hemobit é desenvolvido a partir das diretrizes e do escopo definidos para o **Projeto Integrador Interno 3 — 3º semestre de ADS, 2026.2**.
-
-O projeto-base prevê uma solução de distribuição de hemocomponentes envolvendo estoque, requisições hospitalares, compatibilidade, validade, roteirização, indicadores estatísticos, probabilidade, infraestrutura e comunicação.
-
----
-
-## 🩸 Hemobit
-
-> **Facilitando o caminho entre a necessidade e o hemocomponente.**
-
-**Projeto Integrador Interno 3 — ADS 2026.2**
+Hemobit --- Facilitando o caminho entre a necessidade e o
+hemocomponente.
