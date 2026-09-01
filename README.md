@@ -78,7 +78,7 @@ As histórias e seus cenários BDD estão disponíveis no documento:
 
 Protótipo desenvolvido no Figma contemplando as histórias selecionadas para esta entrega.
 
-🔗 **[Acessar protótipo no Figma](COLOCAR_LINK_FIGMA)**
+🔗 **[Acessar protótipo no Figma](https://www.figma.com/design/2i20Xk8HdRaHD5qzrYGwvJ/Untitled?node-id=0-1&p=f&t=owGOIf38YrcZiYnx-0)**
 
 ### 🎥 Screencast
 
