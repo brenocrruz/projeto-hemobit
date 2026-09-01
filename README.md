@@ -84,7 +84,7 @@ Protótipo desenvolvido no Figma contemplando as histórias selecionadas para es
 
 Apresentação do protótipo Lo-Fi e explicação das histórias contempladas na Entrega 01.
 
-▶️ **[Assistir ao screencast no YouTube](COLOCAR_LINK_YOUTUBE)**
+▶️ **[Assistir ao screencast no YouTube](https://youtu.be/DexqcjN694o)**
 
 ---
 
@@ -110,5 +110,5 @@ Em desenvolvimento.
 
 * 🐙 [Repositório GitHub](https://github.com/brenocrruz/projeto-hemobit)
 * 📋 [Jira](https://algs2.atlassian.net/jira/software/c/projects/PI3E4/boards/11/backlog)
-* 🎨 [Figma](COLOCAR_LINK_FIGMA)
-* 🎥 [YouTube](COLOCAR_LINK_YOUTUBE)
+* 🎨 [Figma](https://www.figma.com/design/2i20Xk8HdRaHD5qzrYGwvJ/Untitled?node-id=0-1&p=f&t=owGOIf38YrcZiYnx-0)
+* 🎥 [YouTube](https://youtu.be/DexqcjN694o)
