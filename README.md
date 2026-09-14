@@ -90,7 +90,9 @@ Apresentação do protótipo Lo-Fi e explicação das histórias contempladas na
 
 ## 🟡 Entrega 02
 
-Em desenvolvimento.
+Modelo de domínio da aplicação (entidades, relacionamentos e regras de validade) e esqueleto inicial do projeto em Java/Spring Boot, com camadas `domain`, `repository`, `service` e `controller`.
+
+📄 **[Modelo de domínio](./docs/poo/modelo-dominio.md)**
 
 ---
 
