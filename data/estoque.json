@@ -1,0 +1,17 @@
+[
+  {
+    "id": "B-1001",
+    "tipoSanguineo": "O-",
+    "volume": 450.0
+  },
+  {
+    "id": "B-1002",
+    "tipoSanguineo": "A+",
+    "volume": 420.0
+  },
+  {
+    "id": "B-1003",
+    "tipoSanguineo": "AB+",
+    "volume": 450.0
+  }
+]
