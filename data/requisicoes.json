@@ -1,0 +1,12 @@
+[
+  {
+    "idRequisicao": "REQ-01",
+    "hospitalDestino": "Hospital das Clínicas",
+    "tipoSanguineoDesejado": "O-"
+  },
+  {
+    "idRequisicao": "REQ-02",
+    "hospitalDestino": "Santa Casa",
+    "tipoSanguineoDesejado": "A+"
+  }
+]
