@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "descricao": "Dados sinteticos do grafo de rotas do Hemobit (coleta -> hemocentro -> hospitais, com veiculos)",
+    "max_nos": 15,
+    "total_nos": 14,
+    "regras_peso": {
+      "velocidade_media_kmh": 40,
+      "custo_base_reais": 15,
+      "custo_por_km_reais": 2.5,
+      "formula_tempo_min": "distancia_km / velocidade_media_kmh * 60",
+      "formula_custo_reais": "custo_base_reais + distancia_km * custo_por_km_reais"
+    },
+    "cadeia_fria": {
+      "concentrado_hemacias": { "temp_min_c": 2, "temp_max_c": 6, "janela_maxima_horas": 30 },
+      "concentrado_plaquetas": { "temp_min_c": 20, "temp_max_c": 24, "janela_maxima_horas": 4 },
+      "plasma_fresco_congelado": { "temp_min_c": -30, "temp_max_c": -18, "janela_maxima_horas": 72 }
+    }
+  },
+  "nos": [
+    { "id": "HEMO-01", "tipo": "hemocentro", "nome": "Hemocentro Central", "capacidade_estoque": 500 },
+
+    { "id": "CC-01", "tipo": "centro_coleta", "nome": "Centro de Coleta 01", "capacidade_diaria_bolsas": 40 },
+    { "id": "CC-02", "tipo": "centro_coleta", "nome": "Centro de Coleta 02", "capacidade_diaria_bolsas": 25 },
+    { "id": "CC-03", "tipo": "centro_coleta", "nome": "Centro de Coleta 03", "capacidade_diaria_bolsas": 30 },
+
+    { "id": "HOSP-01", "tipo": "hospital", "nome": "Hospital 01", "prioridade_media": "alta" },
+    { "id": "HOSP-02", "tipo": "hospital", "nome": "Hospital 02", "prioridade_media": "media" },
+    { "id": "HOSP-03", "tipo": "hospital", "nome": "Hospital 03", "prioridade_media": "alta" },
+    { "id": "HOSP-04", "tipo": "hospital", "nome": "Hospital 04", "prioridade_media": "baixa" },
+    { "id": "HOSP-05", "tipo": "hospital", "nome": "Hospital 05", "prioridade_media": "media" },
+    { "id": "HOSP-06", "tipo": "hospital", "nome": "Hospital 06", "prioridade_media": "alta" },
+
+    { "id": "VEI-01", "tipo": "veiculo", "placa": "HMB-1A01", "tipo_veiculo": "refrigerado", "capacidade_bolsas": 60, "faixa_temp_min_c": -30, "faixa_temp_max_c": 6 },
+    { "id": "VEI-02", "tipo": "veiculo", "placa": "HMB-1A02", "tipo_veiculo": "refrigerado", "capacidade_bolsas": 60, "faixa_temp_min_c": -30, "faixa_temp_max_c": 6 },
+    { "id": "VEI-03", "tipo": "veiculo", "placa": "HMB-1A03", "tipo_veiculo": "refrigerado", "capacidade_bolsas": 40, "faixa_temp_min_c": 2, "faixa_temp_max_c": 24 },
+    { "id": "VEI-04", "tipo": "veiculo", "placa": "HMB-1A04", "tipo_veiculo": "padrao", "capacidade_bolsas": 20, "faixa_temp_min_c": 15, "faixa_temp_max_c": 30 }
+  ],
+  "arestas": [
+    { "origem": "CC-01", "destino": "HEMO-01", "tipo": "coleta_para_hemocentro", "distancia_km": 12, "tempo_min": 18, "custo_reais": 45 },
+    { "origem": "CC-02", "destino": "HEMO-01", "tipo": "coleta_para_hemocentro", "distancia_km": 8, "tempo_min": 12, "custo_reais": 35 },
+    { "origem": "CC-03", "destino": "HEMO-01", "tipo": "coleta_para_hemocentro", "distancia_km": 20, "tempo_min": 30, "custo_reais": 65 },
+
+    { "origem": "HEMO-01", "destino": "HOSP-01", "tipo": "hemocentro_para_hospital", "distancia_km": 5, "tempo_min": 7.5, "custo_reais": 27.5 },
+    { "origem": "HEMO-01", "destino": "HOSP-02", "tipo": "hemocentro_para_hospital", "distancia_km": 15, "tempo_min": 22.5, "custo_reais": 52.5 },
+    { "origem": "HEMO-01", "destino": "HOSP-03", "tipo": "hemocentro_para_hospital", "distancia_km": 9, "tempo_min": 13.5, "custo_reais": 37.5 },
+    { "origem": "HEMO-01", "destino": "HOSP-04", "tipo": "hemocentro_para_hospital", "distancia_km": 22, "tempo_min": 33, "custo_reais": 70 },
+    { "origem": "HEMO-01", "destino": "HOSP-05", "tipo": "hemocentro_para_hospital", "distancia_km": 3, "tempo_min": 4.5, "custo_reais": 22.5 },
+    { "origem": "HEMO-01", "destino": "HOSP-06", "tipo": "hemocentro_para_hospital", "distancia_km": 18, "tempo_min": 27, "custo_reais": 60 },
+
+    { "origem": "VEI-01", "destino": "HEMO-01", "tipo": "veiculo_alocado", "distancia_km": 0, "tempo_min": 0, "custo_reais": 0 },
+    { "origem": "VEI-02", "destino": "HEMO-01", "tipo": "veiculo_alocado", "distancia_km": 0, "tempo_min": 0, "custo_reais": 0 },
+    { "origem": "VEI-03", "destino": "HEMO-01", "tipo": "veiculo_alocado", "distancia_km": 0, "tempo_min": 0, "custo_reais": 0 },
+    { "origem": "VEI-04", "destino": "HEMO-01", "tipo": "veiculo_alocado", "distancia_km": 0, "tempo_min": 0, "custo_reais": 0 }
+  ]
+}
