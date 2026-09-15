@@ -1,0 +1,136 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Página-1" id="3g9ifv1xbBw4BlqMLFPP">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="827" pageHeight="1169" background="light-dark(#FFFFFF,#FFFFFF)" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="MzSROc24_pRcLcTDw12t-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;rotation=90;fillColor=#323232;strokeColor=#F5F5F5;" value="" vertex="1">
+          <mxGeometry height="200" width="360" x="-70" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="MzSROc24_pRcLcTDw12t-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;rotation=90;fillColor=#05577C;fontColor=#000000;" value="" vertex="1">
+          <mxGeometry height="220" width="360" x="170" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="MzSROc24_pRcLcTDw12t-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;rotation=90;fillColor=#063B0C;" value="" vertex="1">
+          <mxGeometry height="310" width="360" x="465" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="MzSROc24_pRcLcTDw12t-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;rotation=90;fillColor=#A94224;" value="" vertex="1">
+          <mxGeometry height="260" width="360" x="780" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="MzSROc24_pRcLcTDw12t-11" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;arcSize=12;fontSize=14;fontStyle=1;fontColor=#FEFEFE;" value="Internet / Usuários" vertex="1">
+          <mxGeometry height="30" width="140" x="40" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="MzSROc24_pRcLcTDw12t-13" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;arcSize=12;fontSize=14;fontStyle=1;fontColor=#FFFFFF;" value="Sub-rede Pública&lt;div&gt;10.0.1.0/24&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="130" x="285" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="MzSROc24_pRcLcTDw12t-14" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;arcSize=12;fontSize=14;fontStyle=1;fontColor=#FFFFFF;" value="Sub-rede Privada - Aplicação&lt;div&gt;10.0.2.0/24&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="200" x="545" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="MzSROc24_pRcLcTDw12t-29" edge="1" parent="1" source="MzSROc24_pRcLcTDw12t-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontColor=#000000;endArrow=classicThin;endFill=1;" target="MzSROc24_pRcLcTDw12t-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="MzSROc24_pRcLcTDw12t-18" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E1E1E;" value="" vertex="1">
+          <mxGeometry height="75" width="170" x="25" y="255" as="geometry" />
+        </mxCell>
+        <mxCell id="MzSROc24_pRcLcTDw12t-19" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;arcSize=12;fontSize=14;fontStyle=1;fontColor=#FFFFFF;" value="&lt;code style=&quot;font-family: Helvetica;&quot;&gt;Sub-rede Banco - Isolada&lt;/code&gt;&lt;br&gt;&lt;code style=&quot;&quot;&gt;&lt;font face=&quot;Helvetica&quot;&gt;10.0.3.0/28&lt;/font&gt;&lt;/code&gt;" vertex="1">
+          <mxGeometry height="50" width="180" x="870" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="MzSROc24_pRcLcTDw12t-20" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;arcSize=12;fontSize=13;fontStyle=1;fontColor=#FFFFFF;" value="Navegador Web" vertex="1">
+          <mxGeometry height="30" width="120" x="50" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="MzSROc24_pRcLcTDw12t-23" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=bottom;rounded=0;autosize=1;resizable=0;arcSize=12;fontSize=9;fontStyle=1;fontColor=#FFFFFF;horizontal=1;labelBorderColor=none;labelBackgroundColor=none;textShadow=0;" value="Profissional / Funcionário / Gestor" vertex="1">
+          <mxGeometry height="20" width="160" x="30" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-8" edge="1" parent="1" source="MzSROc24_pRcLcTDw12t-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=12;fontColor=default;startArrow=none;startFill=0;endArrow=none;endFill=0;" target="PmNT14hck5rSeU7jwQsf-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="MzSROc24_pRcLcTDw12t-26" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#057FB7;" value="" vertex="1">
+          <mxGeometry height="115" width="170" x="265" y="275" as="geometry" />
+        </mxCell>
+        <mxCell id="MzSROc24_pRcLcTDw12t-27" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;arcSize=12;fontSize=13;fontStyle=1;fontColor=#FFFFFF;" value="Nginx + Frontend Web" vertex="1">
+          <mxGeometry height="30" width="150" x="275" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="MzSROc24_pRcLcTDw12t-28" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;arcSize=12;fontSize=13;fontStyle=1;fontColor=#FFFFFF;" value="Chatbot + Dashboard" vertex="1">
+          <mxGeometry height="30" width="150" x="275" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="MzSROc24_pRcLcTDw12t-34" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=10;fontColor=default;gradientColor=none;fontStyle=1" value="HTTPS / TCP 443" vertex="1">
+          <mxGeometry height="20" width="110" x="240" y="235" as="geometry" />
+        </mxCell>
+        <mxCell id="MzSROc24_pRcLcTDw12t-35" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;arcSize=12;fontSize=10;fontStyle=2;fontColor=#FFFFFF;" value="Entrada pública: Somente HTTPS / 443" vertex="1">
+          <mxGeometry height="30" width="200" x="250" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-12" edge="1" parent="1" source="PmNT14hck5rSeU7jwQsf-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=12;fontColor=default;endArrow=classicThin;endFill=1;" target="PmNT14hck5rSeU7jwQsf-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-21" edge="1" parent="1" source="PmNT14hck5rSeU7jwQsf-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=12;fontColor=default;endArrow=classicThin;endFill=1;" target="PmNT14hck5rSeU7jwQsf-17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#065B13;" value="" vertex="1">
+          <mxGeometry height="75" width="170" x="560" y="255" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#065B13;" value="" vertex="1">
+          <mxGeometry height="60" width="200" x="545" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-5" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;arcSize=12;fontSize=13;fontStyle=1;fontColor=#FFFFFF;" value="Backend REST API&lt;div&gt;Regras de Negócio&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="140" x="575" y="272.5" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-6" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;arcSize=12;fontSize=13;fontStyle=1;fontColor=#FFFFFF;" value="Simulador de telemetria:&lt;div&gt;GPS + Temperatura + Tempo&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="190" x="550" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-9" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=10;fontColor=default;gradientColor=none;fontStyle=1" value="&lt;code style=&quot;font-family: Helvetica;&quot;&gt;HTTPS / TCP 8443&lt;/code&gt;&lt;br&gt;&lt;code style=&quot;&quot;&gt;&lt;font face=&quot;Helvetica&quot;&gt;REST /api/v1/&lt;/font&gt;&lt;/code&gt;" vertex="1">
+          <mxGeometry height="20" width="140" x="510" y="208" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-13" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=10;fontColor=default;gradientColor=none;fontStyle=1" value="&lt;code style=&quot;font-family: &amp;quot;Lucida Console&amp;quot;;&quot;&gt;HTTP / TCP 8081&lt;/code&gt;&lt;br&gt;&lt;code style=&quot;&quot;&gt;&lt;font face=&quot;Lucida Console&quot;&gt;(rede &lt;/font&gt;&lt;font face=&quot;Helvetica&quot;&gt;interna&lt;/font&gt;&lt;font face=&quot;Lucida Console&quot;&gt;)&lt;/font&gt;&lt;/code&gt;" vertex="1">
+          <mxGeometry height="20" width="140" x="520" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-14" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;arcSize=12;fontSize=10;fontStyle=2;fontColor=#FFFFFF;" value="API e telemetria sem exposição direta à Internet" vertex="1">
+          <mxGeometry height="30" width="240" x="525" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-17" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7E3311;" value="" vertex="1">
+          <mxGeometry height="75" width="220" x="850" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-18" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;arcSize=12;fontSize=10;fontStyle=2;fontColor=#FFFFFF;" value="PostgreSQL isolado sem rota pública" vertex="1">
+          <mxGeometry height="30" width="190" x="865" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-19" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;arcSize=12;fontSize=13;fontStyle=1;fontColor=#FFFFFF;" value="&lt;font&gt;PostgreSQL:&amp;nbsp;&lt;br&gt;Dados Operacionais +&amp;nbsp;&lt;/font&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(255, 255, 255), rgb(18, 18, 18));&quot;&gt;Histórico&lt;/span&gt;" vertex="1">
+          <mxGeometry height="40" width="210" x="855" y="247.5" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-24" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=10;fontColor=default;gradientColor=none;fontStyle=1" value="PostgreSQL / TCP 5432" vertex="1">
+          <mxGeometry height="20" width="140" x="820" y="322.5" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-25" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=18;fontColor=light-dark(#FF1212,#FA0000);gradientColor=none;fontStyle=1" value="&lt;span style=&quot;color: rgb(166, 128, 184);&quot;&gt;Hemobit - Topologia de Comunicação&lt;/span&gt;" vertex="1">
+          <mxGeometry height="30" width="370" x="405" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-26" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E1E1E;" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="40" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-27" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#057FB7;" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="40" y="610" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-28" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#065B13;" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="40" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-29" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7E3311;" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="40" y="710" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-33" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;autosize=1;resizable=0;arcSize=12;fontSize=13;fontStyle=1;fontColor=#000000;" value="&lt;span&gt;&lt;b&gt;Verde (Camada de Aplicação):&lt;/b&gt; Processamento das regras de negócio (API REST) e Simulador de Telemetria&lt;/span&gt;&lt;span&gt;&lt;sup class=&quot;superscript&quot;&gt;&lt;/sup&gt;&lt;/span&gt;&lt;span&gt;.&lt;/span&gt;" vertex="1">
+          <mxGeometry height="30" width="670" x="95" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-34" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;autosize=1;resizable=0;arcSize=12;fontSize=13;fontStyle=1;fontColor=#000000;" value="&lt;span&gt;&lt;b&gt;Laranja (Camada Banco - Isolada):&lt;/b&gt; Armazenamento persistente no PostgreSQL&lt;/span&gt;&lt;span&gt;&lt;sup class=&quot;superscript&quot;&gt;&lt;/sup&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;" vertex="1">
+          <mxGeometry height="30" width="490" x="95" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-35" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;autosize=1;resizable=0;arcSize=12;fontSize=14;fontStyle=1;fontColor=#000000;" value="&lt;b&gt;Cinza (Internet / Usuários):&lt;/b&gt; Ambiente externo com os navegadores dos clientes (profissionais, funcionários e gestores)." vertex="1">
+          <mxGeometry height="30" width="770" x="95" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-36" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;autosize=1;resizable=0;arcSize=12;fontSize=14;fontStyle=1;fontColor=#000000;" value="&lt;span&gt;&lt;b&gt;Azul (Camada Pública):&lt;/b&gt; Servidor Nginx e entrega das interfaces (Frontend, Chatbot e Dashboard)&lt;/span&gt;&lt;span&gt;&lt;sup class=&quot;superscript&quot;&gt;&lt;/sup&gt;&lt;/span&gt;&lt;span&gt;.&lt;/span&gt;" vertex="1">
+          <mxGeometry height="30" width="640" x="95" y="615" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-38" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="➔" vertex="1">
+          <mxGeometry height="30" width="30" x="40" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="PmNT14hck5rSeU7jwQsf-41" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;autosize=1;resizable=0;arcSize=12;fontSize=13;fontStyle=1;fontColor=#000000;" value="&lt;span&gt;&lt;b&gt;Seta Contínua:&lt;/b&gt; Fluxo de comunicação permitido com indicação do Protocolo e Porta utilizados&lt;/span&gt;&lt;span&gt;&lt;sup class=&quot;superscript&quot;&gt;&lt;/sup&gt;&lt;/span&gt;&lt;span&gt;.&lt;/span&gt;" vertex="1">
+          <mxGeometry height="30" width="580" x="95" y="760" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
