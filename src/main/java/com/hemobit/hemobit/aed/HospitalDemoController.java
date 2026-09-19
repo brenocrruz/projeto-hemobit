@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import com.hemobit.hemobit.aed.estruturas.ListaEncadeada;
 
 @RestController
-@RequestMapping("/hospitais")
-public class HospitalController {
+@RequestMapping("/aed/hospitais")
+public class HospitalDemoController {
 
     private ListaEncadeada<String> listaHospitais = new ListaEncadeada<>();
 

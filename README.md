@@ -88,29 +88,16 @@ projeto-hemobit/
 
 ## 🛠️ Tecnologias
 
-<<<<<<< Updated upstream
 | Camada | Tecnologia |
 |--------|------------|
 | Linguagem | Java 21 |
-| Framework | Spring Boot 3.x |
+| Framework | Spring Boot 4.1.1 |
 | Persistência | Spring Data JPA + PostgreSQL |
 | Frontend | HTML / CSS / Thymeleaf |
 | Build | Maven |
 | CI/CD | GitHub Actions + Render |
 | Containerização | Docker |
 | Ferramentas | Git, GitHub, Jira, Figma, draw.io |
-=======
-* **Java**
-* **Spring Boot**
-* **Spring Data JPA**
-* **Banco de dados relacional**
-* **HTML / CSS**
-* **Thymeleaf**
-* **Git / GitHub**
-* **Jira**
-* **Figma**
->>>>>>> Stashed changes
-
 > **Restrição:** Não é permitido o uso de Lombok ou qualquer mecanismo de geração automática de código boilerplate.
 
 ---

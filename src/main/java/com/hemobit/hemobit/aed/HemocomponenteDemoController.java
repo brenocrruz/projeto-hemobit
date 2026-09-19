@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import com.hemobit.hemobit.aed.estruturas.Pilha;
 
 @RestController
-@RequestMapping("/hemocomponentes")
-public class HemocomponenteController {
+@RequestMapping("/aed/hemocomponentes")
+public class HemocomponenteDemoController {
 
     private Pilha<String> estoqueBolsas = new Pilha<>();
 

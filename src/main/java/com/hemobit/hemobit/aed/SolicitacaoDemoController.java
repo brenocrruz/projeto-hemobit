@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import com.hemobit.hemobit.aed.estruturas.Fila;
 
 @RestController
-@RequestMapping("/solicitacoes")
-public class SolicitacaoController {
+@RequestMapping("/aed/solicitacoes")
+public class SolicitacaoDemoController {
 
     private Fila<String> filaSolicitacoes = new Fila<>();
 
