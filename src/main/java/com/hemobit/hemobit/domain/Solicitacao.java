@@ -92,4 +92,8 @@ public class Solicitacao {
     public void setDataHora(LocalDateTime dataHora) {
         this.dataHora = dataHora;
     }
+    @Override
+    public String toString() {
+        return "Solicitacao{tipo=" + tipoHemocomponente + ", quantidade=" + quantidade + ", status=" + status + "}";
+    }
 }

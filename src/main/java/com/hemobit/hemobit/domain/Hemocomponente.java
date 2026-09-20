@@ -118,4 +118,15 @@ public class Hemocomponente {
     public void setLocalizacaoAtual(Localidade localizacaoAtual) {
         this.localizacaoAtual = localizacaoAtual;
     }
+    @Override
+    public String toString() {
+        return "Hemocomponente{" +
+                "id=" + id +
+                ", tipo=" + tipo +
+                ", quantidade=" + quantidade +
+                ", dataProducao=" + dataProducao +
+                ", dataValidade=" + dataValidade +
+                ", status=" + status +
+                '}';
+    }
 }

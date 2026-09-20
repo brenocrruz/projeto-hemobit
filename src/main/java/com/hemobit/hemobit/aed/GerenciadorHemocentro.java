@@ -3,13 +3,13 @@ package com.hemobit.hemobit.aed;
 import com.hemobit.hemobit.aed.estruturas.ListaEncadeada;
 import com.hemobit.hemobit.aed.estruturas.Fila;
 import com.hemobit.hemobit.aed.estruturas.Pilha;
+import com.hemobit.hemobit.domain.Hemocomponente;
+import com.hemobit.hemobit.domain.Solicitacao;
 
 public class GerenciadorHemocentro {
-    
-    // Como a equipe de POO ainda está definindo as entidades de Domínio, 
-    // usamos Object (genérico) para garantir que já funcione com qualquer classe que eles criarem.
-    private ListaEncadeada<Object> estoque;
-    private Fila<Object> filaRequisicoes;
+
+    private ListaEncadeada<Hemocomponente> estoque;
+    private Fila<Solicitacao> filaRequisicoes;
     private Pilha<String> historicoOperacoes;
 
     public GerenciadorHemocentro() {
@@ -18,22 +18,22 @@ public class GerenciadorHemocentro {
         this.historicoOperacoes = new Pilha<>();
     }
 
-    public void adicionarBolsa(Object bolsa) {
+    public void adicionarBolsa(Hemocomponente bolsa) {
         estoque.adicionar(bolsa);
         historicoOperacoes.empilhar("Nova bolsa adicionada ao estoque.");
     }
 
-    public ListaEncadeada<Object> getEstoque() {
+    public ListaEncadeada<Hemocomponente> getEstoque() {
         return estoque;
     }
 
-    public void enfileirarRequisicao(Object req) {
+    public void enfileirarRequisicao(Solicitacao req) {
         filaRequisicoes.enfileirar(req);
         historicoOperacoes.empilhar("Nova requisição enfileirada.");
     }
 
-    public Object processarProximaRequisicao() {
-        Object req = filaRequisicoes.desenfileirar();
+    public Solicitacao processarProximaRequisicao() {
+        Solicitacao req = filaRequisicoes.desenfileirar();
         if (req != null) {
             historicoOperacoes.empilhar("Requisição processada com sucesso.");
         }
