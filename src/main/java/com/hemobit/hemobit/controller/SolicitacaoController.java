@@ -57,4 +57,14 @@ public class SolicitacaoController {
         solicitacaoService.deletar(id);
         return ResponseEntity.noContent().build();
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody Solicitacao solicitacao) {
+        try {
+            return ResponseEntity.ok(solicitacaoService.atualizar(id, solicitacao));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }

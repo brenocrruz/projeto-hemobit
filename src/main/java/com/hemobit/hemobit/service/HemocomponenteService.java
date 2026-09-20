@@ -70,4 +70,24 @@ public class HemocomponenteService {
     public void deletar(Long id) {
         hemocomponenteRepository.deleteById(id);
     }
+    
+    public HemocomponenteResponseDTO atualizar(Long id, HemocomponenteRequestDTO dto) {
+    Hemocomponente existente = hemocomponenteRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Hemocomponente não encontrado."));
+
+    if (dto.getDataValidade() == null || dto.getDataProducao() == null
+            || dto.getDataValidade().isBefore(dto.getDataProducao())) {
+        throw new IllegalArgumentException("Data de validade não pode ser anterior à data de produção.");
+    }
+    if (dto.getQuantidade() <= 0) {
+        throw new IllegalArgumentException("Quantidade deve ser maior que zero.");
+    }
+
+    existente.setTipo(dto.getTipo());
+    existente.setQuantidade(dto.getQuantidade());
+    existente.setDataProducao(dto.getDataProducao());
+    existente.setDataValidade(dto.getDataValidade());
+
+    return new HemocomponenteResponseDTO(hemocomponenteRepository.save(existente));
+}
 }

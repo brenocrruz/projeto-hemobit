@@ -61,4 +61,20 @@ public class SolicitacaoService {
     public void deletar(Long id) {
         solicitacaoRepository.deleteById(id);
     }
+    public Solicitacao atualizar(Long id, Solicitacao dadosAtualizados) {
+    Solicitacao existente = solicitacaoRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Solicitação não encontrada."));
+
+    if (existente.getStatus() != StatusSolicitacao.PENDENTE) {
+        throw new IllegalStateException("Só é possível editar solicitações com status PENDENTE.");
+    }
+    if (dadosAtualizados.getQuantidade() <= 0) {
+        throw new IllegalArgumentException("Quantidade deve ser maior que zero.");
+    }
+
+    existente.setTipoHemocomponente(dadosAtualizados.getTipoHemocomponente());
+    existente.setQuantidade(dadosAtualizados.getQuantidade());
+
+    return solicitacaoRepository.save(existente);
+    }
 }

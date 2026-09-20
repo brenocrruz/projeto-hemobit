@@ -47,4 +47,12 @@ public class HemocomponenteController {
         hemocomponenteService.deletar(id);
         return ResponseEntity.noContent().build();
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody HemocomponenteRequestDTO dto) {
+        try {
+            return ResponseEntity.ok(hemocomponenteService.atualizar(id, dto));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }
