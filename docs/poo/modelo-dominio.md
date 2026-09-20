@@ -2,6 +2,23 @@
 
 Documento de referência do modelo de domínio da aplicação Hemobit (Rota Vital — 3º semestre, ADS, CESAR School), construído em Java/Spring Boot com persistência em PostgreSQL via JPA/Hibernate.
 
+## Status de implementação
+
+| Entidade | Status |
+|---|---|
+| Doador | ✅ Implementada (CRUD completo) |
+| Doacao | ✅ Implementada |
+| Hemocomponente | ✅ Implementada (CRUD completo, com DTO) |
+| Localidade / UnidadeColeta | ✅ Implementada |
+| UnidadeSaude (= "Hospital") | ✅ Implementada (CRUD completo) |
+| Solicitacao | ✅ Implementada (CRUD completo) |
+| Rota | ✅ Implementada (CRUD completo) |
+| Veiculo | ✅ Implementada (CRUD completo) |
+| Transporte | ⏳ Modelada neste documento, ainda não codada |
+| TransporteHemocomponente | ⏳ Modelada neste documento, ainda não codada |
+
+> Nota de nomenclatura: nos cards de entrega, "Hospital" e "Bolsa/Estoque" referem-se às entidades já existentes `UnidadeSaude` e `Hemocomponente`, respectivamente — não são entidades separadas.
+
 ## Diagrama de classes
 
 ```mermaid
@@ -40,6 +57,14 @@ classDiagram
 
     class UnidadeColeta
     class UnidadeSaude
+
+    class Solicitacao {
+        +Long id
+        +TipoHemocomponente tipoHemocomponente
+        +double quantidade
+        +StatusSolicitacao status
+        +LocalDateTime dataHora
+    }
 
     class Rota {
         +Long id
@@ -90,6 +115,13 @@ classDiagram
         DESCARTADO
     }
 
+    class StatusSolicitacao {
+        <<enumeration>>
+        PENDENTE
+        ATENDIDA
+        NEGADA
+    }
+
     Localidade <|-- UnidadeColeta
     Localidade <|-- UnidadeSaude
 
@@ -103,6 +135,10 @@ classDiagram
     Hemocomponente "1" --> "1" Localidade : localizacaoAtual
     Hemocomponente ..> StatusHemocomponente : usa
 
+    UnidadeSaude "1" --> "*" Solicitacao : solicita
+    Solicitacao ..> StatusSolicitacao : usa
+    Solicitacao ..> TipoHemocomponente : usa
+
     Localidade "1" --> "*" Rota : origem
     Localidade "1" --> "*" Rota : destino
 
@@ -114,7 +150,7 @@ classDiagram
     Hemocomponente "1" --> "*" TransporteHemocomponente
 ```
 
-> Observação: `TipoHemocomponente`, `StatusVeiculo` e `StatusTransporte` são enums adicionais, omitidos do diagrama por brevidade visual — detalhados na seção de entidades abaixo.
+> Observação: `TipoHemocomponente` e `StatusVeiculo`/`StatusTransporte` são enums adicionais, omitidos do diagrama por brevidade visual — detalhados na seção de entidades abaixo.
 
 ## Lista de entidades
 
@@ -137,7 +173,7 @@ Evento de coleta de sangue de um doador.
 - **Relacionamento:** 1 Doacao → N Hemocomponente (uma doação é separada em múltiplos hemocomponentes)
 
 ### Hemocomponente
-Unidade de sangue processada, pronta para uso ou distribuição.
+Unidade de sangue processada, pronta para uso ou distribuição. Equivale ao termo "Bolsa/Estoque" usado nos cards de entrega.
 - `id` (PK)
 - `tipo` (enum `TipoHemocomponente`: CONCENTRADO_HEMACIAS, CONCENTRADO_PLAQUETAS, PLASMA_FRESCO_CONGELADO)
 - `quantidade`
@@ -146,8 +182,7 @@ Unidade de sangue processada, pronta para uso ou distribuição.
 - `status` (enum `StatusHemocomponente`)
 - `doacao` (FK → Doacao, N:1)
 - `localizacaoAtual` (FK → Localidade, N:1) — onde o hemocomponente está fisicamente agora
-
-> **Nota de escopo:** a lista de tipos de hemocomponente acima segue o MVP definido pelo grupo (Concentrado de Hemácias, Concentrado de Plaquetas, Plasma Fresco Congelado). Uma versão anterior do modelo considerava 5 tipos (incluindo Sangue Total e Crioprecipitado); ajustar aqui se a equipe decidir expandir o escopo.
+- **Implementação:** exposto via DTO (`HemocomponenteRequestDTO`/`HemocomponenteResponseDTO`) — ver `docs/poo/padroes-projeto.md`.
 
 ### Localidade (classe abstrata)
 Representa um local físico do sistema. Superclasse de `UnidadeColeta` e `UnidadeSaude`, mapeada com herança `SINGLE_TABLE` (coluna discriminadora `tipo_localidade`).
@@ -162,7 +197,17 @@ Hemocentro — local onde doações são realizadas e hemocomponentes podem ser 
 - **Relacionamento:** 1 UnidadeColeta → N Doacao
 
 ### UnidadeSaude (extends Localidade)
-Hospital — destino de requisições de hemocomponentes.
+Hospital — destino de requisições de hemocomponentes. Equivale ao termo "Hospital" usado nos cards de entrega.
+
+### Solicitacao
+Pedido de hemocomponentes feito por uma unidade de saúde.
+- `id` (PK)
+- `unidadeSaude` (FK → UnidadeSaude, N:1)
+- `tipoHemocomponente` (enum `TipoHemocomponente`)
+- `quantidade`
+- `status` (enum `StatusSolicitacao`: PENDENTE, ATENDIDA, NEGADA)
+- `dataHora`
+- **Regra de negócio:** uma solicitação só pode ser editada enquanto está `PENDENTE`; ao ser atendida (`PUT /solicitacoes/{id}/atender`), o sistema verifica existência de estoque `DISPONIVEL` do tipo solicitado antes de confirmar.
 
 ### Rota
 Caminho entre duas localidades (origem e destino), usado para planejar transportes.
@@ -172,16 +217,17 @@ Caminho entre duas localidades (origem e destino), usado para planejar transport
 - `distancia`
 - `tempoEstimado`
 - **Relacionamento:** 1 Rota → N Transporte (uma rota é usada em vários transportes ao longo do tempo)
+- **Regra de validade:** origem e destino não podem ser a mesma localidade.
 
 ### Veiculo
 Veículo usado para transportar hemocomponentes.
 - `id` (PK)
-- `placa`
+- `placa` (única)
 - `tipo`
 - `capacidade`
 - `status` (enum `StatusVeiculo`: DISPONIVEL, EM_ROTA, MANUTENCAO)
 
-### Transporte
+### Transporte — ainda não implementada
 Evento de movimentação de hemocomponentes por uma rota, usando um veículo.
 - `id` (PK)
 - `dataHoraSaida`
@@ -190,7 +236,7 @@ Evento de movimentação de hemocomponentes por uma rota, usando um veículo.
 - `rota` (FK → Rota, N:1)
 - `veiculo` (FK → Veiculo, N:1)
 
-### TransporteHemocomponente (entidade associativa)
+### TransporteHemocomponente (entidade associativa) — ainda não implementada
 Resolve o relacionamento N:N entre `Transporte` e `Hemocomponente`, carregando o atributo `quantidade` transportada de cada hemocomponente naquele transporte específico.
 - `id` (PK)
 - `transporte` (FK → Transporte, N:1)
@@ -213,9 +259,13 @@ Com dois estados terminais alternativos, alcançáveis a partir de `DISPONIVEL` 
 
 **Regra de integridade doador–doação:** uma `Doacao` não pode existir sem um `Doador` e uma `UnidadeColeta` associados (campos `nullable = false` nas FKs).
 
-**Regra de cadeia fria (simplificada):** todo `Transporte` está sujeito a um tempo máximo aceitável entre `dataHoraSaida` e `dataHoraChegada`; ultrapassar esse limite é tratado como risco de ruptura de cadeia fria (regra a ser refinada em conjunto com a disciplina de AED, que modela o grafo de rotas e pesos).
+**Regra de solicitação:** uma `Solicitacao` só pode ser editada enquanto `PENDENTE`; ao ser atendida, exige estoque `DISPONIVEL` do tipo pedido — aplicada na camada de serviço (`SolicitacaoService`), não apenas no banco.
+
+**Regra de rota:** origem e destino de uma `Rota` não podem ser a mesma `Localidade` — aplicada na camada de serviço (`RotaService`).
+
+**Regra de cadeia fria (simplificada):** todo `Transporte` está sujeito a um tempo máximo aceitável entre `dataHoraSaida` e `dataHoraChegada`; ultrapassar esse limite é tratado como risco de ruptura de cadeia fria (regra a ser refinada em conjunto com a disciplina de AED, que modela o grafo de rotas e pesos, ao codar `Transporte`).
 
 ## Como o modelo é consumido pelas outras disciplinas
 
-- **AED:** o grafo de rotas (nós = `Localidade`/`Veiculo`, arestas = `Rota` com pesos) opera sobre os mesmos identificadores de `Localidade` definidos aqui, garantindo que o algoritmo de caminho mínimo e a compatibilidade ABO/Rh trabalhem sobre o mesmo domínio persistido por POO.
+- **AED:** o grafo de rotas (nós = `Localidade`/`Veiculo`, arestas = `Rota` com pesos) opera sobre os mesmos identificadores de `Localidade` definidos aqui, garantindo que o algoritmo de caminho mínimo e a compatibilidade ABO/Rh trabalhem sobre o mesmo domínio persistido por POO. A classe `GerenciadorHemocentro` (pacote `aed`) já consome diretamente as entidades `Hemocomponente` e `Solicitacao` deste modelo.
 - **Estatística:** os indicadores (demanda por período, taxa de descarte, tempo médio de atendimento) são calculados a partir dos dados de `Doacao`, `Hemocomponente` e `Transporte` expostos pela camada de repositório.
