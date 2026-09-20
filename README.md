@@ -5,7 +5,7 @@
 [![CI/CD Pipeline](https://github.com/brenocrruz/projeto-hemobit/actions/workflows/ci.yml/badge.svg)](https://github.com/brenocrruz/projeto-hemobit/actions/workflows/ci.yml)
 [![Deploy](https://img.shields.io/badge/deploy-online-brightgreen)](https://projeto-hemobit.onrender.com/)
 [![Java](https://img.shields.io/badge/Java-21-orange)](https://openjdk.org/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-green)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.1-green)](https://spring.io/projects/spring-boot)
 
 Projeto desenvolvido para o **Projeto Integrador III — ADS 2026.2**, da **CESAR School**, integrando as disciplinas de **Programação Orientada a Objetos**, **Algoritmos e Estruturas de Dados**, **Estatística e Probabilidade**, **Infraestrutura de Software** e **Infraestrutura de Comunicação**.
 
@@ -226,7 +226,6 @@ O Hemobit é um projeto integrador: cada disciplina contribui com uma parte esse
 | HU07 | Atualização do Status da Solicitação |
 
 ---
-
 ### 🟡 Entrega 02 — Implementação de Histórias (Parte 1)
 
 **Data:** 21/09/2026
@@ -241,8 +240,11 @@ Itens previstos:
 - Screencast do sistema funcionando.
 - Screencast da explicação do código.
 
----
+**Documentação técnica (POO):**
+- [Modelo de domínio](docs/poo/modelo-dominio.md)
+- [Padrão de projeto aplicado (DTO)](docs/poo/padroes-projeto.md)
 
+---
 ### 🟠 Entrega 03 — Implementação de Histórias (Parte 2)
 
 **Data:** 19/10/2026
