@@ -1,9 +1,5 @@
 package com.hemobit.hemobit.dto;
 
-/**
- * Data Transfer Object para agregacao de estatisticas calculadas.
- * Respeita a restricao de NAO utilizar Lombok.
- */
 public class IndicadoresDTO {
 
     private String nomeMetrica;
