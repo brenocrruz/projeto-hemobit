@@ -4,6 +4,7 @@ import com.hemobit.hemobit.domain.UnidadeSaude;
 import com.hemobit.hemobit.repository.UnidadeSaudeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.hemobit.hemobit.util.ValidadorCnpj;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +40,7 @@ public class UnidadeSaudeService {
         existente.setEndereco(dadosAtualizados.getEndereco());
         existente.setCidade(dadosAtualizados.getCidade());
         existente.setTelefone(dadosAtualizados.getTelefone());
+        existente.setCnpj(dadosAtualizados.getCnpj());
 
         validar(existente);
         return unidadeSaudeRepository.save(existente);
@@ -54,6 +56,11 @@ public class UnidadeSaudeService {
         }
         if (unidadeSaude.getCidade() == null || unidadeSaude.getCidade().isBlank()) {
             throw new IllegalArgumentException("Cidade é obrigatória.");
+        }
+        if (!ValidadorCnpj.isValid(unidadeSaude.getCnpj())) {
+            throw new IllegalArgumentException(
+                    "CNPJ inválido. Digite um número válido para prosseguir."
+            );
         }
     }
 }

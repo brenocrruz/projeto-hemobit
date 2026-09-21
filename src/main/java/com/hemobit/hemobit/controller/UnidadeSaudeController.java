@@ -44,9 +44,24 @@ public class UnidadeSaudeController {
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody UnidadeSaude unidadeSaude) {
         try {
-            return ResponseEntity.ok(unidadeSaudeService.atualizar(id, unidadeSaude));
+            UnidadeSaude atualizada =
+                    unidadeSaudeService.atualizar(id, unidadeSaude);
+
+            return ResponseEntity.ok(
+                    "Cadastro hospitalar atualizado com sucesso!"
+            );
+
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
+            if (e.getMessage().equals(
+                    "CNPJ inválido. Digite um número válido para prosseguir.")) {
+
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(e.getMessage());
+            }
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
         }
     }
 
