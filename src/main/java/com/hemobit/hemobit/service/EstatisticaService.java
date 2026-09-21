@@ -1,83 +1,68 @@
-package com.hemobit.hemobit.dto;
+package com.hemobit.hemobit.service;
 
-import java.util.Map;
+import com.hemobit.hemobit.dto.IndicadoresDTO;
+import org.springframework.stereotype.Service;
 
-public class IndicadoresDTO {
+import java.util.*;
+import java.util.stream.Collectors;
 
-    private String nomeIndicador;
-    private double media;
-    private double mediana;
-    private double moda;
-    private double desvioPadrao;
-    private double variancia;
-    private Map<String, Long> distribuicaoFrequencia;
+@Service
+public class EstatisticaService {
 
-    public IndicadoresDTO() {
+    public double calcularMedia(List<Double> valores) {
+        if (valores == null || valores.isEmpty()) return 0.0;
+        return valores.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
     }
 
-    public IndicadoresDTO(String nomeIndicador, double media, double mediana, double moda, double desvioPadrao, double variancia, Map<String, Long> distribuicaoFrequencia) {
-        this.nomeIndicador = nomeIndicador;
-        this.media = media;
-        this.mediana = mediana;
-        this.moda = moda;
-        this.desvioPadrao = desvioPadrao;
-        this.variancia = variancia;
-        this.distribuicaoFrequencia = distribuicaoFrequencia;
+    public double calcularMediana(List<Double> valores) {
+        if (valores == null || valores.isEmpty()) return 0.0;
+        List<Double> ordenados = new ArrayList<>(valores);
+        Collections.sort(ordenados);
+        int n = ordenados.size();
+        if (n % 2 == 1) return ordenados.get(n / 2);
+        return (ordenados.get((n / 2) - 1) + ordenados.get(n / 2)) / 2.0;
     }
 
-    public String getNomeIndicador() {
-        return nomeIndicador;
+    public double calcularModa(List<Double> valores) {
+        if (valores == null || valores.isEmpty()) return 0.0;
+        Map<Double, Long> freq = valores.stream()
+                .collect(Collectors.groupingBy(v -> v, Collectors.counting()));
+        return Collections.max(freq.entrySet(), Map.Entry.comparingByValue()).getKey();
     }
 
-    public void setNomeIndicador(String nomeIndicador) {
-        this.nomeIndicador = nomeIndicador;
+    public double calcularVariancia(List<Double> valores) {
+        if (valores == null || valores.size() < 2) return 0.0;
+        double media = calcularMedia(valores);
+        double somaQuadrados = 0.0;
+        for (Double v : valores) {
+            somaQuadrados += Math.pow(v - media, 2);
+        }
+        return somaQuadrados / (valores.size() - 1);
     }
 
-    public double getMedia() {
-        return media;
+    public double calcularDesvioPadrao(List<Double> valores) {
+        return Math.sqrt(calcularVariancia(valores));
     }
 
-    public void setMedia(double media) {
-        this.media = media;
+    public Map<String, Long> calcularDistribuicaoFrequencia(List<Double> valores) {
+        if (valores == null || valores.isEmpty()) return new HashMap<>();
+        Map<String, Long> freq = new LinkedHashMap<>();
+        for (Double v : valores) {
+            String chave = String.valueOf(v);
+            freq.put(chave, freq.getOrDefault(chave, 0L) + 1);
+        }
+        return freq;
     }
 
-    public double getMediana() {
-        return mediana;
-    }
-
-    public void setMediana(double mediana) {
-        this.mediana = mediana;
-    }
-
-    public double getModa() {
-        return moda;
-    }
-
-    public void setModa(double moda) {
-        this.moda = moda;
-    }
-
-    public double getDesvioPadrao() {
-        return desvioPadrao;
-    }
-
-    public void setDesvioPadrao(double desvioPadrao) {
-        this.desvioPadrao = desvioPadrao;
-    }
-
-    public double getVariancia() {
-        return variancia;
-    }
-
-    public void setVariancia(double variancia) {
-        this.variancia = variancia;
-    }
-
-    public Map<String, Long> getDistribuicaoFrequencia() {
-        return distribuicaoFrequencia;
-    }
-
-    public void setDistribuicaoFrequencia(Map<String, Long> distribuicaoFrequencia) {
-        this.distribuicaoFrequencia = distribuicaoFrequencia;
+    public IndicadoresDTO gerarRelatorioIndicador(String nome, List<Double> dados) {
+        return new IndicadoresDTO(
+                nome,
+                calcularMedia(dados),
+                calcularMediana(dados),
+                calcularModa(dados),
+                calcularDesvioPadrao(dados),   
+                calcularVariancia(dados),    
+                calcularDistribuicaoFrequencia(dados)
+        );
     }
 }
