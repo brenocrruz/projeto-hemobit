@@ -1,6 +1,7 @@
 package com.hemobit.hemobit.dto;
 
 public class IndicadoresDTO {
+
     private String nomeIndicador;
     private Double media;
     private Double mediana;
@@ -8,7 +9,8 @@ public class IndicadoresDTO {
     private Double variancia;
     private Double desvioPadrao;
 
-    public IndicadoresDTO() {}
+    public IndicadoresDTO() {
+    }
 
     public IndicadoresDTO(String nomeIndicador, Double media, Double mediana, Double moda, Double variancia, Double desvioPadrao) {
         this.nomeIndicador = nomeIndicador;
@@ -19,21 +21,27 @@ public class IndicadoresDTO {
         this.desvioPadrao = desvioPadrao;
     }
 
-    public String getNomeIndicador() { return nomeIndicador; }
-    public void setNomeIndicador(String nomeIndicador) { this.nomeIndicador = nomeIndicador; }
+    public String getNomeIndicador() {
+        return nomeIndicador;
+    }
 
-    public Double getMedia() { return media; }
-    public void setMedia(Double media) { this.media = media; }
+    public Double getMedia() {
+        return media;
+    }
 
-    public Double getMediana() { return mediana; }
-    public void setMediana(Double mediana) { this.mediana = mediana; }
+    public Double getMediana() {
+        return mediana;
+    }
 
-    public Double getModa() { return moda; }
-    public void setModa(Double moda) { this.moda = moda; }
+    public Double getModa() {
+        return moda;
+    }
 
-    public Double getVariancia() { return variancia; }
-    public void setVariancia(Double variancia) { this.variancia = variancia; }
+    public Double getVariancia() {
+        return variancia;
+    }
 
-    public Double getDesvioPadrao() { return desvioPadrao; }
-    public void setDesvioPadrao(Double desvioPadrao) { this.desvioPadrao = desvioPadrao; }
+    public Double getDesvioPadrao() {
+        return desvioPadrao;
+    }
 }
