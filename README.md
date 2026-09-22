@@ -226,19 +226,44 @@ O Hemobit é um projeto integrador: cada disciplina contribui com uma parte esse
 | HU07 | Atualização do Status da Solicitação |
 
 ---
-### 🟡 Entrega 02 — Implementação de Histórias (Parte 1)
+### 🟢 Entrega 02 — Implementação de Histórias (Parte 1)
 
 **Data:** 21/09/2026
 
-> 🚧 Em andamento.
+> As entregas abaixo são referentes à disciplina de Programação Orientada a Objetos. Os artefatos das demais disciplinas estão listados na seção Disciplinas Integradas.
 
-Itens previstos:
+#### 📌 Histórias de Usuário Implementadas
 
-- Implementação de pelo menos 2 histórias de usuário.
-- Commits semanais de código na branch `main`.
-- Uso do issue/bug tracker do GitHub.
-- Screencast do sistema funcionando.
-- Screencast da explicação do código.
+- **HU01 — Cadastro e Gestão de Profissionais Solicitantes**
+  - Cadastro de profissionais solicitantes.
+  - Consulta, atualização e exclusão de profissionais.
+  - Validação de CRM/matrícula duplicado.
+
+- **HU02 — Cadastro e Manutenção de Hospitais Solicitantes**
+  - Cadastro de hospitais/unidades de saúde.
+  - Consulta, atualização e exclusão de unidades.
+  - Validação de CNPJ antes da persistência.
+  - Bloqueio de cadastro com CNPJ inválido.
+
+#### 🔀 Controle de Versão e Acompanhamento
+
+- Commits de código realizados na branch `main`.
+- Uso do issue/bug tracker do GitHub para acompanhamento das atividades.
+
+#### 🎥 Screencasts
+
+- **Demonstração do sistema**
+  - Apresentação do funcionamento das duas User Stories.
+  - Demonstração dos cenários positivos e negativos.
+  - Execução da aplicação Spring Boot e utilização dos endpoints.
+  - [▶️ Assistir ao screencast — Demonstração do sistema](https://youtu.be/uAxWwdji9dM)
+
+- **Explicação do código**
+  - Apresentação da implementação das duas User Stories.
+  - Explicação das entidades, repositories, services e controllers.
+  - Apresentação das regras de negócio e validações implementadas.
+  - [▶️ Assistir ao screencast — Explicação do código](https://youtu.be/JKPvnHs35X8)
+
 
 **Documentação técnica (POO):**
 - [Modelo de domínio](docs/poo/modelo-dominio.md)
