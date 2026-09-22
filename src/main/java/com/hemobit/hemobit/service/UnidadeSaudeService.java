@@ -2,6 +2,7 @@ package com.hemobit.hemobit.service;
 
 import com.hemobit.hemobit.domain.UnidadeSaude;
 import com.hemobit.hemobit.repository.UnidadeSaudeRepository;
+import com.hemobit.hemobit.util.ValidadorCnpj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,15 +33,21 @@ public class UnidadeSaudeService {
     }
 
     public UnidadeSaude atualizar(Long id, UnidadeSaude dadosAtualizados) {
+
         UnidadeSaude existente = unidadeSaudeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Unidade de saúde não encontrada."));
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Unidade de saúde não encontrada."
+                        ));
 
         existente.setNome(dadosAtualizados.getNome());
         existente.setEndereco(dadosAtualizados.getEndereco());
         existente.setCidade(dadosAtualizados.getCidade());
         existente.setTelefone(dadosAtualizados.getTelefone());
+        existente.setCnpj(dadosAtualizados.getCnpj());
 
         validar(existente);
+
         return unidadeSaudeRepository.save(existente);
     }
 
@@ -49,11 +56,28 @@ public class UnidadeSaudeService {
     }
 
     private void validar(UnidadeSaude unidadeSaude) {
-        if (unidadeSaude.getNome() == null || unidadeSaude.getNome().isBlank()) {
-            throw new IllegalArgumentException("Nome da unidade de saúde é obrigatório.");
+
+        if (unidadeSaude.getNome() == null ||
+                unidadeSaude.getNome().isBlank()) {
+
+            throw new IllegalArgumentException(
+                    "Nome da unidade de saúde é obrigatório."
+            );
         }
-        if (unidadeSaude.getCidade() == null || unidadeSaude.getCidade().isBlank()) {
-            throw new IllegalArgumentException("Cidade é obrigatória.");
+
+        if (unidadeSaude.getCidade() == null ||
+                unidadeSaude.getCidade().isBlank()) {
+
+            throw new IllegalArgumentException(
+                    "Cidade é obrigatória."
+            );
+        }
+
+        if (!ValidadorCnpj.isValid(unidadeSaude.getCnpj())) {
+
+            throw new IllegalArgumentException(
+                    "CNPJ inválido. Digite um número válido para prosseguir."
+            );
         }
     }
 }
