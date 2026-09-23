@@ -1,47 +1,37 @@
 package com.hemobit.hemobit.aed;
 
-import com.hemobit.hemobit.aed.estruturas.ListaEncadeada;
-import com.hemobit.hemobit.aed.estruturas.Fila;
-import com.hemobit.hemobit.aed.estruturas.Pilha;
-import com.hemobit.hemobit.domain.Hemocomponente;
-import com.hemobit.hemobit.domain.Solicitacao;
+import com.hemobit.hemobit.aed.estruturas.TabelaHashEstoque;
+import com.hemobit.hemobit.aed.estruturas.Grafo;
+import com.hemobit.hemobit.domain.Doacao;
+import java.util.List;
 
 public class GerenciadorHemocentro {
-
-    private ListaEncadeada<Hemocomponente> estoque;
-    private Fila<Solicitacao> filaRequisicoes;
-    private Pilha<String> historicoOperacoes;
+    
+    private TabelaHashEstoque estoque;
+    private Grafo mapaRotas;
 
     public GerenciadorHemocentro() {
-        this.estoque = new ListaEncadeada<>();
-        this.filaRequisicoes = new Fila<>();
-        this.historicoOperacoes = new Pilha<>();
+        this.estoque = new TabelaHashEstoque();
+        this.mapaRotas = new Grafo();
     }
 
-    public void adicionarBolsa(Hemocomponente bolsa) {
-        estoque.adicionar(bolsa);
-        historicoOperacoes.empilhar("Nova bolsa adicionada ao estoque.");
+    public void registrarEntrada(Doacao doacao) {
+        estoque.adicionar(doacao);
     }
 
-    public ListaEncadeada<Hemocomponente> getEstoque() {
-        return estoque;
+    public Doacao solicitarBolsa(String tipoSanguineo) {
+        return estoque.retirar(tipoSanguineo);
     }
 
-    public void enfileirarRequisicao(Solicitacao req) {
-        filaRequisicoes.enfileirar(req);
-        historicoOperacoes.empilhar("Nova requisição enfileirada.");
+    public void adicionarLocalMapa(String nomeLocal) {
+        mapaRotas.adicionarVertice(nomeLocal);
     }
 
-    public Solicitacao processarProximaRequisicao() {
-        Solicitacao req = filaRequisicoes.desenfileirar();
-        if (req != null) {
-            historicoOperacoes.empilhar("Requisição processada com sucesso.");
-        }
-        return req;
+    public void adicionarRota(String origem, String destino, double distancia) {
+        mapaRotas.adicionarAresta(origem, destino, distancia);
     }
 
-    public String consultarUltimaOperacao() {
-        if (historicoOperacoes.estaVazia()) return "Nenhuma operação registrada.";
-        return historicoOperacoes.espiar();
+    public List<String> calcularMelhorRota(String origem, String destino) {
+        return mapaRotas.encontrarCaminhoMaisCurto(origem, destino);
     }
 }

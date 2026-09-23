@@ -5,7 +5,6 @@ import com.hemobit.hemobit.repository.UnidadeSaudeRepository;
 import com.hemobit.hemobit.util.ValidadorCnpj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.hemobit.hemobit.util.ValidadorCnpj;
 
 import java.util.List;
 import java.util.Optional;

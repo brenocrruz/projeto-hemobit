@@ -1,38 +1,55 @@
 package com.hemobit.hemobit.aed;
 
-import com.hemobit.hemobit.domain.Hemocomponente;
-import com.hemobit.hemobit.domain.Solicitacao;
-import com.hemobit.hemobit.domain.TipoHemocomponente;
-import com.hemobit.hemobit.domain.UnidadeSaude;
-
-import java.time.LocalDate;
+import com.hemobit.hemobit.domain.Doacao;
+import com.hemobit.hemobit.domain.Doador;
+import com.hemobit.hemobit.domain.TipoSanguineo;
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class TesteAED {
     public static void main(String[] args) {
         GerenciadorHemocentro gerenciador = new GerenciadorHemocentro();
 
-        System.out.println("--- TESTANDO ESTOQUE (LISTA) ---");
-        Hemocomponente bolsa1 = new Hemocomponente(
-                TipoHemocomponente.CONCENTRADO_HEMACIAS, 450,
-                LocalDate.now(), LocalDate.now().plusDays(35), null, null);
-        Hemocomponente bolsa2 = new Hemocomponente(
-                TipoHemocomponente.CONCENTRADO_PLAQUETAS, 420,
-                LocalDate.now(), LocalDate.now().plusDays(5), null, null);
-        gerenciador.adicionarBolsa(bolsa1);
-        gerenciador.adicionarBolsa(bolsa2);
-        System.out.println("Tamanho do estoque: " + gerenciador.getEstoque().tamanho());
+        System.out.println("--- TESTE DE ESTOQUE ---");
+        Doador doador = new Doador();
+        doador.setTipoSanguineo(TipoSanguineo.O_NEGATIVO);
 
-        System.out.println("\n--- TESTANDO REQUISIÇÕES (FILA - FIFO) ---");
-        UnidadeSaude hospitalDasClinicas = new UnidadeSaude("Hospital das Clínicas", "", "Recife", "");
-        UnidadeSaude santaCasa = new UnidadeSaude("Santa Casa", "", "Recife", "");
-        Solicitacao req1 = new Solicitacao(hospitalDasClinicas, TipoHemocomponente.CONCENTRADO_HEMACIAS, 450);
-        Solicitacao req2 = new Solicitacao(santaCasa, TipoHemocomponente.CONCENTRADO_PLAQUETAS, 420);
-        gerenciador.enfileirarRequisicao(req1);
-        gerenciador.enfileirarRequisicao(req2);
-        System.out.println("Atendendo primeiro: " + gerenciador.processarProximaRequisicao());
-        System.out.println("Atendendo segundo: " + gerenciador.processarProximaRequisicao());
+        LocalDateTime dataHoje = LocalDateTime.now();
+        LocalDateTime dataAntiga = LocalDateTime.now().minusDays(5);
 
-        System.out.println("\n--- TESTANDO HISTÓRICO (PILHA - LIFO) ---");
-        System.out.println("Última operação registrada: " + gerenciador.consultarUltimaOperacao());
+        Doacao d1 = new Doacao();
+        d1.setDataHora(dataHoje);
+        d1.setDoador(doador);
+
+        Doacao d2 = new Doacao();
+        d2.setDataHora(dataAntiga);
+        d2.setDoador(doador);
+
+        gerenciador.registrarEntrada(d1);
+        gerenciador.registrarEntrada(d2);
+
+        Doacao bolsaRetirada = gerenciador.solicitarBolsa("O_NEGATIVO");
+        if (bolsaRetirada != null && bolsaRetirada.getDataHora().equals(dataAntiga)) {
+            System.out.println("SUCESSO: A bolsa mais antiga (FEFO) foi entregue.");
+        } else {
+            System.out.println("ERRO no sistema de estoque.");
+        }
+
+        System.out.println("\n--- TESTE DE ROTAS ---");
+        gerenciador.adicionarLocalMapa("Hemocentro");
+        gerenciador.adicionarLocalMapa("Cruz Vermelha");
+        gerenciador.adicionarLocalMapa("Hospital Sao Jose");
+        gerenciador.adicionarLocalMapa("Hospital Santa Maria");
+
+        gerenciador.adicionarRota("Hemocentro", "Cruz Vermelha", 5.0);
+        gerenciador.adicionarRota("Cruz Vermelha", "Hospital Sao Jose", 3.0);
+        gerenciador.adicionarRota("Hemocentro", "Hospital Santa Maria", 10.0);
+        gerenciador.adicionarRota("Hospital Santa Maria", "Hospital Sao Jose", 2.0);
+        gerenciador.adicionarRota("Hemocentro", "Hospital Sao Jose", 15.0);
+
+        List<String> rota = gerenciador.calcularMelhorRota("Hemocentro", "Hospital Sao Jose");
+        
+        System.out.println("A rota mais rapida para o Hospital Sao Jose e:");
+        System.out.println(rota);
     }
 }

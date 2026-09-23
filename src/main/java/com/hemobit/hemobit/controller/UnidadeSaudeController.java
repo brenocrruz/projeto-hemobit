@@ -44,9 +44,7 @@ public class UnidadeSaudeController {
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody UnidadeSaude unidadeSaude) {
         try {
-            UnidadeSaude atualizada =
-                    unidadeSaudeService.atualizar(id, unidadeSaude);
-
+            unidadeSaudeService.atualizar(id, unidadeSaude);
             return ResponseEntity.ok(
                     "Cadastro hospitalar atualizado com sucesso!"
             );
