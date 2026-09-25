@@ -44,25 +44,14 @@ public class EstatisticaService {
         return Math.sqrt(calcularVariancia(valores));
     }
 
-    public Map<String, Long> calcularDistribuicaoFrequencia(List<Double> valores) {
-        if (valores == null || valores.isEmpty()) return new LinkedHashMap<>();
-        Map<String, Long> freq = new LinkedHashMap<>();
-        for (Double v : valores) {
-            String chave = String.valueOf(v);
-            freq.put(chave, freq.getOrDefault(chave, 0L) + 1);
-        }
-        return freq;
-    }
-
     public IndicadoresDTO gerarRelatorioIndicador(String nome, List<Double> dados) {
         return new IndicadoresDTO(
                 nome,
                 calcularMedia(dados),
                 calcularMediana(dados),
                 calcularModa(dados),
-                calcularDesvioPadrao(dados),
                 calcularVariancia(dados),
-                calcularDistribuicaoFrequencia(dados)
+                calcularDesvioPadrao(dados) 
         );
     }
 }
