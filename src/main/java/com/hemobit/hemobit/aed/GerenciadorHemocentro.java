@@ -23,6 +23,10 @@ public class GerenciadorHemocentro {
         return estoque.retirar(tipoSanguineo);
     }
 
+    public Doacao solicitarBolsaCompativel(String tipoSanguineoReceptor) {
+        return estoque.retirarCompativel(tipoSanguineoReceptor);
+    }
+
     public void adicionarLocalMapa(String nomeLocal) {
         mapaRotas.adicionarVertice(nomeLocal);
     }

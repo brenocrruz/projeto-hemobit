@@ -1,5 +1,7 @@
 package com.hemobit.hemobit.dto;
 
+import org.jspecify.annotations.Nullable;
+
 public class IndicadoresDTO {
 
     private String nomeIndicador;
@@ -40,5 +42,10 @@ public class IndicadoresDTO {
 
     public Double getDesvioPadrao() {
         return desvioPadrao;
+    }
+
+    public @Nullable Object getDistribuicaoFrequencia() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getDistribuicaoFrequencia'");
     }
 }

@@ -8,7 +8,7 @@ public class TabelaHashEstoque {
     public TabelaHashEstoque() {
         gavetas = new FilaFEFO[8];
         for (int i = 0; i < 8; i++) {
-            gavetas[i] = new FilaFEFO(); 
+            gavetas[i] = new FilaFEFO();
         }
     }
 
@@ -27,7 +27,7 @@ public class TabelaHashEstoque {
     }
 
     public void adicionar(Doacao doacao) {
-        String tipo = doacao.getDoador().getTipoSanguineo().toString(); 
+        String tipo = doacao.getDoador().getTipoSanguineo().toString();
         int indice = calcularIndice(tipo);
         gavetas[indice].inserir(doacao);
     }
@@ -35,5 +35,19 @@ public class TabelaHashEstoque {
     public Doacao retirar(String tipoSanguineo) {
         int indice = calcularIndice(tipoSanguineo);
         return gavetas[indice].remover();
+    }
+
+    public Doacao retirarCompativel(String tipoReceptor) {
+        int indiceReceptor = calcularIndice(tipoReceptor);
+        
+        for (int i = 0; i < 8; i++) {
+            if (MatrizCompatibilidade.isCompativel(indiceReceptor, i)) {
+                Doacao doacao = gavetas[i].remover();
+                if (doacao != null) {
+                    return doacao;
+                }
+            }
+        }
+        return null;
     }
 }
