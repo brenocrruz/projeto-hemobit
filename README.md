@@ -307,7 +307,7 @@ O Hemobit é um projeto integrador: cada disciplina contribui com uma parte esse
 #### 🎥 Screencasts
 
 - **Demonstração do sistema:** [▶️ Assistir](https://www.youtube.com/watch?v=NEd4m9DlYlM)
-- **Explicação do código:** [▶️ Assistir — link a adicionar]()
+- **Explicação do código:** [▶️ Assistir](https://youtu.be/ns5ApMgaIzk)
 
 #### 🖼️ Print da tela
 
