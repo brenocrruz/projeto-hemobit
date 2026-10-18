@@ -5,9 +5,7 @@ import com.hemobit.hemobit.domain.StatusSolicitacao;
 
 import java.time.LocalDateTime;
 
-// Resumo: uma linha do histórico de movimentação, no formato que a API devolve.
 public class HistoricoSolicitacaoDTO {
-
     private StatusSolicitacao statusAnterior;
     private StatusSolicitacao statusNovo;
     private LocalDateTime dataHora;

@@ -4,11 +4,7 @@ import com.hemobit.hemobit.domain.Prioridade;
 import com.hemobit.hemobit.domain.TipoHemocomponente;
 import com.hemobit.hemobit.domain.TipoSanguineo;
 
-// Resumo: dados que o cliente envia para criar ou editar uma solicitação (HU06).
-// Explicando fácil: o hospital vem só pelo número (unidadeSaudeId); quem transforma isso
-// no objeto de verdade é o service.
 public class SolicitacaoRequestDTO {
-
     private Long unidadeSaudeId;
     private TipoHemocomponente tipoHemocomponente;
     private TipoSanguineo tipoSanguineo;

@@ -32,13 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-// Resumo: testes das regras da HU06 (criar solicitação) e da HU07 (status, histórico e atendimento).
-// Explicando fácil: cada @Test monta um cenário pequeno (hospital, bolsas, pedido), chama o service
-// e confere o resultado. Os repositórios são de memória (RepositoriosEmMemoria), então não precisa de banco.
-// A consulta buscarParaReserva é imitada aqui (filtra e ordena por validade) porque o JPQL de verdade
-// só roda no PostgreSQL; o que se testa é a lógica do service em cima do que ela devolve.
 class SolicitacaoServiceTest {
-
     private Map<Long, Object> solicitacoes;
     private Map<Long, Object> bolsas;
     private Map<Long, Object> historico;
@@ -94,8 +88,6 @@ class SolicitacaoServiceTest {
                 historicoRepo, new CompatibilidadeService());
     }
 
-    // ------------------------------------------------------------------ HU06
-
     @Test
     void criarDeveSalvarPendenteComCodigoEHistoricoInicial() {
         Solicitacao criada = service.criar(pedido(2, TipoSanguineo.A_POSITIVO));
@@ -140,8 +132,6 @@ class SolicitacaoServiceTest {
         assertTrue(solicitacoes.isEmpty());
     }
 
-    // ------------------------------------------------------------------ HU07: status e histórico
-
     @Test
     void iniciarSeparacaoDeveAtualizarStatusEGravarOperadorEHorario() {
         Solicitacao criada = service.criar(pedido(1, TipoSanguineo.A_POSITIVO));
@@ -182,8 +172,6 @@ class SolicitacaoServiceTest {
         assertThrows(NoSuchElementException.class,
                 () -> service.alterarStatus(999L, StatusSolicitacao.CANCELADA, "Maria"));
     }
-
-    // ------------------------------------------------------------------ HU07: atendimento
 
     @Test
     void atenderDeveReservarBolsasCompativeisDentroDaValidadeNaOrdemFefo() {
@@ -256,8 +244,6 @@ class SolicitacaoServiceTest {
         assertTrue(solicitacoes.isEmpty());
         assertTrue(historico.isEmpty());
     }
-
-    // ------------------------------------------------------------------ apoio
 
     private SolicitacaoRequestDTO pedido(double quantidade, TipoSanguineo tipoSanguineo) {
         SolicitacaoRequestDTO dto = new SolicitacaoRequestDTO();

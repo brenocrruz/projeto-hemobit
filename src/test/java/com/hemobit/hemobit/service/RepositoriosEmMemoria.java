@@ -8,13 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-// Resumo: cria repositórios "de mentira" que guardam tudo em memória, só para os testes.
-// Explicando fácil: em vez de usar o PostgreSQL de verdade, o teste usa um mapa na memória.
-// Assim o teste roda em milissegundos, sem banco e sem depender de nenhuma biblioteca extra.
-// Os métodos básicos (findAll, findById, save, saveAll, deleteById, existsById) já vêm prontos;
-// consultas específicas de cada repositório são passadas em "extras".
 final class RepositoriosEmMemoria {
-
     private RepositoriosEmMemoria() {
     }
 
@@ -83,7 +77,6 @@ final class RepositoriosEmMemoria {
             try {
                 return c.getDeclaredField("id");
             } catch (NoSuchFieldException ignorado) {
-                // procura na classe mãe (ex.: UnidadeSaude herda o id de Localidade)
             }
         }
         throw new NoSuchFieldException("id");

@@ -8,10 +8,7 @@ import com.hemobit.hemobit.domain.TipoSanguineo;
 
 import java.time.LocalDateTime;
 
-// Resumo: o que a API devolve sobre uma solicitação.
-// Explicando fácil: o "id" é o código de identificação que a HU06 pede (ex.: 12).
 public class SolicitacaoResponseDTO {
-
     private Long id;
     private Long unidadeSaudeId;
     private String unidadeSaudeNome;

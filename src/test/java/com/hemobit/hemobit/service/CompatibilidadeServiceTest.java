@@ -8,11 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-// Resumo: confere os 64 pares receptor x doador contra a regra ABO/Rh escrita de outro jeito.
-// Explicando fácil: a regra é "o doador não pode ter nenhum antígeno (A, B ou Rh) que o receptor
-// não tenha". O teste calcula isso por conta própria e compara com a matriz do AED.
 class CompatibilidadeServiceTest {
-
     private final CompatibilidadeService servico = new CompatibilidadeService();
 
     @Test

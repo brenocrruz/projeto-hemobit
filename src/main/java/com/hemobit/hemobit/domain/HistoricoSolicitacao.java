@@ -12,13 +12,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
-// Resumo: uma linha do histórico de movimentação de uma solicitação (HU07).
-// Explicando fácil: cada vez que o status muda, guardamos de qual status veio, para qual foi,
-// quando aconteceu e quem fez. Na criação do pedido o status anterior fica vazio.
 @Entity
 @Table(name = "historico_solicitacao")
 public class HistoricoSolicitacao {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

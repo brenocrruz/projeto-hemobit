@@ -15,14 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-// Resumo: endpoints REST de /solicitacoes (HU06 e HU07).
-// Explicando fácil: este arquivo só traduz HTTP <-> service. Os três @ExceptionHandler no final
-// convertem os erros do service em respostas HTTP: 400 (dado inválido), 404 (não existe)
-// e 409 (o estado atual não permite a ação).
 @RestController
 @RequestMapping("/solicitacoes")
 public class SolicitacaoController {
-
     private final SolicitacaoService solicitacaoService;
 
     @Autowired
@@ -42,7 +37,6 @@ public class SolicitacaoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // HU06
     @PostMapping
     public ResponseEntity<SolicitacaoResponseDTO> criar(@RequestBody SolicitacaoRequestDTO dto) {
         Solicitacao criada = solicitacaoService.criar(dto);
@@ -60,27 +54,23 @@ public class SolicitacaoController {
         return ResponseEntity.noContent().build();
     }
 
-    // HU07: iniciar separação, cancelar ou negar
     @PutMapping("/{id}/status")
     public SolicitacaoResponseDTO alterarStatus(@PathVariable Long id, @RequestBody MudancaStatusDTO dto) {
         return new SolicitacaoResponseDTO(
                 solicitacaoService.alterarStatus(id, dto.getStatus(), dto.getOperador()));
     }
 
-    // HU07: atender reservando bolsas compatíveis (ABO/Rh) e mais próximas de vencer (FEFO)
     @PutMapping("/{id}/atender")
     public SolicitacaoResponseDTO atender(@PathVariable Long id,
                                           @RequestParam(required = false) String operador) {
         return new SolicitacaoResponseDTO(solicitacaoService.atender(id, operador));
     }
 
-    // HU07: histórico de movimentação (quem mudou, quando e de/para qual status)
     @GetMapping("/{id}/historico")
     public List<HistoricoSolicitacaoDTO> historico(@PathVariable Long id) {
         return solicitacaoService.listarHistorico(id).stream().map(HistoricoSolicitacaoDTO::new).toList();
     }
 
-    // HU07: bolsas reservadas para a solicitação
     @GetMapping("/{id}/bolsas")
     public List<HemocomponenteResponseDTO> bolsasReservadas(@PathVariable Long id) {
         return solicitacaoService.listarBolsasReservadas(id).stream()

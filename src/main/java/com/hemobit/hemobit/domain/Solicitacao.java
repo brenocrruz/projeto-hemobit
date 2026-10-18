@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "solicitacao")
 public class Solicitacao {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,16 +37,12 @@ public class Solicitacao {
     @Column(nullable = false)
     private LocalDateTime dataHora;
 
-    // HU06: tipo sanguíneo do paciente e nível de prioridade do pedido.
-    // Ficam sem "nullable = false" no banco só para não quebrar linhas antigas; a obrigatoriedade
-    // é garantida pelo SolicitacaoService.
     @Enumerated(EnumType.STRING)
     private TipoSanguineo tipoSanguineo;
 
     @Enumerated(EnumType.STRING)
     private Prioridade prioridade;
 
-    // HU07: momento em que o pedido foi atendido (bolsas reservadas).
     private LocalDateTime dataAtendimento;
 
     public Solicitacao() {

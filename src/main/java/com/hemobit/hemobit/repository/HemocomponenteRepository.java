@@ -13,11 +13,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface HemocomponenteRepository extends JpaRepository<Hemocomponente, Long> {
-
-    // Resumo: busca as bolsas candidatas a reserva, já na ordem FEFO (vence primeiro, sai primeiro).
-    // Explicando fácil: pega só bolsas do tipo pedido, disponíveis e que ainda não venceram,
-    // da que vence mais cedo para a que vence mais tarde. O bloqueio (PESSIMISTIC_WRITE) faz
-    // dois atendimentos ao mesmo tempo não pegarem a mesma bolsa: o segundo espera o primeiro terminar.
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select h from Hemocomponente h "
             + "where h.tipo = :tipo and h.status = :status and h.dataValidade >= :hoje "

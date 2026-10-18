@@ -21,16 +21,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-// Resumo: regras de negócio das solicitações de hemocomponentes.
-//   HU06 - criar solicitação (validações + código de identificação + status PENDENTE).
-//   HU07 - mudar status com transições válidas, histórico (quando e quem) e atendimento com
-//          compatibilidade ABO/Rh (AED) e FEFO.
-// Explicando fácil: o controller só recebe e devolve dados; toda a decisão "pode ou não pode"
-// fica aqui. Erros de dado inválido viram IllegalArgumentException (400), pedido que não existe vira
-// NoSuchElementException (404) e ação que o estado atual não permite vira IllegalStateException (409).
 @Service
 public class SolicitacaoService {
-
     private static final String OPERADOR_PADRAO = "não informado";
 
     private final SolicitacaoRepository solicitacaoRepository;
@@ -52,8 +44,6 @@ public class SolicitacaoService {
         this.compatibilidadeService = compatibilidadeService;
     }
 
-    // ---------------------------------------------------------------- consultas
-
     public List<Solicitacao> listarTodas() {
         return solicitacaoRepository.findAll();
     }
@@ -72,10 +62,6 @@ public class SolicitacaoService {
         return hemocomponenteRepository.findBySolicitacaoIdOrderByDataValidadeAscIdAsc(id);
     }
 
-    // ---------------------------------------------------------------- HU06
-
-    // Resumo: cria a solicitação já com status PENDENTE e registra a primeira linha do histórico.
-    // Explicando fácil: valida tudo antes de gravar. Se algo estiver errado, nada vai para o banco.
     @Transactional
     public Solicitacao criar(SolicitacaoRequestDTO dto) {
         validar(dto);
@@ -117,14 +103,6 @@ public class SolicitacaoService {
         solicitacaoRepository.deleteById(id);
     }
 
-    // ---------------------------------------------------------------- HU07
-
-    // Resumo: muda o status respeitando as transições permitidas e grava quem fez e quando.
-    //   PENDENTE     -> EM_SEPARACAO, CANCELADA, NEGADA
-    //   EM_SEPARACAO -> ATENDIDA (via atender), CANCELADA, NEGADA
-    //   ATENDIDA, CANCELADA, NEGADA -> nenhuma (pedido finalizado)
-    // Explicando fácil: o pedido só anda para frente. Quem tenta mexer em um pedido já encerrado
-    // recebe a mensagem "Não é permitido alterar o status de solicitações já finalizadas.".
     @Transactional
     public Solicitacao alterarStatus(Long id, StatusSolicitacao novoStatus, String operador) {
         if (novoStatus == null) {
@@ -154,13 +132,6 @@ public class SolicitacaoService {
         return solicitacao;
     }
 
-    // Resumo: atende a solicitação reservando as bolsas certas.
-    //   1) pega só bolsas DISPONIVEL, do tipo pedido e dentro da validade;
-    //   2) vem já ordenado por validade (FEFO: a que vence primeiro sai primeiro);
-    //   3) fica só com as compatíveis (ABO/Rh) com o paciente, usando a matriz do AED;
-    //   4) se faltar bolsa, responde 409 e NADA é alterado; se tiver, reserva todas e marca ATENDIDA.
-    // Explicando fácil: a regra é "tudo ou nada". O @Transactional garante que, se der erro no meio,
-    // o banco volta ao que era antes (nenhuma bolsa fica reservada pela metade).
     @Transactional
     public Solicitacao atender(Long id, String operador) {
         Solicitacao solicitacao = buscarOuFalhar(id);
@@ -199,8 +170,6 @@ public class SolicitacaoService {
         registrarMudanca(solicitacao, StatusSolicitacao.ATENDIDA, nomeOperador(operador));
         return solicitacao;
     }
-
-    // ---------------------------------------------------------------- apoio
 
     private boolean transicaoPermitida(StatusSolicitacao atual, StatusSolicitacao novo) {
         return switch (atual) {

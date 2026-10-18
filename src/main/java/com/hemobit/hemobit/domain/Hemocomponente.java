@@ -15,7 +15,6 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "hemocomponente")
 public class Hemocomponente {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -45,8 +44,6 @@ public class Hemocomponente {
     @JoinColumn(name = "localizacao_atual_id")
     private Localidade localizacaoAtual;
 
-    // HU07: quando a bolsa é reservada para um pedido, guardamos qual pedido ficou com ela.
-    // Fica vazio enquanto a bolsa está disponível no estoque.
     @ManyToOne
     @JoinColumn(name = "solicitacao_id")
     private Solicitacao solicitacao;
