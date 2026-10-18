@@ -11,7 +11,8 @@ Documento de referência do modelo de domínio da aplicação Hemobit (Rota Vita
 | Hemocomponente | ✅ Implementada (CRUD completo, com DTO) |
 | Localidade / UnidadeColeta | ✅ Implementada |
 | UnidadeSaude (= "Hospital") | ✅ Implementada (CRUD completo) |
-| Solicitacao | ✅ Implementada (CRUD completo) |
+| Solicitacao | ✅ Implementada (CRUD completo, DTO, status com histórico e atendimento com ABO/Rh + FEFO) |
+| HistoricoSolicitacao | ✅ Implementada (movimentação de status: quando e quem) |
 | Rota | ✅ Implementada (CRUD completo) |
 | Veiculo | ✅ Implementada (CRUD completo) |
 | Transporte | ⏳ Modelada neste documento, ainda não codada |
@@ -61,9 +62,20 @@ classDiagram
     class Solicitacao {
         +Long id
         +TipoHemocomponente tipoHemocomponente
+        +TipoSanguineo tipoSanguineo
         +double quantidade
+        +Prioridade prioridade
         +StatusSolicitacao status
         +LocalDateTime dataHora
+        +LocalDateTime dataAtendimento
+    }
+
+    class HistoricoSolicitacao {
+        +Long id
+        +StatusSolicitacao statusAnterior
+        +StatusSolicitacao statusNovo
+        +LocalDateTime dataHora
+        +String operador
     }
 
     class Rota {
@@ -118,8 +130,17 @@ classDiagram
     class StatusSolicitacao {
         <<enumeration>>
         PENDENTE
+        EM_SEPARACAO
         ATENDIDA
+        CANCELADA
         NEGADA
+    }
+
+    class Prioridade {
+        <<enumeration>>
+        ROTINA
+        URGENTE
+        EMERGENCIA
     }
 
     Localidade <|-- UnidadeColeta
@@ -137,6 +158,9 @@ classDiagram
 
     UnidadeSaude "1" --> "*" Solicitacao : solicita
     Solicitacao ..> StatusSolicitacao : usa
+    Solicitacao ..> Prioridade : usa
+    Solicitacao "1" --> "*" HistoricoSolicitacao : registra
+    Solicitacao "1" --> "*" Hemocomponente : reserva
     Solicitacao ..> TipoHemocomponente : usa
 
     Localidade "1" --> "*" Rota : origem
@@ -182,6 +206,7 @@ Unidade de sangue processada, pronta para uso ou distribuição. Equivale ao ter
 - `status` (enum `StatusHemocomponente`)
 - `doacao` (FK → Doacao, N:1)
 - `localizacaoAtual` (FK → Localidade, N:1) — onde o hemocomponente está fisicamente agora
+- `solicitacao` (FK → Solicitacao, N:1, opcional) — pedido para o qual a bolsa foi reservada
 - **Implementação:** exposto via DTO (`HemocomponenteRequestDTO`/`HemocomponenteResponseDTO`) — ver `docs/poo/padroes-projeto.md`.
 
 ### Localidade (classe abstrata)
@@ -201,13 +226,26 @@ Hospital — destino de requisições de hemocomponentes. Equivale ao termo "Hos
 
 ### Solicitacao
 Pedido de hemocomponentes feito por uma unidade de saúde.
-- `id` (PK)
+- `id` (PK) — é o código de identificação da solicitação
 - `unidadeSaude` (FK → UnidadeSaude, N:1)
 - `tipoHemocomponente` (enum `TipoHemocomponente`)
-- `quantidade`
-- `status` (enum `StatusSolicitacao`: PENDENTE, ATENDIDA, NEGADA)
+- `tipoSanguineo` (enum `TipoSanguineo`) — tipo sanguíneo do paciente
+- `quantidade` — número de bolsas (inteiro, mínimo 1)
+- `prioridade` (enum `Prioridade`: ROTINA, URGENTE, EMERGENCIA)
+- `status` (enum `StatusSolicitacao`: PENDENTE, EM_SEPARACAO, ATENDIDA, CANCELADA, NEGADA)
+- `dataHora` — criação
+- `dataAtendimento` — preenchida quando o pedido é atendido
+- **Relacionamento:** 1 Solicitacao → N Hemocomponente (bolsas reservadas) e 1 Solicitacao → N HistoricoSolicitacao
+- **Implementação:** exposta via DTO (`SolicitacaoRequestDTO`, `SolicitacaoResponseDTO`, `MudancaStatusDTO`, `HistoricoSolicitacaoDTO`).
+
+### HistoricoSolicitacao
+Linha do histórico de movimentação de uma solicitação.
+- `id` (PK)
+- `solicitacao` (FK → Solicitacao, N:1)
+- `statusAnterior` (vazio na criação)
+- `statusNovo`
 - `dataHora`
-- **Regra de negócio:** uma solicitação só pode ser editada enquanto está `PENDENTE`; ao ser atendida (`PUT /solicitacoes/{id}/atender`), o sistema verifica existência de estoque `DISPONIVEL` do tipo solicitado antes de confirmar.
+- `operador` — quem fez a alteração
 
 ### Rota
 Caminho entre duas localidades (origem e destino), usado para planejar transportes.
@@ -259,7 +297,13 @@ Com dois estados terminais alternativos, alcançáveis a partir de `DISPONIVEL` 
 
 **Regra de integridade doador–doação:** uma `Doacao` não pode existir sem um `Doador` e uma `UnidadeColeta` associados (campos `nullable = false` nas FKs).
 
-**Regra de solicitação:** uma `Solicitacao` só pode ser editada enquanto `PENDENTE`; ao ser atendida, exige estoque `DISPONIVEL` do tipo pedido — aplicada na camada de serviço (`SolicitacaoService`), não apenas no banco.
+**Regras de solicitação (HU06 e HU07):** aplicadas na camada de serviço (`SolicitacaoService`), não apenas no banco.
+- Criação: quantidade inteira de no mínimo 1 bolsa; tipo de hemocomponente, tipo sanguíneo do paciente, prioridade e hospital existente são obrigatórios; nasce `PENDENTE`.
+- Edição: só enquanto `PENDENTE`.
+- Transições: `PENDENTE` → `EM_SEPARACAO`, `CANCELADA`, `NEGADA`, `ATENDIDA`; `EM_SEPARACAO` → `ATENDIDA`, `CANCELADA`, `NEGADA`. `ATENDIDA`, `CANCELADA` e `NEGADA` são finais e não podem mudar ("Não é permitido alterar o status de solicitações já finalizadas.").
+- Histórico: toda mudança grava status anterior, novo status, data/hora e operador responsável.
+- Atendimento: reserva, de forma tudo-ou-nada, bolsas `DISPONIVEL` do tipo pedido, dentro da validade, compatíveis com o paciente pela matriz ABO/Rh do AED e escolhidas em ordem FEFO (vence primeiro, sai primeiro). Se faltar bolsa compatível, responde 409 e nada é alterado. A compatibilidade é didática e não substitui protocolo clínico.
+- Exclusão: não é permitida para solicitação já `ATENDIDA`.
 
 **Regra de rota:** origem e destino de uma `Rota` não podem ser a mesma `Localidade` — aplicada na camada de serviço (`RotaService`).
 

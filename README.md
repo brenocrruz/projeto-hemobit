@@ -274,7 +274,49 @@ O Hemobit é um projeto integrador: cada disciplina contribui com uma parte esse
 
 **Data:** 19/10/2026
 
-> 🚧 Em desenvolvimento.
+#### 📌 Histórias implementadas
+
+> **HU06 — Criação de Solicitação de Hemocomponentes**
+>
+> **Como** profissional solicitante, **quero** registrar uma requisição de hemocomponentes para o meu hospital, **para** dar início ao atendimento.
+>
+> - **Entrega:** `POST /solicitacoes` com hospital, tipo de hemocomponente, tipo sanguíneo do paciente, quantidade de bolsas e prioridade (rotina, urgente ou emergência).
+> - **Regras:** quantidade inteira de no mínimo 1 bolsa; todos os campos obrigatórios; hospital precisa existir. Nada é gravado se algo estiver errado.
+> - **Resultado:** solicitação criada como `PENDENTE`, com código de identificação (`id`) e primeira linha no histórico.
+> - **Erros:** 400 com mensagem clara, por exemplo "A quantidade solicitada deve ser de no mínimo 1 bolsa.".
+
+> **HU07 — Atualização do Status da Solicitação pelo Centro Operacional**
+>
+> **Como** funcionário do centro, **quero** alterar o status das solicitações e atender os pedidos, **para** manter os hospitais informados sobre o andamento.
+>
+> - **Entrega:** `PUT /solicitacoes/{id}/status` (iniciar separação, cancelar, negar), `PUT /solicitacoes/{id}/atender`, `GET /solicitacoes/{id}/historico` e `GET /solicitacoes/{id}/bolsas`.
+> - **Regras:** o pedido só anda para frente (`PENDENTE` → `EM_SEPARACAO` → `ATENDIDA`, `CANCELADA` ou `NEGADA`); pedidos finalizados não mudam mais; toda mudança grava quem fez e quando.
+> - **Atendimento:** reserva as bolsas compatíveis (ABO/Rh, módulo do AED) que vencem primeiro (FEFO), ignorando bolsas vencidas. Se faltar bolsa compatível, responde 409 e nada é alterado.
+> - **Erros:** 409 "Não é permitido alterar o status de solicitações já finalizadas." e "Estoque compatível insuficiente…".
+
+#### 🧪 Testes automatizados
+
+- `SolicitacaoServiceTest`: cenários da HU06 e da HU07 (validações, transições, histórico, atendimento FEFO + ABO/Rh, falta de estoque).
+- `CompatibilidadeServiceTest`: os 64 pares receptor × doador conferidos contra a regra ABO/Rh.
+
+#### 🔀 Controle de Versão e Acompanhamento
+
+- Commits de código realizados na branch `main`, com frequência semanal.
+- Issues/bug tracker do GitHub atualizados: [Ver issues](https://github.com/brenocrruz/projeto-hemobit/issues)
+
+#### 🎥 Screencasts
+
+- **Demonstração do sistema:** [▶️ Assistir](https://www.youtube.com/watch?v=NEd4m9DlYlM)
+- **Explicação do código:** [▶️ Assistir — link a adicionar]()
+
+#### 🖼️ Print da tela
+
+![Atendimento de solicitação com bolsas compatíveis](./docs/img/entrega-03-atendimento.png)
+
+**Documentação técnica (POO):**
+- [Modelo de domínio](docs/poo/modelo-dominio.md)
+- [Backlog da Unidade 2](docs/poo/backlog-u2.md)
+- [Dados e roteiro de demonstração](docs/poo/demo-entrega-03.md)
 
 ---
 

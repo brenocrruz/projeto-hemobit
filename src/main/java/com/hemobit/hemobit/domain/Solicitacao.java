@@ -38,6 +38,18 @@ public class Solicitacao {
     @Column(nullable = false)
     private LocalDateTime dataHora;
 
+    // HU06: tipo sanguíneo do paciente e nível de prioridade do pedido.
+    // Ficam sem "nullable = false" no banco só para não quebrar linhas antigas; a obrigatoriedade
+    // é garantida pelo SolicitacaoService.
+    @Enumerated(EnumType.STRING)
+    private TipoSanguineo tipoSanguineo;
+
+    @Enumerated(EnumType.STRING)
+    private Prioridade prioridade;
+
+    // HU07: momento em que o pedido foi atendido (bolsas reservadas).
+    private LocalDateTime dataAtendimento;
+
     public Solicitacao() {
     }
 
@@ -47,6 +59,13 @@ public class Solicitacao {
         this.quantidade = quantidade;
         this.status = StatusSolicitacao.PENDENTE;
         this.dataHora = LocalDateTime.now();
+    }
+
+    public Solicitacao(UnidadeSaude unidadeSaude, TipoHemocomponente tipoHemocomponente,
+                       TipoSanguineo tipoSanguineo, double quantidade, Prioridade prioridade) {
+        this(unidadeSaude, tipoHemocomponente, quantidade);
+        this.tipoSanguineo = tipoSanguineo;
+        this.prioridade = prioridade;
     }
 
     public Long getId() {
@@ -92,8 +111,34 @@ public class Solicitacao {
     public void setDataHora(LocalDateTime dataHora) {
         this.dataHora = dataHora;
     }
+
+    public TipoSanguineo getTipoSanguineo() {
+        return tipoSanguineo;
+    }
+
+    public void setTipoSanguineo(TipoSanguineo tipoSanguineo) {
+        this.tipoSanguineo = tipoSanguineo;
+    }
+
+    public Prioridade getPrioridade() {
+        return prioridade;
+    }
+
+    public void setPrioridade(Prioridade prioridade) {
+        this.prioridade = prioridade;
+    }
+
+    public LocalDateTime getDataAtendimento() {
+        return dataAtendimento;
+    }
+
+    public void setDataAtendimento(LocalDateTime dataAtendimento) {
+        this.dataAtendimento = dataAtendimento;
+    }
+
     @Override
     public String toString() {
-        return "Solicitacao{tipo=" + tipoHemocomponente + ", quantidade=" + quantidade + ", status=" + status + "}";
+        return "Solicitacao{tipo=" + tipoHemocomponente + ", tipoSanguineo=" + tipoSanguineo
+                + ", quantidade=" + quantidade + ", prioridade=" + prioridade + ", status=" + status + "}";
     }
 }
