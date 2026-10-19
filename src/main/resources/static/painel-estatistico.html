@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hemobit – Painel Estatístico</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+      :root {
+        --bg: #f6f7f9;
+        --card: #ffffff;
+        --text: #1d2330;
+        --muted: #5f6b7a;
+        --border: #e1e5eb;
+        --accent: #c0152f;
+        --alto: #c0152f;
+        --medio: #d98a00;
+        --baixo: #2e8b57;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #12151b;
+          --card: #1b2029;
+          --text: #e8ebf0;
+          --muted: #9aa5b5;
+          --border: #2b3240;
+          --accent: #ff5c72;
+          --alto: #ff6b7e;
+          --medio: #f0b429;
+          --baixo: #4cc38a;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family:
+          system-ui,
+          Segoe UI,
+          Arial,
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      header {
+        padding: 24px 32px;
+        border-bottom: 1px solid var(--border);
+        background: var(--card);
+      }
+      header h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: var(--accent);
+      }
+      header p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 24px 16px 48px;
+      }
+      h2 {
+        font-size: 1.15rem;
+        margin: 32px 0 12px;
+      }
+      .grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+      .grid2 {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+      }
+      .card h3 {
+        margin: 0 0 8px;
+        font-size: 0.95rem;
+      }
+      .big {
+        font-size: 2rem;
+        font-weight: 700;
+      }
+      .tag {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #fff;
+      }
+      .ALTO {
+        background: var(--alto);
+      }
+      .MEDIO {
+        background: var(--medio);
+      }
+      .BAIXO {
+        background: var(--baixo);
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+      .erro {
+        color: var(--alto);
+        font-size: 0.9rem;
+      }
+      .chartbox {
+        position: relative;
+        height: 280px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      td {
+        padding: 6px 4px;
+        border-bottom: 1px solid var(--border);
+      }
+      td:last-child {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Hemobit – Painel Estatístico</h1>
+      <p>
+        Indicadores descritivos (U1) e análise probabilística (U2) em um painel
+        único.
+      </p>
+    </header>
+    <main>
+      <h2>Análise probabilística (U2)</h2>
+      <p class="muted" id="premissas">Carregando…</p>
+      <div class="grid" id="cardsRisco"></div>
+      <div class="grid2" style="margin-top: 16px">
+        <div class="card">
+          <h3>Probabilidade de desabastecimento (%)</h3>
+          <div class="chartbox"><canvas id="chProb"></canvas></div>
+        </div>
+        <div class="card">
+          <h3>Taxa de descarte por vencimento (%)</h3>
+          <div class="chartbox"><canvas id="chDescarte"></canvas></div>
+        </div>
+      </div>
+      <div class="card" id="erroU2" style="display: none"></div>
+
+      <h2>Indicadores descritivos (U1)</h2>
+      <div class="grid2">
+        <div class="card">
+          <h3>Estoque por tipo sanguíneo</h3>
+          <div class="chartbox"><canvas id="chEstoque"></canvas></div>
+          <table id="tbEstoque"></table>
+          <div class="erro" id="erroEstoque"></div>
+        </div>
+        <div class="card">
+          <h3>Demanda por hospital</h3>
+          <div class="chartbox"><canvas id="chDemanda"></canvas></div>
+          <table id="tbDemanda"></table>
+          <div class="erro" id="erroDemanda"></div>
+        </div>
+        <div class="card">
+          <h3>Tempos de atendimento (min)</h3>
+          <table id="tbTempos"></table>
+          <div class="erro" id="erroTempos"></div>
+        </div>
+      </div>
+    </main>
+    <script>
+      const NOMES = {
+        CONCENTRADO_HEMACIAS: "Conc. de Hemácias (CH)",
+        CONCENTRADO_PLAQUETAS: "Conc. de Plaquetas (CP)",
+        PLASMA_FRESCO_CONGELADO: "Plasma Fresco Congelado (PFC)",
+      };
+      const fmt = (n, d = 1) =>
+        Number(n).toLocaleString("pt-BR", {
+          minimumFractionDigits: d,
+          maximumFractionDigits: d,
+        });
+
+      async function getJson(url) {
+        const r = await fetch(url);
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      }
+
+      function barra(id, labels, valores, rotulo) {
+        new Chart(document.getElementById(id), {
+          type: "bar",
+          data: {
+            labels,
+            datasets: [
+              { label: rotulo, data: valores, backgroundColor: "#c0152f" },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+          },
+        });
+      }
+
+      function tabelaStats(id, est) {
+        const linhas = [
+          ["Média", est.media],
+          ["Mediana", est.mediana],
+          ["Moda", est.moda],
+          ["Variância", est.variancia],
+          ["Desvio padrão", est.desvioPadrao],
+        ];
+        document.getElementById(id).innerHTML = linhas
+          .map(
+            (l) =>
+              "<tr><td>" + l[0] + "</td><td>" + fmt(l[1], 2) + "</td></tr>",
+          )
+          .join("");
+      }
+
+      async function carregarU2() {
+        try {
+          const dados = await getJson("/api/analise/probabilistica");
+          document.getElementById("premissas").textContent =
+            "Premissas: demanda diária estimada nos últimos 30 dias; horizonte de reposição de 3 dias; " +
+            "demanda modelada por distribuição de Poisson; risco ALTO ≥ 50%, MÉDIO ≥ 20%.";
+          document.getElementById("cardsRisco").innerHTML = dados
+            .map(
+              (d) =>
+                '<div class="card"><h3>' +
+                (NOMES[d.tipo] || d.tipo) +
+                "</h3>" +
+                '<div class="big">' +
+                fmt(d.probDesabastecimentoPct) +
+                "%</div>" +
+                '<span class="tag ' +
+                d.nivelRisco +
+                '">RISCO ' +
+                d.nivelRisco +
+                "</span>" +
+                '<p class="muted">Estoque válido: ' +
+                d.estoqueValido +
+                " bolsas<br>" +
+                "Demanda média: " +
+                fmt(d.demandaDiaria) +
+                " bolsas/dia<br>" +
+                "Descarte: " +
+                d.bolsasVencidas +
+                " de " +
+                d.totalBolsas +
+                " (" +
+                fmt(d.taxaDescartePct) +
+                "%)</p></div>",
+            )
+            .join("");
+          const nomes = dados.map((d) => NOMES[d.tipo] || d.tipo);
+          barra(
+            "chProb",
+            nomes,
+            dados.map((d) => d.probDesabastecimentoPct),
+            "Prob. desabastecimento (%)",
+          );
+          barra(
+            "chDescarte",
+            nomes,
+            dados.map((d) => d.taxaDescartePct),
+            "Taxa de descarte (%)",
+          );
+        } catch (e) {
+          const el = document.getElementById("erroU2");
+          el.style.display = "block";
+          el.innerHTML =
+            '<span class="erro">Não foi possível carregar a análise probabilística (' +
+            e.message +
+            ").</span>";
+          document.getElementById("premissas").textContent = "";
+        }
+      }
+
+      async function carregarU1(url, idGrafico, idTabela, idErro, rotulo) {
+        try {
+          const r = await getJson(url);
+          if (r.dados) {
+            barra(
+              idGrafico,
+              Object.keys(r.dados),
+              Object.values(r.dados),
+              rotulo,
+            );
+            tabelaStats(idTabela, r.estatisticas);
+          } else {
+            tabelaStats(idTabela, r);
+          }
+        } catch (e) {
+          document.getElementById(idErro).textContent =
+            "Não foi possível carregar este indicador (" + e.message + ").";
+        }
+      }
+
+      carregarU2();
+      carregarU1(
+        "/api/indicadores/estoque-tipo",
+        "chEstoque",
+        "tbEstoque",
+        "erroEstoque",
+        "Bolsas em estoque",
+      );
+      carregarU1(
+        "/api/indicadores/demanda-hospital",
+        "chDemanda",
+        "tbDemanda",
+        "erroDemanda",
+        "Solicitações",
+      );
+      carregarU1(
+        "/api/indicadores/tempos-atendimento",
+        null,
+        "tbTempos",
+        "erroTempos",
+        "",
+      );
+    </script>
+  </body>
+</html>
