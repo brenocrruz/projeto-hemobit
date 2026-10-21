@@ -264,4 +264,14 @@ class SolicitacaoServiceTest {
         bolsas.put(bolsa.getId(), bolsa);
         return bolsa;
     }
+    
+    @Test
+    void deveLancarErroSeQuantidadeForMaiorQueCinquenta() {
+        IllegalArgumentException erro = assertThrows(IllegalArgumentException.class,
+                () -> service.criar(pedido(51, TipoSanguineo.A_POSITIVO)));
+        
+        assertEquals("A quantidade máxima por solicitação é 50.", erro.getMessage());
+    }
+
+    
 }
