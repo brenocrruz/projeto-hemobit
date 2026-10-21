@@ -78,10 +78,14 @@ projeto-hemobit/
 │   ├── historias_de_usuario.md
 │   ├── poo/              # Documentação de POO
 │   ├── aed/              # Documentação de AED
-│   └── rsd/              # Documentação de RSD
+│   ├── rsd/              # Documentação de RSD
+│   └── evidencias/       # Evidências de execução do Docker
 ├── data/                 # Dados sintéticos
 ├── .github/workflows/    # Pipeline CI/CD
-└── Dockerfile
+├── .env.example          # Modelo das variáveis de ambiente
+├── .gitignore            # Arquivos ignorados pelo Git
+├── compose.yaml          # Orquestração dos containers
+└── Dockerfile            # Build multi-stage da aplicação
 ```
 
 ---
@@ -96,7 +100,8 @@ projeto-hemobit/
 | Frontend | HTML / CSS / Thymeleaf |
 | Build | Maven |
 | CI/CD | GitHub Actions + Render |
-| Containerização | Docker |
+| Containerização | Docker + Docker Compose |
+| Testes | JUnit + H2 em memória |
 | Ferramentas | Git, GitHub, Jira, Figma, draw.io |
 > **Restrição:** Não é permitido o uso de Lombok ou qualquer mecanismo de geração automática de código boilerplate.
 
@@ -126,31 +131,61 @@ projeto-hemobit/
 
 ### Pré-requisitos
 
-- **Java 21+**
-- **Maven** (ou usar o wrapper `./mvnw`)
-- **Git**
-- **PostgreSQL** (opcional, para rodar localmente com banco real)
+- **Docker** instalado.
+- **Docker Compose** disponível e funcionando.
+- **Git** instalado.
 
-### Passo a Passo
+### Passo a Passo (Via Docker - Recomendado)
 
-1. Clone o repositório:
+1. Certifique-se de ter o **Docker** e o **Docker Compose** instalados e rodando.
+2. Clone o repositório:
 
 ```bash
 git clone https://github.com/brenocrruz/projeto-hemobit.git
 cd projeto-hemobit
 ```
-
-2. Execute a aplicação:
-
+3. Copie o arquivo de exemplo de variáveis:
 ```bash
-./mvnw spring-boot:run
+cp .env.example .env
 ```
+4. Abra o arquivo .env e preencha as variáveis POSTGRES_PASSWORD e SPRING_DATASOURCE_PASSWORD com a senha do banco (ex: hemobit123).:
+5. Suba os containers com o comando:
+```bash
+docker compose up -d --build
+```
+6. A API estará disponível em http://localhost:8080.
+> ⚠️ **Atenção** O arquivo .env não vem no repositório por questões de segurança (está no .gitignore). É obrigatório criar o seu próprio arquivo .env a partir do .env.example antes de rodar o projeto pela primeira vez.
 
-No Windows: `mvnw.cmd spring-boot:run`
+## Comandos úteis do Docker
 
-3. Acesse a aplicação em [http://localhost:8080](http://localhost:8080).
+### Consultar o estado dos containers:
+```bash
+docker compose ps
+```
+### Acompanhar os logs da aplicação:
+```bash
+docker compose logs -f
+```
+### Acompanhar apenas os logs da API:
+```bash
+docker compose logs -f app
+```
+### Acompanhar apenas os logs da API:
+```bash
+docker compose down
+```
+> **Persistência:** O banco PostgreSQL utiliza o volume nomeado postgres_data. Os dados são preservados ao executar docker compose down. Para remover também o volume e apagar os dados persistidos, utilize docker compose down -v.
 
 ### Variáveis de Ambiente
+
+O arquivo `.env.example` contém o modelo das variáveis necessárias para executar o projeto com Docker. Copie-o para `.env` e configure os valores localmente.
+
+| Variável | Descrição |
+|----------|-----------|
+| `POSTGRES_PASSWORD` | Senha utilizada pelo PostgreSQL. |
+| `SPRING_DATASOURCE_PASSWORD` | Senha utilizada pela aplicação para acessar o banco de dados. |
+
+*(As duas variáveis de senha devem corresponder à mesma senha do banco de dados).*
 
 Para o deploy, as seguintes variáveis são configuradas no Render:
 
@@ -178,6 +213,7 @@ git push (main) → GitHub Actions (build + test) → Deploy Hook → Render (Do
 
 - **Arquivo do pipeline:** [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 - **Dockerfile:** [`Dockerfile`](Dockerfile)
+- **Docker Compose:** [`compose.yaml`](compose.yaml)
 
 ---
 
@@ -325,6 +361,47 @@ O Hemobit é um projeto integrador: cada disciplina contribui com uma parte esse
 **Data:** 09/11/2026
 
 > 🚧 Em desenvolvimento.
+
+---
+
+---
+
+## 📦 Entregas — Infraestrutura de Software (SO)
+
+> As entregas abaixo são referentes à disciplina de **Infraestrutura de Software**.
+
+### 🟢 Unidade 2 Desafios PI - Parte 1 (Em Grupo) - Containerização
+
+#### 🐳 E1 · Container Automatizado
+
+O projeto sobe do zero com um comando (`docker compose up -d --build`), garantindo que rode igual em qualquer máquina.
+
+- **Dockerfile multi-stage:** O primeiro estágio compila o código e roda os testes; o segundo leva apenas o artefato final (JRE Alpine) para deixar a imagem leve e segura.
+- **Isolamento de Credenciais:** Uso de arquivo `.env` local para senhas e `.env.example` no repositório. O `.gitignore` impede o vazamento de segredos.
+- **Banco de Dados:** Utilização de volume nomeado (`postgres_data`) para persistência e `healthcheck` para garantir que a API só suba após o banco estar pronto (usando `depends_on`).
+
+#### ⚙️ Decisões de Arquitetura (E1)
+
+| Decisão | Opções comuns | Justificativa |
+| :--- | :--- | :--- |
+| **Imagem base (build)** | `maven:3.9-eclipse-temurin-21`, `openjdk:21` | Usamos a imagem oficial do Maven com JDK 21, que já traz as ferramentas de compilação necessárias. |
+| **Imagem base (runtime)** | `eclipse-temurin:21-jre-alpine`, `openjdk:21-slim` | `alpine` é menor e tem menos pacotes vulneráveis; como o build já foi feito no estágio anterior, só precisamos do JRE para rodar. |
+| **Multi-stage** | Build único vs. multi-stage | Multi-stage deixa a imagem final menor (sem Maven e código-fonte) e mais segura. |
+| **Dados** | Volume nomeado vs. bind mount | Volume nomeado (`postgres_data`): os dados sobrevivem ao `docker compose down` e ficam gerenciados pelo Docker. |
+| **Rede** | Rede padrão do Compose vs. rede customizada | A rede padrão já resolve a comunicação pelo nome do serviço (`db`); não precisamos de configuração extra. |
+| **Segredos** | `.env` no repositório vs. `.env.example` + `.env` local | O `.env` real fica no `.gitignore`; o `.env.example` serve de modelo e não contém senhas. |
+| **Testes no Build** | Rodar local vs. no container | Os testes rodam no estágio de build do Dockerfile. Para testes de integração, configuramos o banco H2 em memória (`application.properties` na pasta test), garantindo que os testes passem mesmo sem um PostgreSQL externo durante o build. |
+
+#### 📸 Evidências de Execução (E1)
+
+*Print do terminal mostrando os containers rodando (`docker compose ps`):*
+![Docker Compose PS](./docs/evidencias/docker-compose-ps.png)
+
+*Print do navegador mostrando a API respondendo:*
+![API Rodando](./docs/evidencias/api-rodando.png)
+
+#### 🤖 Uso de IA (E1)
+A IA foi utilizada para rascunhar o `Dockerfile`, o `compose.yaml`, auxiliar na configuração do banco de dados H2 para os testes e na formatação deste README. Todo o código, comandos e textos gerados foram revisados, testados e validados pelo grupo antes de serem commitados.
 
 ---
 
