@@ -202,6 +202,9 @@ public class SolicitacaoService {
         if (dto.getQuantidade() < 1) {
             throw new IllegalArgumentException("A quantidade solicitada deve ser de no mínimo 1 bolsa.");
         }
+        if (dto.getQuantidade() > 50) {
+            throw new IllegalArgumentException("A quantidade máxima por solicitação é 50.");
+        }
         if (dto.getQuantidade() != Math.floor(dto.getQuantidade())) {
             throw new IllegalArgumentException("A quantidade solicitada deve ser um número inteiro de bolsas.");
         }
