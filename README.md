@@ -405,6 +405,65 @@ A IA foi utilizada para rascunhar o `Dockerfile`, o `compose.yaml`, auxiliar na 
 
 ---
 
+### 🧪 E2 · TDD (Test-Driven Development)
+
+#### 🗺️ Story Map (Release 1)
+
+**Backbone (Jornada do Usuário):** Cadastrar Hospital → Gerenciar Estoque → Solicitar Hemocomponentes → Atender Solicitação → Rastrear Transporte.
+
+**Histórias da Release 1 (quebradas em tarefas):**
+
+**HU06 — Criação de Solicitação de Hemocomponentes**
+- [x] Tarefa 1: Validar se a quantidade solicitada é maior ou igual a 1.
+- [x] Tarefa 2: Validar se o hospital informado existe no banco de dados.
+- [x] Tarefa 3: Gravar a solicitação com o status inicial `PENDENTE`.
+- [x] Tarefa 4: Registrar a data e hora da criação no histórico.
+
+**HU07 — Atualização do Status da Solicitação**
+- [x] Tarefa 1: Permitir transição apenas de `PENDENTE` para `EM_SEPARACAO`.
+- [x] Tarefa 2: Bloquear alteração de status se a solicitação já estiver `ATENDIDA` ou `CANCELADA`.
+- [x] Tarefa 3: Registrar no histórico quem alterou o status e quando.
+
+**HU03 — Cadastro do Acervo de Hemocomponentes**
+- [ ] Tarefa 1: Validar se o tipo sanguíneo (ABO/Rh) é válido.
+- [ ] Tarefa 2: Salvar a data de validade da bolsa.
+- [ ] Tarefa 3: Impedir o cadastro de bolsas já vencidas.
+
+#### 🥒 Cenário de Aceitação (BDD / Gherkin) - HU06
+
+Abaixo está o teste de aceitação escrito em Gherkin para a criação de solicitações. Ele garante que o fluxo principal e as validações de erro funcionem como o esperado.
+
+- **Funcionalidade:** Criação de Solicitação de Hemocomponentes
+  - **Como** profissional solicitante
+  - **Quero** registrar uma requisição de hemocomponentes
+  - **Para** dar início ao atendimento no hemocentro
+
+- **Cenário: Solicitação criada com sucesso**
+  - **Dado** que o hospital "Hospital da Restauração" está cadastrado
+  - **Quando** eu solicito 2 bolsas de hemácias com prioridade URGENTE
+  - **Então** a solicitação deve ser registrada com o status "PENDENTE"
+  - **E** um histórico inicial deve ser gerado
+
+- **Cenário: Tentativa de solicitar quantidade inválida**
+  - **Dado** que o hospital "Hospital da Restauração" está cadastrado
+  - **Quando** eu tento solicitar 0 bolsas de hemácias
+  - **Então** o sistema deve recusar a solicitação
+  - **E** deve exibir a mensagem "A quantidade solicitada deve ser de no mínimo 1 bolsa."
+
+#### 🔄 Histórico Red → Green (Git)
+
+Para comprovar a prática do TDD, utilizamos o padrão de commits:
+1. `test: adiciona teste para limite maximo de 50 bolsas (RED)` - O teste falhou, pois a regra ainda não existia no código.
+2. `feat: implementa limite maximo de 50 bolsas por solicitacao (GREEN)` - A regra foi implementada e o teste passou.
+
+**Evidência visual do ciclo TDD:**
+
+*Print do teste falhando (RED):*
+![Teste Red](./docs/evidencias/teste-red.png)
+
+*Print do teste passando (GREEN):*
+![Teste Green](./docs/evidencias/teste-green.png)
+
 ## 🔗 Links Úteis
 
 - 🐙 [Repositório GitHub](https://github.com/brenocrruz/projeto-hemobit)
