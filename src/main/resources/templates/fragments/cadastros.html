@@ -1,0 +1,306 @@
+<!doctype html>
+<html
+  lang="pt-BR"
+  xmlns:th="http://www.thymeleaf.org"
+  th:fragment="pagina(tipo, titulo, descricao)"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${titulo + ' | Hemobit'}">Cadastros | Hemobit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/estoque.css}" />
+    <link rel="stylesheet" th:href="@{/css/cadastros.css}" />
+    <script th:src="@{/js/cadastros.js}" defer></script>
+  </head>
+  <body th:attr="data-cadastro=${tipo}">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="main-content">
+      <div
+        th:replace="~{fragments/header :: header(${titulo}, 'CADASTROS / RASTREABILIDADE')}"
+      ></div>
+      <nav class="cadastro-steps" aria-label="Etapas de cadastro">
+        <a
+          th:href="@{/cadastros/unidades-saude}"
+          th:attr="aria-current=${tipo == 'unidades-saude' ? 'page' : null}"
+          >Unidades de saúde</a
+        >
+        <a
+          th:href="@{/cadastros/doadores}"
+          th:attr="aria-current=${tipo == 'doadores' ? 'page' : null}"
+          ><b>01</b> Doadores</a
+        >
+        <a
+          th:href="@{/cadastros/unidades-coleta}"
+          th:attr="aria-current=${tipo == 'unidades-coleta' ? 'page' : null}"
+          ><b>02</b> Unidades de coleta</a
+        >
+        <a
+          th:href="@{/cadastros/doacoes}"
+          th:attr="aria-current=${tipo == 'doacoes' ? 'page' : null}"
+          ><b>03</b> Doações</a
+        >
+        <a th:href="@{/estoque#novo-hemocomponente}"
+          ><b>04</b> Hemocomponentes ↗</a
+        >
+      </nav>
+      <section class="stock-hero">
+        <div>
+          <span class="section-kicker">HEMOBIT / CONEXÕES QUE CUIDAM</span>
+          <h2 th:text="${titulo}">Cadastros</h2>
+          <p th:text="${descricao}"></p>
+        </div>
+        <span class="stock-pixels" aria-hidden="true">▪ ▪<br />▪ ▪ ▪</span>
+      </section>
+      <noscript
+        ><p class="stock-message error">
+          Ative o JavaScript para listar e cadastrar registros.
+        </p></noscript
+      >
+      <section class="stock-panel" aria-labelledby="novo-titulo">
+        <div class="stock-panel-heading">
+          <div>
+            <span class="section-kicker">NOVO REGISTRO</span>
+            <h2
+              id="novo-titulo"
+              th:text="${tipo == 'doadores' ? 'Cadastrar doador' : (tipo == 'doacoes' ? 'Cadastrar doação' : (tipo == 'unidades-saude' ? 'Cadastrar unidade de saúde' : 'Cadastrar unidade de coleta'))}"
+            ></h2>
+            <p>* Campos obrigatórios. Os dados são gravados no sistema.</p>
+          </div>
+        </div>
+        <p
+          id="estado-dependencias"
+          class="stock-message"
+          role="status"
+          hidden
+        ></p>
+        <div class="cadastro-links" th:if="${tipo == 'doacoes'}">
+          <a href="/cadastros/doadores">+ Cadastrar doador</a
+          ><a href="/cadastros/unidades-coleta">+ Cadastrar unidade de coleta</a
+          ><button
+            type="button"
+            id="atualizar-opcoes"
+            class="stock-button secondary"
+          >
+            Atualizar opções
+          </button>
+        </div>
+        <form id="form-cadastro">
+          <fieldset id="campos-cadastro" th:disabled="${tipo == 'doacoes'}">
+            <legend class="visually-hidden" th:text="${titulo}"></legend>
+            <div class="stock-form-grid" th:if="${tipo == 'doadores'}">
+              <label
+                >Nome *<input
+                  name="nome"
+                  required
+                  maxlength="255"
+                  autocomplete="off"
+              /></label>
+              <label
+                >Data de nascimento *<input
+                  name="dataNascimento"
+                  type="date"
+                  required
+              /></label>
+              <label
+                >Tipo sanguíneo *<select name="tipoSanguineo" required>
+                  <option value="">Selecione</option>
+                  <option
+                    th:each="sangue : ${tiposSanguineos}"
+                    th:value="${sangue}"
+                    th:text="${#strings.replace(#strings.replace(sangue.name(), '_POSITIVO', '+'), '_NEGATIVO', '-')}"
+                  ></option></select
+              ></label>
+            </div>
+            <div class="stock-form-grid" th:if="${tipo == 'unidades-coleta'}">
+              <label
+                >Nome da unidade *<input name="nome" required maxlength="255"
+              /></label>
+              <label
+                >Cidade (opcional)<input name="cidade" maxlength="255"
+              /></label>
+              <label
+                >Endereço (opcional)<input name="endereco" maxlength="255"
+              /></label>
+            </div>
+            <div class="stock-form-grid" th:if="${tipo == 'unidades-saude'}">
+              <label
+                >Nome da unidade de saúde *<input
+                  name="nome"
+                  required
+                  maxlength="255"
+              /></label>
+              <label
+                >CNPJ *<input
+                  name="cnpj"
+                  required
+                  maxlength="18"
+                  inputmode="numeric"
+                  aria-describedby="ajuda-cnpj"
+                /><small id="ajuda-cnpj"
+                  >Informe o CNPJ real da unidade, com ou sem pontuação.</small
+                ></label
+              >
+              <label
+                >Cidade *<input name="cidade" required maxlength="255"
+              /></label>
+              <label
+                >Endereço (opcional)<input name="endereco" maxlength="255"
+              /></label>
+              <label
+                >Telefone (opcional)<input
+                  name="telefone"
+                  type="tel"
+                  maxlength="255"
+              /></label>
+            </div>
+            <div class="stock-form-grid" th:if="${tipo == 'doacoes'}">
+              <label
+                >Doador *<select
+                  name="doadorId"
+                  required
+                  aria-describedby="privacidade-doador"
+                >
+                  <option value="">Selecione um doador</option></select
+                ><small id="privacidade-doador"
+                  >Seleção por ID, nome e tipo sanguíneo, sem contato ou data de
+                  nascimento.</small
+                ></label
+              >
+              <label
+                >Unidade de coleta *<select name="unidadeColetaId" required>
+                  <option value="">Selecione uma unidade</option>
+                </select></label
+              >
+              <label
+                >Data e hora da doação *<input
+                  name="dataHora"
+                  type="datetime-local"
+                  required
+                  step="1"
+              /></label>
+              <label
+                >Quantidade *<input
+                  name="quantidade"
+                  type="number"
+                  min="0"
+                  step="any"
+                  required
+                /><small
+                  >Unidade de Bolsa</small
+                ></label
+              >
+            </div>
+            <div class="stock-form-footer">
+              <small
+                th:text="${tipo == 'doadores' ? 'A listagem não exibe contato nem data de nascimento.' : 'Confira os dados antes de salvar.'}"
+              ></small
+              ><button type="submit" class="stock-button" id="salvar-cadastro">
+                Salvar cadastro
+              </button>
+            </div>
+          </fieldset>
+        </form>
+        <p
+          id="mensagem-cadastro"
+          class="stock-message"
+          role="status"
+          hidden
+        ></p>
+        <a
+          th:if="${tipo == 'doacoes'}"
+          href="/estoque#novo-hemocomponente"
+          class="cadastro-next"
+          >Ir para cadastro de hemocomponente →</a
+        >
+        <a
+          th:if="${tipo != 'doacoes' and tipo != 'unidades-saude'}"
+          href="/cadastros/doacoes"
+          class="cadastro-next"
+          >Continuar para doações →</a
+        >
+        <a
+          th:if="${tipo == 'unidades-saude'}"
+          href="/estoque"
+          class="cadastro-next"
+          >Voltar ao estoque →</a
+        >
+      </section>
+      <section class="stock-panel" aria-labelledby="lista-titulo">
+        <div class="stock-panel-heading">
+          <div>
+            <span class="section-kicker">DADOS REAIS</span>
+            <h2 id="lista-titulo">Registros cadastrados</h2>
+            <p id="contagem-cadastros" aria-live="polite">Carregando...</p>
+          </div>
+          <button
+            type="button"
+            id="atualizar-lista"
+            class="stock-button secondary"
+          >
+            Atualizar lista
+          </button>
+        </div>
+        <div
+          class="stock-table-wrap"
+          tabindex="0"
+          role="region"
+          th:attr="aria-label=${titulo}"
+        >
+          <table class="stock-table" id="tabela-cadastros" aria-busy="true">
+            <caption class="visually-hidden" th:text="${titulo}"></caption>
+            <thead th:if="${tipo == 'unidades-saude'}">
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nome</th>
+                <th scope="col">CNPJ</th>
+                <th scope="col">Cidade</th>
+                <th scope="col">Endereço</th>
+                <th scope="col">Telefone</th>
+              </tr>
+            </thead>
+            <thead th:unless="${tipo == 'unidades-saude'}">
+              <tr th:if="${tipo == 'doadores'}">
+                <th scope="col">ID</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Tipo sanguíneo</th>
+              </tr>
+              <tr th:if="${tipo == 'unidades-coleta'}">
+                <th scope="col">ID</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Cidade</th>
+                <th scope="col">Endereço</th>
+              </tr>
+              <tr th:if="${tipo == 'doacoes'}">
+                <th scope="col">ID</th>
+                <th scope="col">Data e hora</th>
+                <th scope="col">Quantidade</th>
+                <th scope="col">Doador (ID)</th>
+                <th scope="col">Unidade (ID)</th>
+              </tr>
+            </thead>
+            <tbody id="cadastro-linhas">
+              <tr>
+                <td
+                  th:colspan="${tipo == 'doadores' ? 3 : (tipo == 'unidades-saude' ? 6 : (tipo == 'doacoes' ? 5 : 4))}"
+                >
+                  Carregando registros...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <footer class="main-footer">
+        <span>© Hemobit · Cadastros</span
+        ><a href="/estoque">Voltar ao estoque ↗</a>
+      </footer>
+    </main>
+  </body>
+</html>

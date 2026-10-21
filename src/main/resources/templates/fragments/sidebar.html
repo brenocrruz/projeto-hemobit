@@ -3,7 +3,11 @@
   <div class="nav-caption">MENU PRINCIPAL</div>
   <nav class="nav-list" aria-label="Menu principal">
     <a th:href="@{/dashboard}" th:classappend="${paginaAtual == 'dashboard'} ? ' active' : ''"><span class="nav-icon">▤</span> Visão geral</a>
-    <a href="#estoque"><span class="nav-icon">◈</span> Estoque sanguíneo</a>
+    <a th:href="@{/estoque}" href="/estoque" th:classappend="${paginaAtual == 'estoque'} ? ' active' : ''"><span class="nav-icon">◈</span> Estoque sanguíneo</a>
+    <a th:href="@{/cadastros/doadores}" th:classappend="${paginaAtual == 'doadores'} ? ' active' : ''"><span class="nav-icon">♡</span> Doadores</a>
+    <a th:href="@{/cadastros/unidades-saude}" th:classappend="${paginaAtual == 'unidades-saude'} ? ' active' : ''"><span class="nav-icon">✚</span> Unidades de saúde</a>
+    <a th:href="@{/cadastros/unidades-coleta}" th:classappend="${paginaAtual == 'unidades-coleta'} ? ' active' : ''"><span class="nav-icon">◈</span> Unidades de coleta</a>
+    <a th:href="@{/cadastros/doacoes}" th:classappend="${paginaAtual == 'doacoes'} ? ' active' : ''"><span class="nav-icon">◉</span> Doações</a>
     <a href="#solicitacoes"><span class="nav-icon">▤</span> Solicitações</a>
     <a href="#alertas"><span class="nav-icon">▥</span> Alertas</a>
   </nav>
