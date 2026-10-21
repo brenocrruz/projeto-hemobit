@@ -24,17 +24,13 @@
       <div
         th:replace="~{fragments/header :: header('Visão geral', 'PAINEL DE CONTROLE')}"
       ></div>
-      <div class="demo-note">
-        <span class="demo-dot"></span> Ambiente de demonstração: os números
-        abaixo são ilustrativos, não representam dados reais do sistema.
-      </div>
       <section class="hero">
         <div class="hero-copy">
           <span class="hero-kicker">HEMOBIT / CENTRO DE CONTROLE</span>
           <h2>Inteligência que conecta<br /><em>dados e vidas.</em></h2>
           <p>
-            Tecnologia a serviço da gestão sanguínea. Estoque, solicitações e
-            alertas em uma única visão.
+            Tecnologia a serviço da gestão sanguínea. Doadores, doações e
+            estoque em uma única visão.
           </p>
           <a href="#estoque" class="hero-link"
             >Explorar estoque <span aria-hidden="true">↗</span></a
@@ -57,37 +53,26 @@
           <div class="hero-data">01 / HEMO · BIT</div>
         </div>
       </section>
+      <div class="dashboard-toolbar"><p>Dados reais dos cadastros e do estoque.</p><button id="atualizar-dashboard" type="button">Atualizar dados ↻</button></div>
       <section class="metrics" aria-label="Indicadores principais">
         <article class="metric">
-          <div class="metric-top">
-            <span>Bolsas disponíveis</span
-            ><span class="metric-icon rose">◉</span>
-          </div>
-          <strong id="total-estoque">—</strong><small>Estoque disponível</small>
+          <div class="metric-top"><span>Hemocomponentes disponíveis</span><span class="metric-icon rose">◉</span></div>
+          <strong id="total-estoque" aria-live="polite" aria-busy="true">…</strong><small id="estado-estoque">Carregando registros disponíveis...</small>
           <div class="metric-line rose-line"></div>
         </article>
         <article class="metric">
-          <div class="metric-top">
-            <span>Solicitações pendentes</span
-            ><span class="metric-icon amber">▤</span>
-          </div>
-          <strong>12</strong><small>Aguardando atendimento</small>
+          <div class="metric-top"><span>Doadores cadastrados</span><span class="metric-icon amber">▤</span></div>
+          <strong id="total-doadores" aria-live="polite" aria-busy="true">…</strong><small id="estado-doadores">Carregando total de doadores...</small>
           <div class="metric-line amber-line"></div>
         </article>
         <article class="metric">
-          <div class="metric-top">
-            <span>Próximas do vencimento</span
-            ><span class="metric-icon red">◷</span>
-          </div>
-          <strong>08</strong><small>Requerem atenção</small>
+          <div class="metric-top"><span>Doações registradas</span><span class="metric-icon red">◷</span></div>
+          <strong id="total-doacoes" aria-live="polite" aria-busy="true">…</strong><small id="estado-doacoes">Carregando total de doações...</small>
           <div class="metric-line red-line"></div>
         </article>
         <article class="metric">
-          <div class="metric-top">
-            <span>Unidades cadastradas</span
-            ><span class="metric-icon violet">✚</span>
-          </div>
-          <strong>24</strong><small>Rede de atendimento</small>
+          <div class="metric-top"><span>Unidades de coleta cadastradas</span><span class="metric-icon violet">✚</span></div>
+          <strong id="total-unidades-coleta" aria-live="polite" aria-busy="true">…</strong><small id="estado-unidades-coleta">Carregando unidades de coleta...</small>
           <div class="metric-line violet-line"></div>
         </article>
       </section>
@@ -98,8 +83,8 @@
               <span class="section-kicker">DISTRIBUIÇÃO</span>
               <h2>Estoque por tipo sanguíneo</h2>
               <p>
-                Distribuição fornecida pela API de indicadores (dados
-                demonstrativos)
+                Dados reais: unidades de hemocomponentes cadastradas,
+                disponíveis e com validade a partir de hoje.
               </p>
             </div>
             <span class="panel-pill">8 tipos</span>
@@ -108,107 +93,19 @@
             <p>Carregando dados do estoque...</p>
           </div>
           <div class="panel-footer">
-            <span class="legend-dot"></span> Estoque ilustrativo para
-            apresentação visual
+            <span class="legend-dot"></span> Contagem de registros disponíveis e com validade vigente.
           </div>
         </section>
-        <section class="panel alert-panel" id="alertas">
-          <div class="panel-heading">
-            <div>
-              <span class="section-kicker">MONITORAMENTO</span>
-              <h2>Central de atenção</h2>
-              <p>Itens que merecem acompanhamento</p>
-            </div>
-            <span class="alert-counter">3 alertas</span>
-          </div>
-          <div class="alert-list">
-            <div class="alert-item">
-              <span class="alert-symbol danger">!</span>
-              <div>
-                <strong>Estoque crítico de O−</strong>
-                <p>Quantidade abaixo do nível desejado</p>
-              </div>
-              <span class="alert-chevron">›</span>
-            </div>
-            <div class="alert-item">
-              <span class="alert-symbol warning">◷</span>
-              <div>
-                <strong>8 bolsas perto do vencimento</strong>
-                <p>Verifique a prioridade de utilização</p>
-              </div>
-              <span class="alert-chevron">›</span>
-            </div>
-            <div class="alert-item">
-              <span class="alert-symbol info">▤</span>
-              <div>
-                <strong>Solicitações aguardando</strong>
-                <p>12 pedidos pendentes de análise</p>
-              </div>
-              <span class="alert-chevron">›</span>
-            </div>
-          </div>
-          <div class="alert-footnote">
-            Alertas simulados nesta versão do painel.
-          </div>
+        <section class="panel quick-panel" aria-labelledby="acesso-rapido">
+          <div class="panel-heading"><div><span class="section-kicker">OPERAÇÃO</span><h2 id="acesso-rapido">Acesso rápido</h2><p>Do cadastro à gestão do estoque</p></div></div>
+          <nav class="quick-links" aria-label="Acesso rápido aos módulos">
+            <a href="/cadastros/doadores"><span class="quick-icon" aria-hidden="true">♡</span><span><strong>Doadores</strong><small>Consultar e cadastrar doadores</small></span><span aria-hidden="true">↗</span></a>
+            <a href="/cadastros/unidades-coleta"><span class="quick-icon" aria-hidden="true">✚</span><span><strong>Unidades de coleta</strong><small>Gerenciar os locais de coleta</small></span><span aria-hidden="true">↗</span></a>
+            <a href="/cadastros/doacoes"><span class="quick-icon" aria-hidden="true">◉</span><span><strong>Doações</strong><small>Registrar e consultar doações</small></span><span aria-hidden="true">↗</span></a>
+            <a href="/estoque"><span class="quick-icon" aria-hidden="true">◈</span><span><strong>Gestão de estoque</strong><small>Consultar e cadastrar hemocomponentes</small></span><span aria-hidden="true">↗</span></a>
+          </nav>
         </section>
       </div>
-      <section class="panel requests-panel" id="solicitacoes">
-        <div class="panel-heading">
-          <div>
-            <span class="section-kicker">ACOMPANHAMENTO</span>
-            <h2>Solicitações recentes</h2>
-            <p>Exemplos de solicitações de hemocomponentes</p>
-          </div>
-          <span class="panel-pill">Dados demonstrativos</span>
-        </div>
-        <div class="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>PROTOCOLO</th>
-                <th>UNIDADE SOLICITANTE</th>
-                <th>TIPO</th>
-                <th>PRIORIDADE</th>
-                <th>STATUS</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="protocol">#SOL-1042</td>
-                <td>Hospital Central</td>
-                <td><span class="blood-tag">O+</span></td>
-                <td><span class="priority high">Alta</span></td>
-                <td><span class="status pending">Pendente</span></td>
-              </tr>
-              <tr>
-                <td class="protocol">#SOL-1041</td>
-                <td>Unidade Norte</td>
-                <td><span class="blood-tag">A−</span></td>
-                <td><span class="priority medium">Média</span></td>
-                <td><span class="status analysis">Em análise</span></td>
-              </tr>
-              <tr>
-                <td class="protocol">#SOL-1040</td>
-                <td>Hospital Regional</td>
-                <td><span class="blood-tag">AB+</span></td>
-                <td><span class="priority normal">Normal</span></td>
-                <td><span class="status done">Atendida</span></td>
-              </tr>
-              <tr>
-                <td class="protocol">#SOL-1039</td>
-                <td>Unidade Sul</td>
-                <td><span class="blood-tag">B+</span></td>
-                <td><span class="priority high">Alta</span></td>
-                <td><span class="status pending">Pendente</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-      <footer class="main-footer">
-        <span>© Hemobit · Painel demonstrativo</span
-        ><span>Desenvolvido para apoiar a gestão de hemocomponentes</span>
-      </footer>
     </main>
   </body>
 </html>

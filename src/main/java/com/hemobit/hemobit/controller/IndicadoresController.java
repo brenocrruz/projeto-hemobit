@@ -1,11 +1,15 @@
 package com.hemobit.hemobit.controller;
 
 import com.hemobit.hemobit.dto.IndicadoresDTO;
+import com.hemobit.hemobit.domain.StatusHemocomponente;
+import com.hemobit.hemobit.domain.TipoSanguineo;
+import com.hemobit.hemobit.repository.HemocomponenteRepository;
 import com.hemobit.hemobit.service.EstatisticaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/indicadores")
@@ -13,9 +17,35 @@ import java.util.*;
 public class IndicadoresController {
 
     private final EstatisticaService estatisticaService;
+    private final HemocomponenteRepository hemocomponenteRepository;
 
-    public IndicadoresController(EstatisticaService estatisticaService) {
+    public IndicadoresController(EstatisticaService estatisticaService,
+                                 HemocomponenteRepository hemocomponenteRepository) {
         this.estatisticaService = estatisticaService;
+        this.hemocomponenteRepository = hemocomponenteRepository;
+    }
+
+    @GetMapping("/estoque-real")
+    public ResponseEntity<Map<String, Object>> getEstoqueReal() {
+        LocalDate hoje = LocalDate.now();
+        Map<TipoSanguineo, Long> totais = new EnumMap<>(TipoSanguineo.class);
+        hemocomponenteRepository.contarEstoquePorTipo(StatusHemocomponente.DISPONIVEL, hoje)
+                .forEach(item -> totais.put(item.getTipoSanguineo(), item.getTotal()));
+
+        Map<String, Long> estoque = new LinkedHashMap<>();
+        for (TipoSanguineo tipo : TipoSanguineo.values()) {
+            String rotulo = tipo.name().replace("_POSITIVO", "+").replace("_NEGATIVO", "-");
+            estoque.put(rotulo, totais.getOrDefault(tipo, 0L));
+        }
+        Map<String, Object> resposta = new LinkedHashMap<>();
+        resposta.put("dados", estoque);
+        resposta.put("metadados", Map.of(
+                "unidade", "registros",
+                "descricao", "Unidades de hemocomponentes cadastradas; sem equivalencia validada com bolsas fisicas",
+                "status", StatusHemocomponente.DISPONIVEL.name(),
+                "dataReferencia", hoje.toString(),
+                "origem", "PostgreSQL"));
+        return ResponseEntity.ok(resposta);
     }
 
     @GetMapping("/estoque-tipo")

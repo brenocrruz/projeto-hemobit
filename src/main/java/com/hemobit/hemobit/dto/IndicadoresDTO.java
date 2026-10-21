@@ -1,7 +1,7 @@
 package com.hemobit.hemobit.dto;
 
-import org.jspecify.annotations.Nullable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Map;
 
 public class IndicadoresDTO {
 
@@ -11,14 +11,21 @@ public class IndicadoresDTO {
     private Double moda;
     private Double variancia;
     private Double desvioPadrao;
+    private final Map<Double, Long> distribuicaoFrequencia;
 
     public IndicadoresDTO(String nomeIndicador, Double media, Double mediana, Double moda, Double variancia, Double desvioPadrao) {
+        this(nomeIndicador, media, mediana, moda, variancia, desvioPadrao, Map.of());
+    }
+
+    public IndicadoresDTO(String nomeIndicador, Double media, Double mediana, Double moda,
+                          Double variancia, Double desvioPadrao, Map<Double, Long> distribuicaoFrequencia) {
         this.nomeIndicador = nomeIndicador;
         this.media = media;
         this.mediana = mediana;
         this.moda = moda;
         this.variancia = variancia;
         this.desvioPadrao = desvioPadrao;
+        this.distribuicaoFrequencia = Map.copyOf(distribuicaoFrequencia);
     }
 
     public String getNomeIndicador() {
@@ -46,8 +53,7 @@ public class IndicadoresDTO {
     }
 
     @JsonIgnore
-    public @Nullable Object getDistribuicaoFrequencia() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDistribuicaoFrequencia'");
+    public Map<Double, Long> getDistribuicaoFrequencia() {
+        return distribuicaoFrequencia;
     }
 }
