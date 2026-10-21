@@ -456,13 +456,17 @@ Para comprovar a prática do TDD, utilizamos o padrão de commits:
 1. `test: adiciona teste para limite maximo de 50 bolsas (RED)` - O teste falhou, pois a regra ainda não existia no código.
 2. `feat: implementa limite maximo de 50 bolsas por solicitacao (GREEN)` - A regra foi implementada e o teste passou.
 
-**Evidência visual do ciclo TDD:**
+#### Evidência visual do ciclo TDD:
 
 *Print do teste falhando (RED):*
 ![Teste Red](./docs/evidencias/teste-red.png)
 
 *Print do teste passando (GREEN):*
 ![Teste Green](./docs/evidencias/teste-green.png)
+
+**Esteira de Integração Contínua (CI):**
+*Print do GitHub Actions mostrando os testes passando na esteira:*
+![Pipeline Verde](./docs/evidencias/pipeline-verde.png)
 
 ## 🔗 Links Úteis
 
