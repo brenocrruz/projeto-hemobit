@@ -1,6 +1,6 @@
 package com.hemobit.hemobit.dto;
 
-import org.jspecify.annotations.Nullable;
+import java.util.Map;
 
 public class IndicadoresDTO {
 
@@ -10,14 +10,17 @@ public class IndicadoresDTO {
     private Double moda;
     private Double variancia;
     private Double desvioPadrao;
+    private Map<Double, Long> distribuicaoFrequencia; // <-- Nova variável adicionada
 
-    public IndicadoresDTO(String nomeIndicador, Double media, Double mediana, Double moda, Double variancia, Double desvioPadrao) {
+    // Construtor atualizado com o novo parâmetro
+    public IndicadoresDTO(String nomeIndicador, Double media, Double mediana, Double moda, Double variancia, Double desvioPadrao, Map<Double, Long> distribuicaoFrequencia) {
         this.nomeIndicador = nomeIndicador;
         this.media = media;
         this.mediana = mediana;
         this.moda = moda;
         this.variancia = variancia;
         this.desvioPadrao = desvioPadrao;
+        this.distribuicaoFrequencia = distribuicaoFrequencia;
     }
 
     public String getNomeIndicador() {
@@ -44,8 +47,8 @@ public class IndicadoresDTO {
         return desvioPadrao;
     }
 
-    public @Nullable Object getDistribuicaoFrequencia() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDistribuicaoFrequencia'");
+    // Getter consertado
+    public Map<Double, Long> getDistribuicaoFrequencia() {
+        return distribuicaoFrequencia;
     }
 }

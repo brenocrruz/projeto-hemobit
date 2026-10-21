@@ -30,6 +30,12 @@ public class EstatisticaService {
         return Collections.max(freq.entrySet(), Map.Entry.comparingByValue()).getKey();
     }
 
+    public Map<Double, Long> calcularDistribuicaoFrequencia(List<Double> valores) {
+        if (valores == null || valores.isEmpty()) return new HashMap<>();
+        return valores.stream()
+                .collect(Collectors.groupingBy(v -> v, Collectors.counting()));
+    }
+
     public double calcularVariancia(List<Double> valores) {
         if (valores == null || valores.size() < 2) return 0.0;
         double media = calcularMedia(valores);
@@ -51,7 +57,8 @@ public class EstatisticaService {
                 calcularMediana(dados),
                 calcularModa(dados),
                 calcularVariancia(dados),
-                calcularDesvioPadrao(dados) 
+                calcularDesvioPadrao(dados),
+                calcularDistribuicaoFrequencia(dados)
         );
     }
 }
