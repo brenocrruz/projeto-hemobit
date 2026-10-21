@@ -8,7 +8,9 @@ import jakarta.persistence.Entity;
 @DiscriminatorValue("UNIDADE_SAUDE")
 public class UnidadeSaude extends Localidade {
 
-    @Column(nullable = false)
+    // SINGLE_TABLE: a coluna também atende UnidadeColeta, que não possui CNPJ.
+    // A obrigatoriedade para saúde é validada pelo serviço e pelo CHECK do banco.
+    @Column
     private String cnpj;
 
     public UnidadeSaude() {
