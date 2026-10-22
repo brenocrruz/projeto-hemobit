@@ -469,10 +469,10 @@ Para comprovar a prática do TDD, utilizamos o padrão de commits:
 Configuramos o pipeline para rodar todos os testes a cada `push` e `pull request`. O bloqueio de merge foi ativado na branch `main`, garantindo que códigos com falhas não sejam integrados.
 
 **1. Execução Vermelha (Pipeline barrou o merge por falha nos testes):**
-![Pipeline Vermelho](./docs/evidencias/pipeline-vermelho.PNG)
+![Pipeline Vermelho](./docs/evidencias/teste-pipeline-vermelho.PNG)
 
 **2. Execução Verde (Todos os testes passaram e a esteira liberou o merge):**
-![Pipeline Verde](./docs/evidencias/pipeline-verde.PNG)
+![Pipeline Verde](./docs/evidencias/teste-pipeline-verde.PNG)
 
 ## 🔗 Links Úteis
 
