@@ -464,9 +464,15 @@ Para comprovar a prática do TDD, utilizamos o padrão de commits:
 *Print do teste passando (GREEN):*
 ![Teste Green](./docs/evidencias/teste-green.png)
 
-**Esteira de Integração Contínua (CI):**
-*Print do GitHub Actions mostrando os testes passando na esteira:*
-![Pipeline Verde](./docs/evidencias/pipeline-verde.png)
+#### 🚦 Testes na Esteira (GitHub Actions)
+
+Configuramos o pipeline para rodar todos os testes a cada `push` e `pull request`. O bloqueio de merge foi ativado na branch `main`, garantindo que códigos com falhas não sejam integrados.
+
+**1. Execução Vermelha (Pipeline barrou o merge por falha nos testes):**
+![Pipeline Vermelho](./docs/evidencias/pipeline-vermelho.PNG)
+
+**2. Execução Verde (Todos os testes passaram e a esteira liberou o merge):**
+![Pipeline Verde](./docs/evidencias/pipeline-verde.PNG)
 
 ## 🔗 Links Úteis
 
