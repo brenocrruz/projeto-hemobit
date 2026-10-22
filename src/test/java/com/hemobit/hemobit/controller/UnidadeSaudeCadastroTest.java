@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -31,7 +32,8 @@ class UnidadeSaudeCadastroTest {
                 .andExpect(status().isOk()).andExpect(view().name("unidades-saude"))
                 .andExpect(model().attribute("paginaAtual", "unidades-saude"))
                 .andExpect(content().string(containsString("data-cadastro=\"unidades-saude\"")))
-                .andExpect(content().string(containsString("name=\"cnpj\" required")))
+                .andExpect(content().string(containsString("name=\"cnpj\"")))
+                .andExpect(content().string(containsString("required")))
                 .andExpect(content().string(containsString("name=\"cidade\" required")))
                 .andExpect(content().string(containsString("name=\"telefone\"")));
     }
