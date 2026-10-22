@@ -487,11 +487,11 @@ O projeto possui deploy contínuo configurado para a nuvem, garantindo que cada 
 
 **1. URL Pública (Sistema no ar):**
 🔗 **[https://hemobit.onrender.com](https://hemobit.onrender.com)**
-![URL Pública](./docs/evidencias/url-publica.png)
+![URL Pública](./docs/evidencias/print-url-publica.PNG)
 
 **2. Pipeline Vermelho (Bloqueando deploy por falha nos testes):**
 *Print da esteira falhando e impedindo a publicação da imagem com erro:*
-![Pipeline Vermelho](./docs/evidencias/pipeline-vermelho.png)
+![Pipeline Vermelho](./docs/evidencias/print-pipeline-vermelho.PNG)
 
 **3. Processo de Rollback**
 Para reverter para uma versão anterior em caso de falha crítica em produção, acesse o painel do Render, navegue até a aba **Deploys**, encontre a versão estável anterior e clique em **Rollback**.
