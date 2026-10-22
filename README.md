@@ -496,6 +496,25 @@ O projeto possui deploy contínuo configurado para a nuvem, garantindo que cada 
 **3. Processo de Rollback**
 Para reverter para uma versão anterior em caso de falha crítica em produção, acesse o painel do Render, navegue até a aba **Deploys**, encontre a versão estável anterior e clique em **Rollback**.
 
+## 🤖 Uso de Inteligência Artificial
+
+Em conformidade com as diretrizes do projeto, declaramos o uso de IA (modelos de linguagem) como ferramenta de apoio durante o desenvolvimento. A IA foi utilizada para **rascunhar e auxiliar**, mas todo o conteúdo foi rigorosamente **revisado, testado e validado** pela equipe.
+
+### Onde a IA foi utilizada:
+- **Infraestrutura (E1):** Rascunho inicial do `Dockerfile` (multi-stage) e do arquivo `compose.yaml` (configuração de healthcheck, volumes e redes).
+- **TDD (E2):** Auxílio na estruturação do Story Map, escrita do cenário Gherkin (BDD) e configuração do banco H2 em memória para testes de integração.
+- **CI/CD e Deploy (E3):** Estruturação do pipeline do GitHub Actions (`ci.yml`), configuração do script de deploy hook e documentação do processo de rollback.
+- **Documentação:** Formatação e organização visual deste README.
+
+### Principais Prompts Utilizados:
+1. *"Como configurar um Dockerfile multi-stage para uma aplicação Spring Boot com Maven, garantindo que os testes rodem no build?"*
+2. *"Qual a melhor forma de isolar credenciais de banco de dados no Docker Compose e no GitHub Actions?"*
+3. *"Como configurar o banco H2 em memória para rodar testes de integração no Spring Boot sem um PostgreSQL externo?"*
+4. *"Preciso simular a prática de TDD (Red -> Green) para uma regra de negócio no meu projeto. Como escrever o teste primeiro e depois o código?"*
+5. *"Como criar um Deploy Hook no Render e integrá-lo ao pipeline do GitHub Actions para que o deploy só ocorra se os testes passarem?"*
+
+**Declaração:** Todos os códigos, comandos e textos gerados com auxílio de IA foram compreendidos, executados em ambiente local e validados pela equipe antes de serem integrados à branch `main`.
+
 ## 🔗 Links Úteis
 
 - 🐙 [Repositório GitHub](https://github.com/brenocrruz/projeto-hemobit)
