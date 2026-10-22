@@ -270,7 +270,7 @@ class SolicitacaoServiceTest {
         IllegalArgumentException erro = assertThrows(IllegalArgumentException.class,
                 () -> service.criar(pedido(51, TipoSanguineo.A_POSITIVO)));
         
-        assertEquals("A quantidade máxima por solicitação é 50.", erro.getMessage());
+        assertEquals("Teste quebrando de proposito", erro.getMessage());
     }
 
     
