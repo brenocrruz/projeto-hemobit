@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visão geral | Hemobit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css" />
+    <link
+      rel="stylesheet"
+      th:href="@{/css/dashboard.css}"
+      href="/css/dashboard.css"
+    />
+    <script th:src="@{/js/dashboard.js}" src="/js/dashboard.js" defer></script>
+  </head>
+  <body>
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="main-content">
+      <div
+        th:replace="~{fragments/header :: header('Visão geral', 'PAINEL DE CONTROLE')}"
+      ></div>
+      <section class="hero">
+        <div class="hero-copy">
+          <span class="hero-kicker">HEMOBIT / CENTRO DE CONTROLE</span>
+          <h2>Inteligência que conecta<br /><em>dados e vidas.</em></h2>
+          <p>
+            Tecnologia a serviço da gestão sanguínea. Doadores, doações e
+            estoque em uma única visão.
+          </p>
+          <a href="#estoque" class="hero-link"
+            >Explorar estoque <span aria-hidden="true">↗</span></a
+          >
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="hero-grid"></div>
+          <div class="hero-ring hero-ring-a"></div>
+          <div class="hero-ring hero-ring-b"></div>
+          <div class="digital-drop">
+            <div class="drop-core"></div>
+            <span class="drop-pixel px1"></span
+            ><span class="drop-pixel px2"></span
+            ><span class="drop-pixel px3"></span
+            ><span class="drop-pixel px4"></span
+            ><span class="drop-pixel px5"></span
+            ><span class="drop-pixel px6"></span
+            ><span class="drop-pixel px7"></span>
+          </div>
+          <div class="hero-data">01 / HEMO · BIT</div>
+        </div>
+      </section>
+      <div class="dashboard-toolbar"><p>Dados reais dos cadastros e do estoque.</p><button id="atualizar-dashboard" type="button">Atualizar dados ↻</button></div>
+      <section class="metrics" aria-label="Indicadores principais">
+        <article class="metric">
+          <div class="metric-top"><span>Hemocomponentes disponíveis</span><span class="metric-icon rose">◉</span></div>
+          <strong id="total-estoque" aria-live="polite" aria-busy="true">…</strong><small id="estado-estoque">Carregando registros disponíveis...</small>
+          <div class="metric-line rose-line"></div>
+        </article>
+        <article class="metric">
+          <div class="metric-top"><span>Doadores cadastrados</span><span class="metric-icon amber">▤</span></div>
+          <strong id="total-doadores" aria-live="polite" aria-busy="true">…</strong><small id="estado-doadores">Carregando total de doadores...</small>
+          <div class="metric-line amber-line"></div>
+        </article>
+        <article class="metric">
+          <div class="metric-top"><span>Doações registradas</span><span class="metric-icon red">◷</span></div>
+          <strong id="total-doacoes" aria-live="polite" aria-busy="true">…</strong><small id="estado-doacoes">Carregando total de doações...</small>
+          <div class="metric-line red-line"></div>
+        </article>
+        <article class="metric">
+          <div class="metric-top"><span>Unidades de coleta cadastradas</span><span class="metric-icon violet">✚</span></div>
+          <strong id="total-unidades-coleta" aria-live="polite" aria-busy="true">…</strong><small id="estado-unidades-coleta">Carregando unidades de coleta...</small>
+          <div class="metric-line violet-line"></div>
+        </article>
+      </section>
+      <div class="dashboard-grid">
+        <section class="panel stock-panel" id="estoque">
+          <div class="panel-heading">
+            <div>
+              <span class="section-kicker">DISTRIBUIÇÃO</span>
+              <h2>Estoque por tipo sanguíneo</h2>
+              <p>
+                Dados reais: unidades de hemocomponentes cadastradas,
+                disponíveis e com validade a partir de hoje.
+              </p>
+            </div>
+            <span class="panel-pill">8 tipos</span>
+          </div>
+          <div class="stock-grid" id="estoque-grid" aria-live="polite">
+            <p>Carregando dados do estoque...</p>
+          </div>
+          <div class="panel-footer">
+            <span class="legend-dot"></span> Contagem de registros disponíveis e com validade vigente.
+          </div>
+        </section>
+        <section class="panel quick-panel" aria-labelledby="acesso-rapido">
+          <div class="panel-heading"><div><span class="section-kicker">OPERAÇÃO</span><h2 id="acesso-rapido">Acesso rápido</h2><p>Do cadastro à gestão do estoque</p></div></div>
+          <nav class="quick-links" aria-label="Acesso rápido aos módulos">
+            <a href="/cadastros/doadores"><span class="quick-icon" aria-hidden="true">♡</span><span><strong>Doadores</strong><small>Consultar e cadastrar doadores</small></span><span aria-hidden="true">↗</span></a>
+            <a href="/cadastros/unidades-coleta"><span class="quick-icon" aria-hidden="true">✚</span><span><strong>Unidades de coleta</strong><small>Gerenciar os locais de coleta</small></span><span aria-hidden="true">↗</span></a>
+            <a href="/cadastros/doacoes"><span class="quick-icon" aria-hidden="true">◉</span><span><strong>Doações</strong><small>Registrar e consultar doações</small></span><span aria-hidden="true">↗</span></a>
+            <a href="/estoque"><span class="quick-icon" aria-hidden="true">◈</span><span><strong>Gestão de estoque</strong><small>Consultar e cadastrar hemocomponentes</small></span><span aria-hidden="true">↗</span></a>
+          </nav>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

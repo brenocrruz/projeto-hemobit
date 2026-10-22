@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,6 +48,23 @@ class EstatisticaServiceTest {
         assertNotNull(dto);
         assertEquals("Teste Indicadores", dto.getNomeIndicador());
         assertEquals(20.0, dto.getMedia());
-        assertNotNull(dto.getDistribuicaoFrequencia());
+        assertEquals(Map.of(10.0, 1L, 20.0, 2L, 30.0, 1L), dto.getDistribuicaoFrequencia());
+        assertEquals(20.0, dto.getMediana());
+        assertEquals(20.0, dto.getModa());
+        assertEquals(200.0 / 3, dto.getVariancia(), 0.000001);
+        assertEquals(Math.sqrt(200.0 / 3), dto.getDesvioPadrao(), 0.000001);
+    }
+
+    @Test
+    void deveRetornarDistribuicaoVaziaSemDados() {
+        assertEquals(Map.of(), service.gerarRelatorioIndicador("Vazio", List.of()).getDistribuicaoFrequencia());
+        assertEquals(Map.of(), service.gerarRelatorioIndicador("Nulo", null).getDistribuicaoFrequencia());
+    }
+
+    @Test
+    void devePreservarConstrutorExistente() {
+        IndicadoresDTO dto = new IndicadoresDTO("Indicador", 1.0, 2.0, 3.0, 4.0, 5.0);
+        assertEquals(Map.of(), dto.getDistribuicaoFrequencia());
+        assertEquals(1.0, dto.getMedia());
     }
 }

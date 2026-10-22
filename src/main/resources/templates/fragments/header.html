@@ -1,0 +1,4 @@
+<header class="page-header" th:fragment="header(titulo, subtitulo)">
+  <div class="heading"><p class="eyebrow" th:text="${subtitulo}">VISÃO GERAL</p><h1 th:text="${titulo}">Dashboard</h1><p class="heading-description">Acompanhe os indicadores e a operação em um só lugar.</p></div>
+  <div class="header-actions"><div class="today-chip"><span class="status-dot"></span><span th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy')}">21/10/2026</span></div><div class="avatar" aria-label="Painel Hemobit">HB</div></div>
+</header>
