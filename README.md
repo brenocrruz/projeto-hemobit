@@ -474,6 +474,28 @@ Configuramos o pipeline para rodar todos os testes a cada `push` e `pull request
 **2. Execução Verde (Todos os testes passaram e a esteira liberou o merge):**
 ![Pipeline Verde](./docs/evidencias/teste-pipeline-verde.PNG)
 
+### 🟢 Deploy Automatizado (E3)
+
+O projeto possui deploy contínuo configurado para a nuvem, garantindo que cada merge na branch `main` chegue ao ambiente público de forma automática e segura.
+
+- **Ferramenta CI/CD:** GitHub Actions.
+- **Provedor de Deploy:** Render (Docker).
+- **Fluxo de Automação:** Push na `main` → GitHub Actions (Build + Testes) → Deploy Hook → Render.
+- **Segurança de Credenciais:** A URL do Deploy Hook está protegida no *GitHub Secrets* (`RENDER_DEPLOY_HOOK_URL`) e as senhas do banco de produção estão isoladas nas variáveis de ambiente do Render.
+
+#### 📸 Evidências do Deploy (E3)
+
+**1. URL Pública (Sistema no ar):**
+🔗 **[https://hemobit.onrender.com](https://hemobit.onrender.com)**
+![URL Pública](./docs/evidencias/url-publica.png)
+
+**2. Pipeline Vermelho (Bloqueando deploy por falha nos testes):**
+*Print da esteira falhando e impedindo a publicação da imagem com erro:*
+![Pipeline Vermelho](./docs/evidencias/pipeline-vermelho.png)
+
+**3. Processo de Rollback**
+Para reverter para uma versão anterior em caso de falha crítica em produção, acesse o painel do Render, navegue até a aba **Deploys**, encontre a versão estável anterior e clique em **Rollback**.
+
 ## 🔗 Links Úteis
 
 - 🐙 [Repositório GitHub](https://github.com/brenocrruz/projeto-hemobit)
