@@ -20,26 +20,62 @@ Para atualizações em tempo real do estoque de hemocomponentes e alteração cr
 
 ## 2. Canal de Telemetria
 
-Para atualizações em tempo real do estoque de hemocomponentes e alterações críticas de status, a aplicação utiliza o protocolo **WebSocket**. Para as operações convencionais de cadastro e consulta, utiliza-se **HTTP/REST**.
+A telemetria usa dois caminhos, cada um com o protocolo adequado ao sentido do tráfego:
 
-| Item | Valor |
-| --- | --- |
-| Protocolo | WebSocket (`ws://` em desenvolvimento, `wss://` em produção) |
-| Endpoint | `/ws/telemetria` |
-| Formato | JSON |
-| Frequência | Evento-driven (dispara ao detectar alteração crítica) |
+| Sentido | Protocolo | Endpoint | Formato |
+| --- | --- | --- | --- |
+| Veículo → hemocentro (ingestão) | HTTP/REST `POST` | `/api/v1/telemetria/leituras` | JSON, uma leitura por requisição, resposta `202 Accepted` |
+| Hemocentro → painel (tempo real) | WebSocket (`ws://` em desenvolvimento, `wss://` em produção) | `/ws/telemetria` | JSON, evento-driven |
 
-**Exemplo de mensagem WebSocket:**
+A ingestão por HTTP é sem estado e passa por qualquer proxy/rede móvel; cada leitura carrega um número de `sequencia` por veículo, o que permite detectar perdas no servidor. O WebSocket só é usado para empurrar dados ao painel, sem *polling*. Conexões de outra origem (cabeçalho `Origin`) são recusadas com `403`.
+
+**Leitura de telemetria (`POST /api/v1/telemetria/leituras`):**
 
 ```json
 {
-  "evento": "ESTOQUE_CRITICO",
-  "tipoSanguineo": "O_NEGATIVO",
-  "quantidadeAtual": 2,
-  "timestamp": "2026-09-14T10:30:00"
+  "veiculo": "VTR-01",
+  "sequencia": 42,
+  "tipoHemocomponente": "CH",
+  "latitude": -8.047600,
+  "longitude": -34.877000,
+  "temperaturaC": 4.12,
+  "enviadoEm": 1793502715408
 }
 ```
- 
+
+| Status | Quando |
+| --- | --- |
+| `202` | Leitura aceita. Corpo: `{"sequencia": 42, "recebidoEm": ..., "temperaturaConforme": true}` |
+| `400` | Campo ausente/inválido (ex.: `temperaturaC` nula ou fora de -60 a 60 °C, `tipoHemocomponente` diferente de `CH`, `CP` ou `PFC`). Corpo: `{"erros": [...]}` |
+
+**Eventos do WebSocket `/ws/telemetria`:**
+
+| Evento | Frequência | Conteúdo |
+| --- | --- | --- |
+| `METRICAS_REDE` | A cada 1 s, para cada painel conectado | Mesmo conteúdo de `GET /api/v1/rede/metricas`: latência, jitter, perda, vazão, erros 4xx/5xx, série de 60 s e última leitura de cada veículo |
+| `TEMPERATURA_FORA_DA_FAIXA` | Quando um veículo sai da faixa da cadeia fria (uma vez por saída) | Leitura que disparou o alerta |
+
+```json
+{
+  "evento": "TEMPERATURA_FORA_DA_FAIXA",
+  "veiculo": "VTR-01",
+  "tipoHemocomponente": "CH",
+  "temperaturaC": 7.4,
+  "faixaC": [2.0, 6.0],
+  "timestamp": 1793502715408
+}
+```
+
+**Endpoints de apoio ao monitoramento:**
+
+| Método | Caminho | Descrição | Status |
+| --- | --- | --- | --- |
+| GET | /api/v1/rede/metricas | Estado do painel (alternativa ao WebSocket) | 200 |
+| GET | /api/v1/rede/ping | Sonda leve para medir RTT | 200 |
+| GET | /api/v1/rede/carga?kb=N | Corpo de N KB (máx. 4096) para medir vazão | 200 |
+| POST | /api/v1/rede/metricas/reiniciar | Zera a janela de métricas; só habilitado no ambiente local (`REDE_CONTROLE_HABILITADO=true`) | 204, 403 |
+| GET | /api/v1/telemetria/veiculos | Última leitura de cada veículo | 200 |
+
 ---
 
 ## 3. Endpoints

@@ -1,0 +1,28 @@
+.rede-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}
+.rede-metrics .metric{padding-bottom:44px}
+.rede-badge{position:absolute;left:19px;bottom:14px;font-size:10px;font-weight:800;letter-spacing:.6px;padding:5px 9px;border-radius:6px;background:#eef2f3;color:#6f7f86}
+.rede-badge.bom{background:#e7f6ef;color:#2f8a63}
+.rede-badge.atencao{background:#fff4e2;color:#b17a22}
+.rede-badge.critico{background:#fde8eb;color:#b3263f}
+.rede-acoes{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rede-canal{font-size:11px;font-weight:800;letter-spacing:.5px;padding:8px 10px;border-radius:8px;background:#eef2f3;color:#6f7f86}
+.rede-canal.ws{background:#e7f6ef;color:#2f8a63}.rede-canal.polling{background:#fff4e2;color:#b17a22}
+.rede-subtitulo{font-size:13px;color:#203640;margin:22px 0 10px}
+.rede-alertas{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.rede-alertas li{font-size:12px;line-height:1.5;padding:9px 12px;border-radius:8px;background:#fde8eb;color:#8f1f35}
+.rede-alertas li.rede-alerta-vazio{background:#f6f9f9;color:var(--muted)}
+.rede-grid{grid-template-columns:1.45fr 1fr}
+.rede-grafico{width:100%;height:200px;display:block;background:linear-gradient(#f4f7f8 1px,transparent 1px) 0 0/100% 25%;border-radius:8px}
+.rede-grafico .linha-media{fill:none;stroke:#2b7783;stroke-width:2;vector-effect:non-scaling-stroke}
+.rede-grafico .linha-p95{fill:none;stroke:#b52d4d;stroke-width:2;stroke-dasharray:5 4;vector-effect:non-scaling-stroke}
+.rede-grafico .barra-perda{fill:#e5a74733}
+.rede-grafico text{font:10px 'DM Sans',sans-serif;fill:#8a979d}
+.rede-legenda{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11px;color:var(--muted)}
+.rede-legenda span{display:inline-block;width:14px;height:3px;margin-left:8px}
+.rede-legenda .l-media{background:#2b7783}.rede-legenda .l-p95{background:#b52d4d}.rede-legenda .l-perda{background:#e5a747;height:9px;opacity:.5}
+.rede-diagnostico{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.rede-diagnostico li{font-size:12px;line-height:1.6;color:#4c5b62;padding:10px 12px;border-radius:8px;background:#f6f9f9;border-left:3px solid #c9d6d8}
+.rede-diagnostico li.bom{border-left-color:#3ba274}.rede-diagnostico li.atencao{border-left-color:#e5a747}.rede-diagnostico li.critico{border-left-color:#c32c4c}
+.temp-ok{color:#2f8a63;font-weight:700}.temp-fora{color:#b3263f;font-weight:800}
+@media(max-width:1200px){.rede-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.rede-grid{grid-template-columns:1fr}}
+@media(max-width:640px){.rede-metrics{grid-template-columns:1fr 1fr}.dashboard-toolbar{flex-direction:column}}

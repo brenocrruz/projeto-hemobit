@@ -1,12 +1,22 @@
+# Ambiente de comunicação do Hemobit, segmentado conforme docs/rsd/arquitetura_hemobit_gomes.pdf:
+#   publica   (10.0.1.0/24) -> Nginx, única porta publicada no host
+#   aplicacao (10.0.2.0/24) -> API REST + simulador de telemetria
+#   banco     (10.0.3.0/28) -> PostgreSQL, rede interna sem rota para fora
 services:
   db:
     image: postgres:16-alpine
+    # pg_hba.conf aceita conexões só da API (10.0.3.11): defesa extra caso o Docker não isole as redes por IP.
+    command: ["postgres", "-c", "hba_file=/etc/postgresql/pg_hba.conf"]
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./infra/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+    networks:
+      banco:
+        ipv4_address: 10.0.3.10
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
@@ -15,15 +25,63 @@ services:
 
   app:
     build: .
-    ports:
-      - "8080:8080"
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      # Simulador e endpoints de controle só ficam ligados neste ambiente local (desligados por padrão).
+      TELEMETRIA_SIMULADOR_HABILITADO: "true"
+      REDE_CONTROLE_HABILITADO: "true"
+      # A telemetria simulada passa pelo Nginx, como fariam os veículos vindos da Internet.
+      TELEMETRIA_URL_INGESTAO: http://nginx/api/v1/telemetria/leituras
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/api/v1/rede/ping >/dev/null || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 20s
+    networks:
+      aplicacao:
+        ipv4_address: 10.0.2.10
+      banco:
+        ipv4_address: 10.0.3.11
     depends_on:
       db:
         condition: service_healthy
+
+  nginx:
+    build: ./infra/nginx
+    ports:
+      - "8080:80"
+    # NET_ADMIN permite ao benchmarking aplicar tc netem na interface Nginx -> API.
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      publica:
+        ipv4_address: 10.0.1.10
+      aplicacao:
+        ipv4_address: 10.0.2.20
+    depends_on:
+      app:
+        condition: service_healthy
+
+networks:
+  publica:
+    ipam:
+      config:
+        - subnet: 10.0.1.0/24
+  aplicacao:
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.0.2.0/24
+  banco:
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.0.3.0/28
 
 volumes:
   postgres_data:
