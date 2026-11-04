@@ -201,7 +201,7 @@ Para o deploy, as seguintes variáveis são configuradas no Render:
 
 A aplicação está implantada e acessível publicamente:
 
-🔗 **[https://projeto-hemobit.onrender.com/](https://projeto-hemobit.onrender.com/)**
+🔗 **[https://https://hemobit.onrender.com/](https://https://hemobit.onrender.com/)**
 
 ### Pipeline de CI/CD
 
