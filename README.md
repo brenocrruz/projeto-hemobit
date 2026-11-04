@@ -201,7 +201,7 @@ Para o deploy, as seguintes variáveis são configuradas no Render:
 
 A aplicação está implantada e acessível publicamente:
 
-🔗 **[https://projeto-hemobit.onrender.com/](https://projeto-hemobit.onrender.com/)**
+🔗 **[https://https://hemobit.onrender.com/](https://https://hemobit.onrender.com/)**
 
 ### Pipeline de CI/CD
 
@@ -317,16 +317,16 @@ O Hemobit é um projeto integrador: cada disciplina contribui com uma parte esse
 > **Como** profissional solicitante, **quero** registrar uma requisição de hemocomponentes para o meu hospital, **para** dar início ao atendimento.
 >
 > - **Entrega:** `POST /solicitacoes` com hospital, tipo de hemocomponente, tipo sanguíneo do paciente, quantidade de bolsas e prioridade (rotina, urgente ou emergência).
-> - **Regras:** quantidade inteira de no mínimo 1 bolsa; todos os campos obrigatórios; hospital precisa existir. Nada é gravado se algo estiver errado.
+> - **Regras:** quantidade inteira de 1 a 50 bolsas; todos os campos obrigatórios; hospital precisa existir. Nada é gravado se algo estiver errado.
 > - **Resultado:** solicitação criada como `PENDENTE`, com código de identificação (`id`) e primeira linha no histórico.
-> - **Erros:** 400 com mensagem clara, por exemplo "A quantidade solicitada deve ser de no mínimo 1 bolsa.".
+> - **Erros:** 400 com mensagem clara, por exemplo "A quantidade solicitada deve ser de no mínimo 1 bolsa." ou "A quantidade máxima por solicitação é 50.".
 
 > **HU07 — Atualização do Status da Solicitação pelo Centro Operacional**
 >
 > **Como** funcionário do centro, **quero** alterar o status das solicitações e atender os pedidos, **para** manter os hospitais informados sobre o andamento.
 >
 > - **Entrega:** `PUT /solicitacoes/{id}/status` (iniciar separação, cancelar, negar), `PUT /solicitacoes/{id}/atender`, `GET /solicitacoes/{id}/historico` e `GET /solicitacoes/{id}/bolsas`.
-> - **Regras:** o pedido só anda para frente (`PENDENTE` → `EM_SEPARACAO` → `ATENDIDA`, `CANCELADA` ou `NEGADA`); pedidos finalizados não mudam mais; toda mudança grava quem fez e quando.
+> - **Regras:** o pedido só anda para frente: `PENDENTE` pode ir para `EM_SEPARACAO`, `ATENDIDA`, `CANCELADA` ou `NEGADA`, e `EM_SEPARACAO` pode ir para `ATENDIDA`, `CANCELADA` ou `NEGADA`. `ATENDIDA`, `CANCELADA` e `NEGADA` são status finais e não mudam mais (o "Entregue" da história da Entrega 01 corresponde a `ATENDIDA`). Toda mudança grava quem fez e quando.
 > - **Atendimento:** reserva as bolsas compatíveis (ABO/Rh, módulo do AED) que vencem primeiro (FEFO), ignorando bolsas vencidas. Se faltar bolsa compatível, responde 409 e nada é alterado.
 > - **Erros:** 409 "Não é permitido alterar o status de solicitações já finalizadas." e "Estoque compatível insuficiente…".
 
