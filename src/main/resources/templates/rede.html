@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rede e telemetria | Hemobit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css" />
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}" href="/css/dashboard.css" />
+    <link rel="stylesheet" th:href="@{/css/rede.css}" href="/css/rede.css" />
+    <script th:src="@{/js/rede.js}" src="/js/rede.js" defer></script>
+  </head>
+  <body>
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="main-content">
+      <div th:replace="~{fragments/header :: header('Rede e telemetria', 'MONITORAMENTO DE REDE')}"></div>
+
+      <div class="dashboard-toolbar">
+        <p id="rede-estado" aria-live="polite">Conectando ao canal de telemetria...</p>
+        <div class="rede-acoes">
+          <span class="rede-canal" id="canal" title="Como o painel recebe os dados">conectando…</span>
+          <button id="reiniciar" type="button" hidden>Zerar janela ↺</button>
+        </div>
+      </div>
+
+      <section class="metrics rede-metrics" aria-label="Métricas de rede da telemetria">
+        <article class="metric" data-metrica="latencia">
+          <div class="metric-top"><span>Latência (RTT) p95</span><span class="metric-icon violet">⌁</span></div>
+          <strong id="m-latencia">…</strong><small id="d-latencia">p50 · média</small>
+          <span class="rede-badge" id="b-latencia">—</span>
+        </article>
+        <article class="metric" data-metrica="jitter">
+          <div class="metric-top"><span>Jitter (RFC 3550)</span><span class="metric-icon amber">∿</span></div>
+          <strong id="m-jitter">…</strong><small id="d-jitter">variação entre envios consecutivos</small>
+          <span class="rede-badge" id="b-jitter">—</span>
+        </article>
+        <article class="metric" data-metrica="perda">
+          <div class="metric-top"><span>Perda de pacotes</span><span class="metric-icon red">✕</span></div>
+          <strong id="m-perda">…</strong><small id="d-perda">cliente · lacunas de sequência</small>
+          <span class="rede-badge" id="b-perda">—</span>
+        </article>
+        <article class="metric" data-metrica="vazao">
+          <div class="metric-top"><span>Vazão da telemetria</span><span class="metric-icon rose">⇅</span></div>
+          <strong id="m-vazao">…</strong><small id="d-vazao">kbit/s</small>
+          <span class="rede-badge" id="b-vazao">—</span>
+        </article>
+        <article class="metric" data-metrica="erros">
+          <div class="metric-top"><span>Erros HTTP da API</span><span class="metric-icon red">!</span></div>
+          <strong id="m-erros">…</strong><small id="d-erros">4xx · 5xx</small>
+          <span class="rede-badge" id="b-erros">—</span>
+        </article>
+        <article class="metric" data-metrica="api">
+          <div class="metric-top"><span>Tempo de servidor p95</span><span class="metric-icon violet">◷</span></div>
+          <strong id="m-api">…</strong><small id="d-api">req/s</small>
+          <span class="rede-badge" id="b-api">—</span>
+        </article>
+      </section>
+
+      <div class="dashboard-grid rede-grid">
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <span class="section-kicker">ÚLTIMOS 60 s</span>
+              <h2>Latência da telemetria</h2>
+              <p>RTT medido pelo simulador em cada envio HTTP (média e p95 por segundo).</p>
+            </div>
+            <span class="panel-pill" id="amostras">0 amostras</span>
+          </div>
+          <svg id="grafico-latencia" class="rede-grafico" viewBox="0 0 600 200" preserveAspectRatio="none" role="img" aria-label="Latência por segundo"></svg>
+          <div class="rede-legenda"><span class="l-media"></span> média <span class="l-p95"></span> p95 <span class="l-perda"></span> perda</div>
+        </section>
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <span class="section-kicker">INTERPRETAÇÃO</span>
+              <h2>Diagnóstico do canal</h2>
+              <p>Leitura automática das métricas contra os limites do benchmarking.</p>
+            </div>
+          </div>
+          <ul class="rede-diagnostico" id="diagnostico" aria-live="polite"><li>Aguardando amostras...</li></ul>
+          <h3 class="rede-subtitulo">Alertas de cadeia fria</h3>
+          <ul class="rede-alertas" id="alertas" aria-live="assertive"><li class="rede-alerta-vazio">Nenhuma excursão de temperatura nesta sessão.</li></ul>
+        </section>
+      </div>
+
+      <div class="dashboard-grid rede-grid">
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <span class="section-kicker">TELEMETRIA REAL</span>
+              <h2>Veículos em trânsito</h2>
+              <p>Última leitura recebida por veículo (GPS, temperatura e atraso unidirecional).</p>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>VEÍCULO</th><th>TIPO</th><th>TEMP.</th><th>FAIXA</th><th>POSIÇÃO</th><th>SEQ.</th><th>ATRASO</th></tr></thead>
+              <tbody id="veiculos"><tr><td colspan="7">Sem leituras ainda.</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <span class="section-kicker">SERVIÇOS</span>
+              <h2>Rotas da API</h2>
+              <p>Medido no servidor; exclui as consultas do próprio painel.</p>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>ROTA</th><th>REQ.</th><th>P95</th><th>4XX</th><th>5XX</th></tr></thead>
+              <tbody id="rotas"><tr><td colspan="5">Sem requisições na janela.</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>
