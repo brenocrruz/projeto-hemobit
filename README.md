@@ -3,7 +3,7 @@
 ### Gestão e Distribuição Inteligente de Hemocomponentes
 
 [![CI/CD Pipeline](https://github.com/brenocrruz/projeto-hemobit/actions/workflows/ci.yml/badge.svg)](https://github.com/brenocrruz/projeto-hemobit/actions/workflows/ci.yml)
-[![Deploy](https://img.shields.io/badge/deploy-online-brightgreen)](https://projeto-hemobit.onrender.com/)
+[![Deploy](https://img.shields.io/badge/deploy-online-brightgreen)](https://hemobit.onrender.com/)
 [![Java](https://img.shields.io/badge/Java-21-orange)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.1-green)](https://spring.io/projects/spring-boot)
 
@@ -70,8 +70,10 @@ projeto-hemobit/
 │   ├── aed/              # Algoritmos e Estruturas de Dados
 │   ├── controller/       # Endpoints REST
 │   ├── domain/           # Entidades JPA
+│   ├── rede/             # Métricas de rede e painel de monitoramento
 │   ├── repository/       # Repositórios Spring Data
-│   └── service/          # Regras de negócio
+│   ├── service/          # Regras de negócio
+│   └── telemetria/       # Simulador e ingestão de telemetria
 ├── src/main/resources/
 ├── src/test/             # Testes automatizados
 ├── docs/
@@ -81,6 +83,8 @@ projeto-hemobit/
 │   ├── rsd/              # Documentação de RSD
 │   └── evidencias/       # Evidências de execução do Docker
 ├── data/                 # Dados sintéticos
+├── infra/                # Configuração do Nginx e do PostgreSQL (pg_hba)
+├── scripts/              # Script de benchmarking de rede
 ├── .github/workflows/    # Pipeline CI/CD
 ├── .env.example          # Modelo das variáveis de ambiente
 ├── .gitignore            # Arquivos ignorados pelo Git
@@ -153,7 +157,7 @@ cp .env.example .env
 ```bash
 docker compose up -d --build
 ```
-6. A API estará disponível em http://localhost:8080.
+6. A aplicação estará disponível em http://localhost:8080 (atrás do proxy Nginx). O painel de rede e telemetria fica em http://localhost:8080/rede.
 > ⚠️ **Atenção** O arquivo .env não vem no repositório por questões de segurança (está no .gitignore). É obrigatório criar o seu próprio arquivo .env a partir do .env.example antes de rodar o projeto pela primeira vez.
 
 ## Comandos úteis do Docker
@@ -201,7 +205,7 @@ Para o deploy, as seguintes variáveis são configuradas no Render:
 
 A aplicação está implantada e acessível publicamente:
 
-🔗 **[https://projeto-hemobit.onrender.com/](https://projeto-hemobit.onrender.com/)**
+🔗 **[https://hemobit.onrender.com/](https://hemobit.onrender.com/)**
 
 ### Pipeline de CI/CD
 
@@ -227,7 +231,7 @@ O Hemobit é um projeto integrador: cada disciplina contribui com uma parte esse
 | **Algoritmos e Estruturas de Dados (AED)** | Projeta e implementa os algoritmos de roteirização, compatibilidade ABO/Rh e priorização FEFO. | [Escopo do Grafo](./docs/aed/escopo-grafo.md) |
 | **Estatística e Probabilidade (EST)** | Transforma os dados de estoque, demanda e operação em indicadores e análises. | Em desenvolvimento |
 | **Infraestrutura de Software (SO)** | Garante desempenho, concorrência, CI/CD e operação em nuvem. | [Pipeline CI/CD](./.github/workflows/ci.yml) |
-| **Infraestrutura de Comunicação (RSD)** | Define a arquitetura de comunicação entre unidades e a telemetria dos veículos. | [Contratos de API](./docs/rsd/contratos-api.md) |
+| **Infraestrutura de Comunicação (RSD)** | Define a arquitetura de comunicação entre unidades e a telemetria dos veículos. | [Contratos de API](./docs/rsd/contratos-api.md) · [Benchmarking](./docs/rsd/benchmarking.md) · [Plano de implantação](./docs/rsd/plano-implantacao.md) |
 
 ---
 
@@ -317,16 +321,16 @@ O Hemobit é um projeto integrador: cada disciplina contribui com uma parte esse
 > **Como** profissional solicitante, **quero** registrar uma requisição de hemocomponentes para o meu hospital, **para** dar início ao atendimento.
 >
 > - **Entrega:** `POST /solicitacoes` com hospital, tipo de hemocomponente, tipo sanguíneo do paciente, quantidade de bolsas e prioridade (rotina, urgente ou emergência).
-> - **Regras:** quantidade inteira de no mínimo 1 bolsa; todos os campos obrigatórios; hospital precisa existir. Nada é gravado se algo estiver errado.
+> - **Regras:** quantidade inteira de 1 a 50 bolsas; todos os campos obrigatórios; hospital precisa existir. Nada é gravado se algo estiver errado.
 > - **Resultado:** solicitação criada como `PENDENTE`, com código de identificação (`id`) e primeira linha no histórico.
-> - **Erros:** 400 com mensagem clara, por exemplo "A quantidade solicitada deve ser de no mínimo 1 bolsa.".
+> - **Erros:** 400 com mensagem clara, por exemplo "A quantidade solicitada deve ser de no mínimo 1 bolsa." ou "A quantidade máxima por solicitação é 50.".
 
 > **HU07 — Atualização do Status da Solicitação pelo Centro Operacional**
 >
 > **Como** funcionário do centro, **quero** alterar o status das solicitações e atender os pedidos, **para** manter os hospitais informados sobre o andamento.
 >
 > - **Entrega:** `PUT /solicitacoes/{id}/status` (iniciar separação, cancelar, negar), `PUT /solicitacoes/{id}/atender`, `GET /solicitacoes/{id}/historico` e `GET /solicitacoes/{id}/bolsas`.
-> - **Regras:** o pedido só anda para frente (`PENDENTE` → `EM_SEPARACAO` → `ATENDIDA`, `CANCELADA` ou `NEGADA`); pedidos finalizados não mudam mais; toda mudança grava quem fez e quando.
+> - **Regras:** o pedido só anda para frente: `PENDENTE` pode ir para `EM_SEPARACAO`, `ATENDIDA`, `CANCELADA` ou `NEGADA`, e `EM_SEPARACAO` pode ir para `ATENDIDA`, `CANCELADA` ou `NEGADA`. `ATENDIDA`, `CANCELADA` e `NEGADA` são status finais e não mudam mais (o "Entregue" da história da Entrega 01 corresponde a `ATENDIDA`). Toda mudança grava quem fez e quando.
 > - **Atendimento:** reserva as bolsas compatíveis (ABO/Rh, módulo do AED) que vencem primeiro (FEFO), ignorando bolsas vencidas. Se faltar bolsa compatível, responde 409 e nada é alterado.
 > - **Erros:** 409 "Não é permitido alterar o status de solicitações já finalizadas." e "Estoque compatível insuficiente…".
 
@@ -366,6 +370,23 @@ O Hemobit é um projeto integrador: cada disciplina contribui com uma parte esse
 
 ---
 
+## 📦 Entregas — Infraestrutura de Comunicação (RSD)
+
+### 🟢 W12 · Benchmarking e painel de rede
+
+- **Ambiente de comunicação:** `compose.yaml` com três redes (pública, aplicação e banco) e Nginx ([`infra/nginx/nginx.conf`](infra/nginx/nginx.conf)) como única entrada, seguindo a [topologia](docs/rsd/arquitetura_hemobit_gomes.pdf).
+- **Telemetria:** simulador de 3 veículos (GPS + temperatura + timestamp) enviando `POST /api/v1/telemetria/leituras` através do Nginx; a ingestão valida a leitura, confere a faixa da cadeia fria e detecta lacunas de sequência.
+- **Painel de monitoramento:** página `/rede` (menu *Rede e telemetria*) com latência, jitter, perda, vazão e erros 4xx/5xx em tempo real, classificação BOM/ATENÇÃO/CRÍTICO, diagnóstico interpretado e alertas de cadeia fria. Recebe os dados por WebSocket (`/ws/telemetria`), com *polling* de `GET /api/v1/rede/metricas` como reserva.
+- **Degradação real de rede:** o benchmarking aplica `tc netem` (perda, atraso e jitter) no enlace Nginx → API para medir o canal em condições de 4G ruim e zona de sombra.
+- **Benchmarking:** [`scripts/benchmark-rede.sh`](scripts/benchmark-rede.sh) e relatório em [docs/rsd/benchmarking.md](docs/rsd/benchmarking.md).
+- **Plano de implantação/migração:** [docs/rsd/plano-implantacao.md](docs/rsd/plano-implantacao.md).
+
+```bash
+NETEM=1 ROTULO=docker-local scripts/benchmark-rede.sh http://localhost:8080
+```
+
+---
+
 ## 📦 Entregas — Infraestrutura de Software (SO)
 
 > As entregas abaixo são referentes à disciplina de **Infraestrutura de Software**.
@@ -388,7 +409,7 @@ O projeto sobe do zero com um comando (`docker compose up -d --build`), garantin
 | **Imagem base (runtime)** | `eclipse-temurin:21-jre-alpine`, `openjdk:21-slim` | `alpine` é menor e tem menos pacotes vulneráveis; como o build já foi feito no estágio anterior, só precisamos do JRE para rodar. |
 | **Multi-stage** | Build único vs. multi-stage | Multi-stage deixa a imagem final menor (sem Maven e código-fonte) e mais segura. |
 | **Dados** | Volume nomeado vs. bind mount | Volume nomeado (`postgres_data`): os dados sobrevivem ao `docker compose down` e ficam gerenciados pelo Docker. |
-| **Rede** | Rede padrão do Compose vs. rede customizada | A rede padrão já resolve a comunicação pelo nome do serviço (`db`); não precisamos de configuração extra. |
+| **Rede** | Rede padrão do Compose vs. rede customizada | Redes customizadas seguindo a topologia de RSD: `publica` (Nginx), `aplicacao` e `banco` (ambas `internal`). Só o Nginx publica porta no host (W12, ver [plano de implantação](docs/rsd/plano-implantacao.md)). |
 | **Segredos** | `.env` no repositório vs. `.env.example` + `.env` local | O `.env` real fica no `.gitignore`; o `.env.example` serve de modelo e não contém senhas. |
 | **Testes no Build** | Rodar local vs. no container | Os testes rodam no estágio de build do Dockerfile. Para testes de integração, configuramos o banco H2 em memória (`application.properties` na pasta test), garantindo que os testes passem mesmo sem um PostgreSQL externo durante o build. |
 
