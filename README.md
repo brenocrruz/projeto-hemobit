@@ -3,7 +3,7 @@
 ### Gestão e Distribuição Inteligente de Hemocomponentes
 
 [![CI/CD Pipeline](https://github.com/brenocrruz/projeto-hemobit/actions/workflows/ci.yml/badge.svg)](https://github.com/brenocrruz/projeto-hemobit/actions/workflows/ci.yml)
-[![Deploy](https://img.shields.io/badge/deploy-online-brightgreen)](https://projeto-hemobit.onrender.com/)
+[![Deploy](https://img.shields.io/badge/deploy-online-brightgreen)](https://hemobit.onrender.com/)
 [![Java](https://img.shields.io/badge/Java-21-orange)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.1-green)](https://spring.io/projects/spring-boot)
 
@@ -205,7 +205,7 @@ Para o deploy, as seguintes variáveis são configuradas no Render:
 
 A aplicação está implantada e acessível publicamente:
 
-🔗 **[https://https://hemobit.onrender.com/](https://https://hemobit.onrender.com/)**
+🔗 **[https://hemobit.onrender.com/](https://hemobit.onrender.com/)**
 
 ### Pipeline de CI/CD
 
