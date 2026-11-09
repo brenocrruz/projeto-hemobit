@@ -310,7 +310,7 @@ O Hemobit é um projeto integrador: cada disciplina contribui com uma parte esse
 - [Padrão de projeto aplicado (DTO)](docs/poo/padroes-projeto.md)
 
 ---
-### 🟠 Entrega 03 — Implementação de Histórias (Parte 2)
+### 🟢 Entrega 03 — Implementação de Histórias (Parte 2)
 
 **Data:** 19/10/2026
 
@@ -351,7 +351,7 @@ O Hemobit é um projeto integrador: cada disciplina contribui com uma parte esse
 
 #### 🖼️ Print da tela
 
-![Atendimento de solicitação com bolsas compatíveis](./docs/img/entrega-03-atendimento.png)
+![Atendimento de solicitação com bolsas compatíveis](./docs/poo/entrega-03-atendimento.png)
 
 **Documentação técnica (POO):**
 - [Modelo de domínio](docs/poo/modelo-dominio.md)
@@ -360,11 +360,52 @@ O Hemobit é um projeto integrador: cada disciplina contribui com uma parte esse
 
 ---
 
-### 🔴 Entrega 04 — Implementação de Histórias (Parte 3) e Apresentação Final
+### 🟠 Entrega 04 — Implementação de Histórias (Parte 3) e Apresentação Final
 
 **Data:** 09/11/2026
 
-> 🚧 Em desenvolvimento.
+#### 📌 Histórias implementadas
+
+> **HU04 — Registro e Entrada de Bolsas de Sangue no Estoque**
+>
+> **Como** funcionário do centro, **quero** dar entrada em novas bolsas no estoque, informando código, tipo do hemocomponente, grupo sanguíneo, data de coleta e data de validade, **para** manter a disponibilidade e o controle de validade atualizados.
+>
+> - **Entrega:** `POST /hemocomponentes`, formulário "Novo hemocomponente" da tela `/estoque` e `GET /hemocomponentes/estoque` (total disponível por tipo sanguíneo).
+> - **Regras:** código da bolsa obrigatório e único; validade não pode ser anterior à produção nem a hoje; quantidade maior que zero; a doação de origem precisa existir, e o grupo sanguíneo e a data de coleta vêm dela (se o grupo for informado, precisa ser o da doação).
+> - **Resultado:** bolsa gravada como `DISPONIVEL`, com o estoque do tipo sanguíneo incrementado e mostrado na tela logo após o cadastro.
+> - **Erros:** 400 "Não é permitido cadastrar bolsas com data de validade vencida!" e 409 "Já existe uma bolsa cadastrada com o código ...".
+
+> **HU05 — Consulta e Listagem do Estoque do Hemocentro**
+>
+> **Como** funcionário do centro ou gestor, **quero** visualizar e filtrar as bolsas armazenadas por tipo sanguíneo, tipo de componente e status, **para** tomar decisões operacionais rapidamente.
+>
+> - **Entrega:** `GET /hemocomponentes?tipoSanguineo=&status=&tipo=` (filtros opcionais e combináveis) e filtros da tela `/estoque`: grupo sanguíneo, hemocomponente, status, validade e busca por texto.
+> - **Regras:** com mais de um filtro, a bolsa precisa atender a todos; sem filtro, lista tudo ordenado pela validade (a que vence primeiro aparece primeiro).
+> - **Resultado:** somente as bolsas que atendem aos filtros. Sem resultado, a API devolve lista vazia e a tela exibe "Nenhum hemocomponente encontrado para os filtros selecionados.".
+> - **Erros:** 400 quando um filtro tem valor inválido.
+
+#### 🧪 Testes automatizados
+
+- `HemocomponenteEstoqueServiceTest`: entrada de bolsa (código, validade vencida, validade de hoje, campos obrigatórios, doação inexistente, grupo sanguíneo divergente, código repetido), resumo do estoque por tipo sanguíneo e consultas com filtros combinados, sem resultado e sem filtro.
+- `HemocomponenteControllerTest`: repasse dos filtros, 400 para filtro inválido e para validade vencida, 409 para código repetido e resumo do estoque.
+
+#### 🔀 Controle de Versão e Acompanhamento
+
+- Commits e Pull Requests na `main`, com a esteira de CI (`build`) obrigatória antes do merge: [histórico de commits](https://github.com/brenocrruz/projeto-hemobit/commits/main).
+- Issues/bug tracker do GitHub: [Ver issues](https://github.com/brenocrruz/projeto-hemobit/issues)
+
+#### 🎥 Screencasts
+
+- **Demonstração do sistema:** [▶️ Assistir](https://youtu.be/o-1bVjVld6Q)
+- **Explicação do código:** [▶️ Assistir](https://youtu.be/RYn7iZcb-mU)
+
+#### 🖼️ Print da tela
+
+![Consulta do estoque com filtros e entrada de bolsa](./docs/poo/entrega-04-estoque.png)
+
+**Documentação técnica (POO):**
+- [Modelo de domínio](docs/poo/modelo-dominio.md)
+- [Dados e roteiro de demonstração](docs/poo/demo-entrega-04.md)
 
 ---
 

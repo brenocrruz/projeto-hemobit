@@ -26,8 +26,9 @@
     <section class="stock-panel" aria-labelledby="lista-titulo">
       <div class="stock-panel-heading"><div><span class="section-kicker">RASTREABILIDADE</span><h2 id="lista-titulo">Hemocomponentes cadastrados</h2><p id="contagem-estoque" aria-live="polite">Consultando registros...</p></div><button type="button" class="stock-button secondary" id="atualizar-estoque">Atualizar dados</button></div>
       <div class="stock-filters">
-        <label class="search-field">Pesquisar<input id="pesquisa-estoque" type="search" placeholder="ID, tipo sanguíneo ou localização" /></label>
+        <label class="search-field">Pesquisar<input id="pesquisa-estoque" type="search" placeholder="ID, código, tipo sanguíneo ou localização" /></label>
         <label>Hemocomponente<select id="filtro-tipo"><option value="">Todos os tipos</option><option th:each="tipo : ${tipos}" th:value="${tipo}" th:text="${tipo}"></option></select></label>
+        <label>Grupo sanguíneo<select id="filtro-sanguineo"><option value="">Todos os grupos</option><option th:each="grupo : ${tiposSanguineos}" th:value="${grupo}" th:text="${grupo}"></option></select></label>
         <label>Status<select id="filtro-status"><option value="">Todos os status</option><option th:each="status : ${statusDisponiveis}" th:value="${status}" th:text="${status}"></option></select></label>
         <label>Validade<select id="filtro-validade"><option value="">Todas as datas</option><option value="vigente">Não vencidos</option><option value="vencido">Vencidos</option></select></label>
         <button type="button" class="stock-button secondary" id="limpar-filtros">Limpar</button>
@@ -36,20 +37,21 @@
       <div class="stock-table-wrap" role="region" aria-label="Tabela de hemocomponentes" tabindex="0">
         <table class="stock-table" aria-busy="true" id="tabela-estoque">
           <caption class="visually-hidden">Registros reais de hemocomponentes</caption>
-          <thead><tr><th scope="col">ID</th><th scope="col">Hemocomponente</th><th scope="col">Tipo sanguíneo</th><th scope="col">Quantidade</th><th scope="col">Validade</th><th scope="col">Status</th><th scope="col">Localização</th></tr></thead>
-          <tbody id="estoque-linhas"><tr><td colspan="7">Carregando hemocomponentes...</td></tr></tbody>
+          <thead><tr><th scope="col">ID</th><th scope="col">Código</th><th scope="col">Hemocomponente</th><th scope="col">Tipo sanguíneo</th><th scope="col">Quantidade</th><th scope="col">Validade</th><th scope="col">Status</th><th scope="col">Localização</th></tr></thead>
+          <tbody id="estoque-linhas"><tr><td colspan="8">Carregando hemocomponentes...</td></tr></tbody>
         </table>
       </div>
     </section>
     <section class="stock-panel" id="novo-hemocomponente" aria-labelledby="cadastro-titulo">
       <p><a class="stock-button secondary" href="/cadastros/doacoes">Cadastrar doação</a> <a class="stock-button secondary" href="/cadastros/doadores">Cadastrar doador</a> <a class="stock-button secondary" href="/cadastros/unidades-saude">Cadastrar unidade de saúde</a> <a class="stock-button secondary" href="/cadastros/unidades-coleta">Unidades de coleta para doações</a></p>
-      <div class="stock-panel-heading"><div><span class="section-kicker">ENTRADA DE ESTOQUE</span><h2 id="cadastro-titulo">Novo hemocomponente</h2><p>Vincule uma doação existente. O registro será criado como disponível.</p></div><span class="stock-tag">+ CADASTRO</span></div>
+      <div class="stock-panel-heading"><div><span class="section-kicker">ENTRADA DE ESTOQUE</span><h2 id="cadastro-titulo">Novo hemocomponente</h2><p>Informe o código da bolsa e vincule uma doação existente. O registro será criado como disponível.</p></div><span class="stock-tag">+ CADASTRO</span></div>
       <p id="estado-opcoes" class="stock-message" role="status">Carregando doações e localidades...</p>
       <button type="button" class="stock-button secondary" id="recarregar-opcoes" hidden>Tentar carregar opções novamente</button>
       <form id="form-hemocomponente">
         <fieldset id="campos-cadastro" disabled>
           <legend class="visually-hidden">Dados do novo hemocomponente</legend>
           <div class="stock-form-grid">
+            <label>Código da bolsa *<input type="text" name="codigo" required maxlength="40" autocomplete="off" placeholder="Ex.: B102030" /></label>
             <label>Tipo de hemocomponente *<select name="tipo" required><option value="">Selecione o tipo</option><option th:each="tipo : ${tipos}" th:value="${tipo}" th:text="${tipo}"></option></select></label>
             <label>Quantidade *<input type="number" name="quantidade" min="0" step="any" required placeholder="Maior que zero" /></label>
             <label>Data de produção *<input type="date" name="dataProducao" required /></label>
@@ -57,7 +59,7 @@
             <label>Doação *<select name="doacaoId" required aria-describedby="ajuda-doacao"><option value="">Selecione uma doação</option></select><small id="ajuda-doacao">Somente doações existentes. Identificação sem dados pessoais do doador.</small></label>
             <label>Localização <span class="optional">(opcional)</span><select name="localizacaoAtualId"><option value="">Sem localização</option></select></label>
           </div>
-          <div class="stock-form-footer"><small>* Campos obrigatórios. Validade igual ou posterior à produção.</small><button class="stock-button" type="submit" id="salvar-hemocomponente">Cadastrar hemocomponente</button></div>
+          <div class="stock-form-footer"><small>* Campos obrigatórios. Validade igual ou posterior à produção e ainda não vencida.</small><button class="stock-button" type="submit" id="salvar-hemocomponente">Cadastrar hemocomponente</button></div>
         </fieldset>
       </form>
       <p id="mensagem-cadastro" class="stock-message" role="status" aria-live="polite" hidden></p>

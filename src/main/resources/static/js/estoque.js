@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const salvar = document.getElementById("salvar-hemocomponente");
     const pesquisa = document.getElementById("pesquisa-estoque");
     const filtroTipo = document.getElementById("filtro-tipo");
+    const filtroSanguineo = document.getElementById("filtro-sanguineo");
     const filtroStatus = document.getElementById("filtro-status");
     const filtroValidade = document.getElementById("filtro-validade");
     const tipos = {
@@ -28,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let listaDisponivel = false;
     let opcoesDisponiveis = false;
     let enviando = false;
+    let consulta = 0;
 
     // Os valores dos selects vêm dos enums Java; aqui apenas traduzimos os rótulos.
     [form.elements.tipo, filtroTipo].forEach(select => {
@@ -37,6 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     Array.from(filtroStatus.options).forEach(option => {
         if (option.value) option.textContent = status[option.value] || option.value;
+    });
+    Array.from(filtroSanguineo.options).forEach(option => {
+        if (option.value) option.textContent = sangue(option.value);
     });
 
     function mensagem(id, texto, classe = "") {
@@ -77,10 +82,24 @@ document.addEventListener("DOMContentLoaded", () => {
     function estadoTabela(texto) {
         const linha = document.createElement("tr");
         const celula = document.createElement("td");
-        celula.colSpan = 7;
+        celula.colSpan = 8;
         celula.textContent = texto;
         linha.append(celula);
         linhas.replaceChildren(linha);
+    }
+
+    function filtrosAtivos() {
+        return Boolean(pesquisa.value.trim() || filtroTipo.value || filtroSanguineo.value
+            || filtroStatus.value || filtroValidade.value);
+    }
+
+    function urlLista() {
+        const parametros = new URLSearchParams();
+        if (filtroSanguineo.value) parametros.set("tipoSanguineo", filtroSanguineo.value);
+        if (filtroStatus.value) parametros.set("status", filtroStatus.value);
+        if (filtroTipo.value) parametros.set("tipo", filtroTipo.value);
+        const consultaTexto = parametros.toString();
+        return consultaTexto ? `/hemocomponentes?${consultaTexto}` : "/hemocomponentes";
     }
 
     function renderizar() {
@@ -88,17 +107,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const termo = normalizar(pesquisa.value.trim());
         const hoje = hojeLocal();
         const filtrados = registros.filter(item => {
-            const texto = [item.id, tipos[item.tipo] || item.tipo, tipoSanguineo(item),
+            const texto = [item.id, item.codigo || "", tipos[item.tipo] || item.tipo, tipoSanguineo(item),
                 status[item.status] || item.status, nomeLocal(item)].join(" ");
             return (!termo || normalizar(texto).includes(termo))
-                && (!filtroTipo.value || item.tipo === filtroTipo.value)
-                && (!filtroStatus.value || item.status === filtroStatus.value)
                 && (!filtroValidade.value || (item.dataValidade &&
                     (filtroValidade.value === "vencido" ? item.dataValidade < hoje : item.dataValidade >= hoje)));
         });
         contagem.textContent = `${filtrados.length.toLocaleString("pt-BR")} de ${registros.length.toLocaleString("pt-BR")} registros`;
         if (!filtrados.length) {
-            estadoTabela(registros.length ? "Nenhum registro corresponde aos filtros." : "Nenhum hemocomponente cadastrado. Use o formulário abaixo para começar.");
+            estadoTabela(filtrosAtivos() ? "Nenhum hemocomponente encontrado para os filtros selecionados." : "Nenhum hemocomponente cadastrado. Use o formulário abaixo para começar.");
             return;
         }
         const fragmento = document.createDocumentFragment();
@@ -112,6 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return td;
             }
             celula(`#${item.id}`);
+            celula(item.codigo || "—");
             celula(tipos[item.tipo] || item.tipo);
             const tag = document.createElement("span");
             tag.className = "blood-tag";
@@ -136,12 +154,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function carregarLista() {
+        const numero = ++consulta;
         listaDisponivel = false;
         tabela.setAttribute("aria-busy", "true");
         contagem.textContent = "Consultando registros...";
         estadoTabela("Carregando hemocomponentes...");
         try {
-            const dados = await obterJson("/hemocomponentes");
+            const dados = await obterJson(urlLista());
+            if (numero !== consulta) return true;
             if (!Array.isArray(dados) || dados.some(item => !item || item.id == null || !Number.isFinite(item.quantidade))) {
                 throw new Error("Formato de estoque inválido");
             }
@@ -150,12 +170,27 @@ document.addEventListener("DOMContentLoaded", () => {
             renderizar();
             return true;
         } catch (erro) {
+            if (numero !== consulta) return true;
             console.error("Erro ao carregar estoque:", erro);
             contagem.textContent = "Estoque indisponível";
             estadoTabela("Não foi possível carregar o estoque. Use Atualizar dados para tentar novamente.");
             return false;
         } finally {
-            tabela.setAttribute("aria-busy", "false");
+            if (numero === consulta) tabela.setAttribute("aria-busy", "false");
+        }
+    }
+
+    async function textoEstoque(criado) {
+        const base = criado && criado.codigo
+            ? `Bolsa ${criado.codigo} cadastrada com sucesso.` : "Hemocomponente cadastrado com sucesso.";
+        if (!criado || !criado.tipoSanguineo) return base;
+        try {
+            const resumo = await obterJson("/hemocomponentes/estoque");
+            const total = resumo[criado.tipoSanguineo];
+            return Number.isFinite(total)
+                ? `${base} Estoque disponível de ${sangue(criado.tipoSanguineo)}: ${total} bolsa(s).` : base;
+        } catch (erro) {
+            return base;
         }
     }
 
@@ -232,6 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
         validarDatas();
         if (!form.reportValidity()) return;
         const payload = {
+            codigo: form.elements.codigo.value.trim(),
             tipo: form.elements.tipo.value, quantidade,
             dataProducao: form.elements.dataProducao.value,
             dataValidade: form.elements.dataValidade.value,
@@ -250,15 +286,19 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!resposta.ok) {
                 const detalhe = await resposta.text();
                 // O contrato atual retorna texto para validações de negócio (400).
-                mensagem("mensagem-cadastro", resposta.status === 400 && detalhe && !detalhe.trim().startsWith("{") && !detalhe.trim().startsWith("<")
+                mensagem("mensagem-cadastro", (resposta.status === 400 || resposta.status === 409) && detalhe && !detalhe.trim().startsWith("{") && !detalhe.trim().startsWith("<")
                     ? detalhe : `Não foi possível cadastrar (HTTP ${resposta.status}). Verifique os dados e tente novamente.`, "error");
                 return;
             }
+            const criado = await resposta.json().catch(() => null);
             form.reset();
             validarDatas();
-            mensagem("mensagem-cadastro", "Hemocomponente cadastrado com sucesso.", "success");
             const atualizada = await carregarLista();
-            if (!atualizada) mensagem("mensagem-cadastro", "Cadastro realizado com sucesso. A lista não pôde ser atualizada; use Atualizar dados. Não repita o cadastro.", "success");
+            if (atualizada) {
+                mensagem("mensagem-cadastro", await textoEstoque(criado), "success");
+            } else {
+                mensagem("mensagem-cadastro", "Cadastro realizado com sucesso. A lista não pôde ser atualizada; use Atualizar dados. Não repita o cadastro.", "success");
+            }
         } catch (erro) {
             console.error("Erro no cadastro:", erro);
             mensagem("mensagem-cadastro", "Não foi possível confirmar o cadastro. Atualize a lista antes de tentar novamente para evitar duplicidade.", "error");
@@ -271,10 +311,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     pesquisa.addEventListener("input", renderizar);
-    [filtroTipo, filtroStatus, filtroValidade].forEach(select => select.addEventListener("change", renderizar));
+    filtroValidade.addEventListener("change", renderizar);
+    [filtroTipo, filtroSanguineo, filtroStatus].forEach(select => select.addEventListener("change", carregarLista));
     document.getElementById("limpar-filtros").addEventListener("click", () => {
-        [pesquisa, filtroTipo, filtroStatus, filtroValidade].forEach(input => { input.value = ""; });
-        renderizar();
+        [pesquisa, filtroTipo, filtroSanguineo, filtroStatus, filtroValidade].forEach(input => { input.value = ""; });
+        carregarLista();
     });
     atualizar.addEventListener("click", atualizarTudo);
     tentarOpcoes.addEventListener("click", atualizarTudo);

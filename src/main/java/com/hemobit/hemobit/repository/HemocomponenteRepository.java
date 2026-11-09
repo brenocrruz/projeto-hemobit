@@ -35,4 +35,6 @@ public interface HemocomponenteRepository extends JpaRepository<Hemocomponente, 
                                            @Param("hoje") LocalDate hoje);
 
     List<Hemocomponente> findBySolicitacaoIdOrderByDataValidadeAscIdAsc(Long solicitacaoId);
+
+    boolean existsByCodigo(String codigo);
 }

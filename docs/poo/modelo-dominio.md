@@ -8,7 +8,7 @@ Documento de referência do modelo de domínio da aplicação Hemobit (Rota Vita
 |---|---|
 | Doador | ✅ Implementada (CRUD completo) |
 | Doacao | ✅ Implementada |
-| Hemocomponente | ✅ Implementada (CRUD completo, com DTO) |
+| Hemocomponente | ✅ Implementada (CRUD completo, com DTO, código da bolsa, entrada com validação de validade, consulta com filtros e resumo do estoque) |
 | Localidade / UnidadeColeta | ✅ Implementada |
 | UnidadeSaude (= "Hospital") | ✅ Implementada (CRUD completo) |
 | Solicitacao | ✅ Implementada (CRUD completo, DTO, status com histórico e atendimento com ABO/Rh + FEFO) |
@@ -40,6 +40,7 @@ classDiagram
 
     class Hemocomponente {
         +Long id
+        +String codigo
         +TipoHemocomponente tipo
         +double quantidade
         +LocalDate dataProducao
@@ -199,6 +200,7 @@ Evento de coleta de sangue de um doador.
 ### Hemocomponente
 Unidade de sangue processada, pronta para uso ou distribuição. Equivale ao termo "Bolsa/Estoque" usado nos cards de entrega.
 - `id` (PK)
+- `codigo` (texto único, em maiúsculas — código da bolsa informado na entrada; bolsas antigas podem não ter)
 - `tipo` (enum `TipoHemocomponente`: CONCENTRADO_HEMACIAS, CONCENTRADO_PLAQUETAS, PLASMA_FRESCO_CONGELADO)
 - `quantidade`
 - `dataProducao`
@@ -207,6 +209,9 @@ Unidade de sangue processada, pronta para uso ou distribuição. Equivale ao ter
 - `doacao` (FK → Doacao, N:1)
 - `localizacaoAtual` (FK → Localidade, N:1) — onde o hemocomponente está fisicamente agora
 - `solicitacao` (FK → Solicitacao, N:1, opcional) — pedido para o qual a bolsa foi reservada
+- **Tipo sanguíneo:** não é coluna da bolsa; é obtido da doação (`doacao.doador.tipoSanguineo`) e exposto no DTO.
+- **Entrada de bolsa (HU04):** código obrigatório e único, validade não anterior à produção nem a hoje, quantidade maior que zero, doação existente.
+- **Consulta (HU05):** filtros combinados por tipo sanguíneo, status e tipo de hemocomponente, ordenados pela validade; resumo do estoque disponível por tipo sanguíneo.
 - **Implementação:** exposto via DTO (`HemocomponenteRequestDTO`/`HemocomponenteResponseDTO`) — ver `docs/poo/padroes-projeto.md`.
 
 ### Localidade (classe abstrata)
