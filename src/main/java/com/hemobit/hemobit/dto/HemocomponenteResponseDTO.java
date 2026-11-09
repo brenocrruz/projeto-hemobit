@@ -3,12 +3,15 @@ package com.hemobit.hemobit.dto;
 import com.hemobit.hemobit.domain.Hemocomponente;
 import com.hemobit.hemobit.domain.StatusHemocomponente;
 import com.hemobit.hemobit.domain.TipoHemocomponente;
+import com.hemobit.hemobit.domain.TipoSanguineo;
 
 import java.time.LocalDate;
 
 public class HemocomponenteResponseDTO {
 
     private Long id;
+    private String codigo;
+    private TipoSanguineo tipoSanguineo;
     private TipoHemocomponente tipo;
     private double quantidade;
     private LocalDate dataProducao;
@@ -19,6 +22,8 @@ public class HemocomponenteResponseDTO {
 
     public HemocomponenteResponseDTO(Hemocomponente hemocomponente) {
         this.id = hemocomponente.getId();
+        this.codigo = hemocomponente.getCodigo();
+        this.tipoSanguineo = hemocomponente.getTipoSanguineo();
         this.tipo = hemocomponente.getTipo();
         this.quantidade = hemocomponente.getQuantidade();
         this.dataProducao = hemocomponente.getDataProducao();
@@ -31,6 +36,14 @@ public class HemocomponenteResponseDTO {
 
     public Long getId() {
         return id;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public TipoSanguineo getTipoSanguineo() {
+        return tipoSanguineo;
     }
 
     public TipoHemocomponente getTipo() {

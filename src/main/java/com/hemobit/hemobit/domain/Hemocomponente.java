@@ -19,6 +19,9 @@ public class Hemocomponente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, length = 40)
+    private String codigo;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoHemocomponente tipo;
@@ -64,6 +67,21 @@ public class Hemocomponente {
 
     public Long getId() {
         return id;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+
+    public TipoSanguineo getTipoSanguineo() {
+        if (doacao == null || doacao.getDoador() == null) {
+            return null;
+        }
+        return doacao.getDoador().getTipoSanguineo();
     }
 
     public TipoHemocomponente getTipo() {
@@ -134,6 +152,7 @@ public class Hemocomponente {
     public String toString() {
         return "Hemocomponente{" +
                 "id=" + id +
+                ", codigo=" + codigo +
                 ", tipo=" + tipo +
                 ", quantidade=" + quantidade +
                 ", dataProducao=" + dataProducao +

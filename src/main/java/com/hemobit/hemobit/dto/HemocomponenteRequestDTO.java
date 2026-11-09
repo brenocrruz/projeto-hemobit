@@ -1,17 +1,36 @@
 package com.hemobit.hemobit.dto;
 
 import com.hemobit.hemobit.domain.TipoHemocomponente;
+import com.hemobit.hemobit.domain.TipoSanguineo;
 
 import java.time.LocalDate;
 
 public class HemocomponenteRequestDTO {
 
+    private String codigo;
+    private TipoSanguineo tipoSanguineo;
     private TipoHemocomponente tipo;
     private double quantidade;
     private LocalDate dataProducao;
     private LocalDate dataValidade;
     private Long doacaoId;
     private Long localizacaoAtualId;
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+
+    public TipoSanguineo getTipoSanguineo() {
+        return tipoSanguineo;
+    }
+
+    public void setTipoSanguineo(TipoSanguineo tipoSanguineo) {
+        this.tipoSanguineo = tipoSanguineo;
+    }
 
     public TipoHemocomponente getTipo() {
         return tipo;

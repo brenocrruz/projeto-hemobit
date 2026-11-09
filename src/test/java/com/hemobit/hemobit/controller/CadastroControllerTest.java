@@ -139,8 +139,8 @@ class CadastroControllerTest {
                 .andExpect(jsonPath("$.doacoes[0].tipoSanguineo").value("O_POSITIVO"))
                 .andExpect(jsonPath("$.localidades[0].id").value(1));
         mvc.perform(post("/hemocomponentes").contentType("application/json").content("""
-                {"tipo":"CONCENTRADO_HEMACIAS","quantidade":100,"dataProducao":"2026-10-21",
-                 "dataValidade":"2026-11-21","doacaoId":1,"localizacaoAtualId":1}
+                {"codigo":"B100001","tipo":"CONCENTRADO_HEMACIAS","quantidade":100,"dataProducao":"2026-10-21",
+                 "dataValidade":"2099-12-31","doacaoId":1,"localizacaoAtualId":1}
                 """))
                 .andExpect(status().isCreated()).andExpect(jsonPath("$.status").value("DISPONIVEL"));
         mvc.perform(get("/hemocomponentes"))

@@ -21,10 +21,11 @@ class HemocomponenteServiceTest {
         var localidades = mock(LocalidadeRepository.class);
         var service = new HemocomponenteService(hemocomponentes, doacoes, localidades);
         var dto = new HemocomponenteRequestDTO();
+        dto.setCodigo("B000001");
         dto.setTipo(TipoHemocomponente.CONCENTRADO_HEMACIAS);
         dto.setQuantidade(100);
-        dto.setDataProducao(LocalDate.of(2026, 10, 20));
-        dto.setDataValidade(LocalDate.of(2026, 11, 20));
+        dto.setDataProducao(LocalDate.now().minusDays(1));
+        dto.setDataValidade(LocalDate.now().plusDays(30));
         dto.setDoacaoId(999L);
         when(doacoes.findById(999L)).thenReturn(Optional.empty());
         assertThrows(IllegalArgumentException.class, () -> service.criar(dto));
