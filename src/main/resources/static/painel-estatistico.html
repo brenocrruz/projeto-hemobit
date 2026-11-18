@@ -147,6 +147,11 @@
       <h2>Análise probabilística (U2)</h2>
       <p class="muted" id="premissas">Carregando…</p>
       <div class="grid" id="cardsRisco"></div>
+      <div class="card" style="margin-top: 16px">
+        <h3>Leitura gerencial e ações sugeridas</h3>
+        <p class="muted">As recomendações abaixo são regras operacionais didáticas derivadas dos indicadores; não substituem avaliação técnica.</p>
+        <div id="acoesGerenciais"></div>
+      </div>
       <div class="grid2" style="margin-top: 16px">
         <div class="card">
           <h3>Probabilidade de desabastecimento (%)</h3>
@@ -257,6 +262,8 @@
                 "Demanda média: " +
                 fmt(d.demandaDiaria) +
                 " bolsas/dia<br>" +
+                "Demanda esperada no horizonte (λ): " +
+                fmt(d.lambdaHorizonte) + " bolsas<br>" +
                 "Descarte: " +
                 d.bolsasVencidas +
                 " de " +
@@ -266,6 +273,21 @@
                 "%)</p></div>",
             )
             .join("");
+          document.getElementById("acoesGerenciais").innerHTML = dados.map((d) => {
+            const nome = NOMES[d.tipo] || d.tipo;
+            let acao = d.nivelRisco === "ALTO"
+              ? "Priorizar reposição e coleta; atender primeiro solicitações de emergência e urgência e reavaliar pedidos de rotina."
+              : d.nivelRisco === "MEDIO"
+                ? "Programar reposição dentro do horizonte de 3 dias e acompanhar o estoque diariamente."
+                : "Manter o estoque atual e monitorar a demanda; evitar excesso que possa elevar perdas por vencimento.";
+            if (d.taxaDescartePct >= 10) {
+              acao += " A taxa de descarte está em 10% ou mais: revisar FEFO e o volume de coleta deste tipo.";
+            } else if (d.bolsasVencidas > 0) {
+              acao += " Há bolsas vencidas/descartadas: conferir a aplicação da política FEFO.";
+            }
+            return "<p><strong>" + nome + " — risco " + d.nivelRisco + ":</strong> " + acao +
+              " <span class=\"muted\">(" + fmt(d.probDesabastecimentoPct) + "% de risco; descarte " + fmt(d.taxaDescartePct) + "%).</span></p>";
+          }).join("");
           const nomes = dados.map((d) => NOMES[d.tipo] || d.tipo);
           barra(
             "chProb",
