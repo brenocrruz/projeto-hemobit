@@ -4,6 +4,12 @@
 > Painel: `/painel-estatistico.html` (integrado à aplicação Spring Boot)
 
 ## 1. Objetivo
+# Análise Probabilística — Desabastecimento e Descarte
+
+> Disciplina: Estatística e Probabilidade (EST) · Unidade 2 · Projeto Hemobit
+> Painel: `/painel-estatistico.html` (integrado à aplicação Spring Boot)
+
+## 1. Objetivo
 
 Apoiar decisões de estoque e priorização do centro de hemocomponentes respondendo a duas perguntas:
 
