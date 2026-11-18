@@ -8,6 +8,7 @@ import com.hemobit.hemobit.domain.TipoHemocomponente;
 import com.hemobit.hemobit.domain.TipoSanguineo;
 import com.hemobit.hemobit.dto.HemocomponenteRequestDTO;
 import com.hemobit.hemobit.dto.HemocomponenteResponseDTO;
+import com.hemobit.hemobit.dto.TipoHemocomponenteDTO;
 import com.hemobit.hemobit.repository.DoacaoRepository;
 import com.hemobit.hemobit.repository.HemocomponenteRepository;
 import com.hemobit.hemobit.repository.LocalidadeRepository;
@@ -20,6 +21,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -57,6 +59,12 @@ public class HemocomponenteService {
                 .filter(h -> tipo == null || h.getTipo() == tipo)
                 .sorted(Comparator.comparing(Hemocomponente::getDataValidade).thenComparing(Hemocomponente::getId))
                 .map(HemocomponenteResponseDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<TipoHemocomponenteDTO> listarTipos() {
+        return Arrays.stream(TipoHemocomponente.values())
+                .map(TipoHemocomponenteDTO::new)
                 .collect(Collectors.toList());
     }
 
@@ -132,22 +140,31 @@ public class HemocomponenteService {
     }
     
     public HemocomponenteResponseDTO atualizar(Long id, HemocomponenteRequestDTO dto) {
-    Hemocomponente existente = hemocomponenteRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Hemocomponente não encontrado."));
+        Hemocomponente existente = hemocomponenteRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Hemocomponente não encontrado."));
 
-    if (dto.getDataValidade() == null || dto.getDataProducao() == null
-            || dto.getDataValidade().isBefore(dto.getDataProducao())) {
-        throw new IllegalArgumentException("Data de validade não pode ser anterior à data de produção.");
+        if (dto.getTipo() == null) {
+            throw new IllegalArgumentException("Informe o tipo do hemocomponente.");
+        }
+        if (dto.getDataProducao() == null || dto.getDataValidade() == null) {
+            throw new IllegalArgumentException("Informe as datas de produção e de validade.");
+        }
+        if (dto.getDataValidade().isBefore(dto.getDataProducao())) {
+            throw new IllegalArgumentException("Data de validade não pode ser anterior à data de produção.");
+        }
+        if (!dto.getDataValidade().equals(existente.getDataValidade())
+                && dto.getDataValidade().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Não é permitido cadastrar bolsas com data de validade vencida!");
+        }
+        if (dto.getQuantidade() <= 0) {
+            throw new IllegalArgumentException("Quantidade deve ser maior que zero.");
+        }
+
+        existente.setTipo(dto.getTipo());
+        existente.setQuantidade(dto.getQuantidade());
+        existente.setDataProducao(dto.getDataProducao());
+        existente.setDataValidade(dto.getDataValidade());
+
+        return new HemocomponenteResponseDTO(hemocomponenteRepository.save(existente));
     }
-    if (dto.getQuantidade() <= 0) {
-        throw new IllegalArgumentException("Quantidade deve ser maior que zero.");
-    }
-
-    existente.setTipo(dto.getTipo());
-    existente.setQuantidade(dto.getQuantidade());
-    existente.setDataProducao(dto.getDataProducao());
-    existente.setDataValidade(dto.getDataValidade());
-
-    return new HemocomponenteResponseDTO(hemocomponenteRepository.save(existente));
-}
 }

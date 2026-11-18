@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rotas de entrega | Hemobit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css" />
+  <link rel="stylesheet" th:href="@{/css/estoque.css}" href="/css/estoque.css" />
+  <link rel="stylesheet" th:href="@{/css/jornada.css}" href="/css/jornada.css" />
+  <script th:src="@{/js/rotas.js}" src="/js/rotas.js" defer></script>
+</head>
+<body>
+  <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+  <main class="main-content">
+    <div th:replace="~{fragments/header :: header('Rotas de entrega', 'LOGÍSTICA / DISTRIBUIÇÃO')}"></div>
+    <section class="stock-hero">
+      <div><span class="section-kicker">HEMOBIT / ROTAS</span><h2>O caminho da bolsa,<br /><em>do hemocentro ao paciente.</em></h2><p>Visualize as rotas cadastradas entre hemocentros, unidades de coleta e unidades de saúde, com distância e tempo estimado.</p></div>
+      <a class="stock-button" href="#nova-rota">+ Nova rota</a>
+      <span class="stock-pixels" aria-hidden="true">▪ ▪<br />▪ ▪ ▪<br />▪ ▪</span>
+    </section>
+    <noscript><p class="stock-message error">Ative o JavaScript para consultar e cadastrar rotas.</p></noscript>
+    <section class="stock-panel" aria-labelledby="rotas-titulo">
+      <div class="stock-panel-heading"><div><span class="section-kicker">MAPA DE ROTAS</span><h2 id="rotas-titulo">Rotas cadastradas</h2><p id="contagem-rotas" aria-live="polite">Consultando rotas...</p></div><button type="button" class="stock-button secondary" id="atualizar-rotas">Atualizar dados</button></div>
+      <div id="resumo-rotas" class="resumo-rotas" hidden></div>
+      <div id="lista-rotas" class="lista-rotas" aria-live="polite"></div>
+    </section>
+    <section class="stock-panel" id="nova-rota" aria-labelledby="cadastro-titulo">
+      <div class="stock-panel-heading"><div><span class="section-kicker">NOVA ROTA</span><h2 id="cadastro-titulo">Cadastrar rota</h2><p>Escolha duas localidades diferentes e informe a distância e o tempo estimado.</p></div><span class="stock-tag">+ CADASTRO</span></div>
+      <p id="estado-localidades" class="stock-message" role="status">Carregando localidades...</p>
+      <form id="form-rota">
+        <fieldset id="campos-rota" disabled>
+          <legend class="visually-hidden">Dados da nova rota</legend>
+          <div class="stock-form-grid">
+            <label>Origem *<select name="origemId" required><option value="">Selecione a origem</option></select></label>
+            <label>Destino *<select name="destinoId" required><option value="">Selecione o destino</option></select></label>
+            <label>Distância (km) *<input type="number" name="distancia" min="0" step="any" required placeholder="Maior que zero" /></label>
+            <label>Tempo estimado (minutos) *<input type="number" name="tempoEstimado" min="1" step="1" required placeholder="Inteiro, no mínimo 1" /></label>
+          </div>
+          <div class="stock-form-footer"><small>* Campos obrigatórios. Origem e destino não podem ser o mesmo local.</small><button class="stock-button" type="submit" id="salvar-rota">Cadastrar rota</button></div>
+        </fieldset>
+      </form>
+      <p id="mensagem-cadastro" class="stock-message" role="status" aria-live="polite" hidden></p>
+    </section>
+    <footer class="main-footer"><span>© Hemobit · Rotas de entrega</span><span>HEALTH × DATA</span></footer>
+  </main>
+</body>
+</html>
