@@ -51,18 +51,16 @@ public class EstatisticaService {
     }
 
     public IndicadoresDTO gerarRelatorioIndicador(String nome, List<Double> dados) {
-        Map<Double, Long> frequencias = dados == null ? Map.of() : dados.stream()
-                .collect(Collectors.groupingBy(v -> v, Collectors.counting()));
         return new IndicadoresDTO(
                 nome,
                 calcularMedia(dados),
                 calcularMediana(dados),
                 calcularModa(dados),
                 calcularVariancia(dados),
-                calcularDesvioPadrao(dados),
-                frequencias
+                calcularDesvioPadrao(dados)
         );
     }
+
     public double calcularProbabilidadePoisson(double lambda, int k) {
         return (Math.pow(lambda, k) * Math.exp(-lambda)) / fatorial(k);
     }
