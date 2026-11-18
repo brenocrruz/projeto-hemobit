@@ -38,3 +38,14 @@ public interface HemocomponenteRepository extends JpaRepository<Hemocomponente, 
 
     boolean existsByCodigo(String codigo);
 }
+
+List<Hemocomponente> findByStatusAndDataValidadeBetween(
+    StatusHemocomponente status,
+    LocalDate inicio,
+    LocalDate fim
+);
+
+List<Hemocomponente> findByStatusAndDataValidadeBefore(
+    StatusHemocomponente status,
+    LocalDate data
+);
