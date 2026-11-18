@@ -5,10 +5,12 @@ import com.hemobit.hemobit.domain.TipoHemocomponente;
 import com.hemobit.hemobit.domain.TipoSanguineo;
 import com.hemobit.hemobit.dto.HemocomponenteRequestDTO;
 import com.hemobit.hemobit.dto.HemocomponenteResponseDTO;
+import com.hemobit.hemobit.dto.TipoHemocomponenteDTO;
 import com.hemobit.hemobit.service.HemocomponenteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +33,11 @@ public class HemocomponenteController {
             @RequestParam(required = false) StatusHemocomponente status,
             @RequestParam(required = false) TipoHemocomponente tipo) {
         return hemocomponenteService.listar(tipoSanguineo, status, tipo);
+    }
+
+    @GetMapping("/tipos")
+    public List<TipoHemocomponenteDTO> listarTipos() {
+        return hemocomponenteService.listarTipos();
     }
 
     @GetMapping("/estoque")
@@ -59,6 +66,15 @@ public class HemocomponenteController {
         hemocomponenteService.deletar(id);
         return ResponseEntity.noContent().build();
     }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> tratarCorpoInvalido(HttpMessageNotReadableException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                "Corpo da requisição inválido: confira o tipo do hemocomponente, o tipo sanguíneo "
+                        + "(A_POSITIVO, A_NEGATIVO, B_POSITIVO, B_NEGATIVO, AB_POSITIVO, AB_NEGATIVO, "
+                        + "O_POSITIVO, O_NEGATIVO) e as datas (AAAA-MM-DD).");
+    }
+
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<String> tratarConflito(IllegalStateException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
