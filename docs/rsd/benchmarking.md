@@ -136,3 +136,55 @@ NETEM=1 ROTULO=docker-local scripts/benchmark-rede.sh http://localhost:8080
 ```
 
 Saídas em `docs/rsd/benchmark-resultados/<ROTULO>/`: `latencia.csv`, `carga.csv`, `ingestao.csv`, `vazao.csv`, `netem-<cenário>.csv` (dados brutos), `metricas-painel.json`, `netem-<cenário>.json` (snapshots do painel) e `resumo.md`. O `NETEM=1` exige o `compose.yaml` local (usa `docker compose exec` no Nginx). Sem ele, o script funciona contra qualquer URL. O painel ao vivo fica em `http://localhost:8080/rede`.
+
+
+## 6. Consolidação final e rastreabilidade
+
+### 6.1 Síntese executiva
+
+O conjunto de medições documentado neste relatório cobre o cenário nominal e dois perfis de degradação aplicados com `tc netem` no caminho Nginx → API. No ambiente local medido, a aplicação manteve respostas HTTP sem 5xx nos resultados registrados. A degradação elevou RTT e jitter de forma coerente com os perfis configurados, demonstrando que a camada TCP recupera parte da perda de pacotes por retransmissão, com custo de latência.
+
+| Cenário | Perfil aplicado | Resultado documentado | Leitura operacional |
+|---|---|---|---|
+| Nominal | Sem `netem` | p95 da sonda 5,37 ms; p95 da telemetria 10,1 ms; 0% de perda observada; 0 respostas 5xx | Dentro dos limites definidos |
+| Degradado | 50 ms ± 25 ms, distribuição normal, 2% de perda | p95 da sonda 125,56 ms; p95 da telemetria 219,9 ms; jitter de telemetria 57,1 ms | Atenção para latência e jitter |
+| Crítico | 200 ms ± 100 ms, distribuição normal, 10% de perda | p95 da sonda 747,37 ms; p95 da telemetria 1.284,7 ms; jitter 331,1 ms | Crítico; não atende aos limites de latência/jitter |
+
+Os valores acima são os resultados já registrados nos arquivos CSV/JSON e no resumo do ambiente `docker-local`; não representam uma nova execução feita durante a consolidação deste documento. Os dados brutos permanecem preservados em `benchmark-resultados/docker-local/`.
+
+### 6.2 Critérios de aceite
+
+- [x] Cenário nominal registrado com latência p95 abaixo de 200 ms, perda observada abaixo de 1% e nenhuma resposta 5xx.
+- [x] Cenários degradado e crítico registrados para caracterizar o comportamento sob falhas de enlace.
+- [x] Métricas e limites do painel documentados no mesmo relatório.
+- [x] Dados brutos CSV/JSON preservados para auditoria.
+- [ ] Repetir o benchmark no ambiente público de destino antes do corte de produção.
+- [ ] Manter p95 abaixo de 500 ms, perda abaixo de 1% e 0 respostas 5xx por 24 horas no ambiente de nuvem.
+
+### 6.3 Reexecução reproduzível
+
+No ambiente local com Docker Compose, execute:
+
+```bash
+cp .env.example .env
+# Preencha as senhas locais no arquivo .env
+docker compose up -d --build
+docker compose ps
+curl -fsS http://localhost:8080/api/v1/rede/ping
+ROTULO=docker-local scripts/benchmark-rede.sh http://localhost:8080
+```
+
+Para repetir os cenários de degradação, execute em ambiente Linux/Docker com permissão `NET_ADMIN` no serviço Nginx:
+
+```bash
+NETEM=1 ROTULO=docker-local scripts/benchmark-rede.sh http://localhost:8080
+```
+
+O script salva CSVs, snapshots JSON e `resumo.md` no diretório indicado por `SAIDA` (por padrão `docs/rsd/benchmark-resultados/<rótulo>/`). Antes de substituir os resultados versionados, arquive a execução anterior ou use outro `ROTULO`.
+
+### 6.4 Limitações e conclusão
+
+- A linha de base é de ambiente local; não deve ser apresentada como medição de latência de rede móvel ou de produção.
+- `tc netem` degrada o enlace entre Nginx e API, sendo uma aproximação controlada de condições adversas, não uma reprodução completa de uma rede celular.
+- A conclusão de capacidade é válida para a carga sintética descrita. A expansão para dezenas/centenas de veículos exige nova execução com a taxa real de envio e hardware do destino.
+- A consolidação documental está concluída; a validação de nuvem continua sendo um critério externo de aceite e não pode ser marcada como concluída sem acesso ao ambiente implantado.
