@@ -229,7 +229,7 @@ O Hemobit é um projeto integrador: cada disciplina contribui com uma parte esse
 |------------|------------------|-----------|
 | **Programação Orientada a Objetos (POO)** | Constrói a aplicação web em Java/Spring Boot, modela o domínio e implementa as regras de negócio. | [Modelo de Domínio](./docs/poo/modelo-dominio.md) |
 | **Algoritmos e Estruturas de Dados (AED)** | Projeta e implementa os algoritmos de roteirização, compatibilidade ABO/Rh e priorização FEFO. | [Escopo do Grafo](./docs/aed/escopo-grafo.md) |
-| **Estatística e Probabilidade (EST)** | Transforma os dados de estoque, demanda e operação em indicadores e análises. | Em desenvolvimento |
+| **Estatística e Probabilidade (EST)** | Calcula indicadores descritivos e estima risco de desabastecimento por Poisson e taxa de descarte por vencimento. | [Modelo probabilístico e interpretação gerencial](./docs/est/analise-probabilistica.md) · Painel `/painel-estatistico.html` |
 | **Infraestrutura de Software (SO)** | Garante desempenho, concorrência, CI/CD e operação em nuvem. | [Pipeline CI/CD](./.github/workflows/ci.yml) |
 | **Infraestrutura de Comunicação (RSD)** | Define a arquitetura de comunicação entre unidades e a telemetria dos veículos. | [Contratos de API](./docs/rsd/contratos-api.md) · [Benchmarking](./docs/rsd/benchmarking.md) · [Plano de implantação](./docs/rsd/plano-implantacao.md) |
 
@@ -419,6 +419,23 @@ O Hemobit é um projeto integrador: cada disciplina contribui com uma parte esse
 - [Dados e roteiro de demonstração](docs/poo/demo-entrega-04.md)
 
 ---
+
+---
+
+## 📊 Entregas — Estatística e Probabilidade (EST)
+
+### U1 + U2 · Painel estatístico consolidado
+
+O painel único está disponível em **`/painel-estatistico.html`** e reúne os indicadores descritivos da U1 com a análise probabilística da U2. O acesso também está disponível pelo menu lateral em **Painel estatístico**.
+
+- **U1 — descritiva:** estoque por tipo sanguíneo, demanda por hospital e estatísticas dos tempos de atendimento (média, mediana, moda, variância e desvio padrão).
+- **U2 — desabastecimento:** estima a demanda diária usando os últimos 30 dias e projeta 3 dias por uma distribuição de Poisson. O risco é classificado como ALTO (≥ 50%), MÉDIO (≥ 20% e < 50%) ou BAIXO (< 20%).
+- **U2 — descarte:** calcula a proporção de bolsas vencidas/descartadas em relação ao total de bolsas de cada tipo.
+- **Leitura gerencial:** o painel apresenta ações sugeridas conforme o risco e sinaliza atenção à política FEFO quando há descarte.
+
+**API:** `GET /api/analise/probabilistica`. Os indicadores são calculados a partir dos registros do banco; cada registro de `Hemocomponente` representa uma bolsa. Os parâmetros, fórmulas, exemplos e limitações estão documentados em [`docs/est/analise-probabilistica.md`](./docs/est/analise-probabilistica.md).
+
+> Os dados são sintéticos e os resultados têm finalidade acadêmica. As recomendações são apoio operacional didático, não orientação clínica.
 
 ---
 
