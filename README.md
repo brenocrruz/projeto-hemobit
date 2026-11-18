@@ -384,10 +384,21 @@ O Hemobit é um projeto integrador: cada disciplina contribui com uma parte esse
 > - **Resultado:** somente as bolsas que atendem aos filtros. Sem resultado, a API devolve lista vazia e a tela exibe "Nenhum hemocomponente encontrado para os filtros selecionados.".
 > - **Erros:** 400 quando um filtro tem valor inválido.
 
+> **HU03 — Cadastro do Acervo de Hemocomponentes**
+>
+> **Como** funcionário do centro, **quero** cadastrar e manter o acervo de hemocomponentes com tipo sanguíneo válido e data de validade, **para** que o estoque só contenha bolsas utilizáveis.
+>
+> - **Entrega:** `GET /hemocomponentes/tipos` (catálogo dos tipos de hemocomponente, com nome e prazo de validade de referência), `POST /hemocomponentes` e `PUT /hemocomponentes/{id}` com as mesmas regras de validade.
+> - **Regras:** o tipo sanguíneo precisa ser um dos oito valores ABO/Rh (A, B, AB e O, positivo ou negativo) e, quando informado, confere com o da doação; a data de validade é obrigatória e não pode ser anterior à produção; bolsa com validade anterior a hoje não pode ser cadastrada, nem ter a validade alterada para uma data vencida na edição (editar outros dados de uma bolsa já vencida continua permitido).
+> - **Resultado:** o acervo só recebe bolsas com tipo sanguíneo e validade válidos, e o catálogo mostra os tipos aceitos.
+> - **Erros:** 400 "Corpo da requisição inválido: confira o tipo do hemocomponente, o tipo sanguíneo (...) e as datas (AAAA-MM-DD)." para valor fora da lista, e 400 "Não é permitido cadastrar bolsas com data de validade vencida!" para validade vencida.
+
 #### 🧪 Testes automatizados
 
 - `HemocomponenteEstoqueServiceTest`: entrada de bolsa (código, validade vencida, validade de hoje, campos obrigatórios, doação inexistente, grupo sanguíneo divergente, código repetido), resumo do estoque por tipo sanguíneo e consultas com filtros combinados, sem resultado e sem filtro.
 - `HemocomponenteControllerTest`: repasse dos filtros, 400 para filtro inválido e para validade vencida, 409 para código repetido e resumo do estoque.
+- `HemocomponenteAcervoServiceTest`: catálogo de tipos e regras de validade na edição (validade vencida, anterior à produção, tipo e datas obrigatórios, bolsa já vencida sem mudar a validade e edição válida).
+- `HemocomponenteAcervoControllerTest`: catálogo em `GET /hemocomponentes/tipos` e 400 com mensagem clara para tipo sanguíneo inválido no cadastro e na edição.
 
 #### 🔀 Controle de Versão e Acompanhamento
 
@@ -487,9 +498,9 @@ A IA foi utilizada para rascunhar o `Dockerfile`, o `compose.yaml`, auxiliar na 
 - [x] Tarefa 3: Registrar no histórico quem alterou o status e quando.
 
 **HU03 — Cadastro do Acervo de Hemocomponentes**
-- [ ] Tarefa 1: Validar se o tipo sanguíneo (ABO/Rh) é válido.
-- [ ] Tarefa 2: Salvar a data de validade da bolsa.
-- [ ] Tarefa 3: Impedir o cadastro de bolsas já vencidas.
+- [x] Tarefa 1: Validar se o tipo sanguíneo (ABO/Rh) é válido.
+- [x] Tarefa 2: Salvar a data de validade da bolsa.
+- [x] Tarefa 3: Impedir o cadastro de bolsas já vencidas.
 
 #### 🥒 Cenário de Aceitação (BDD / Gherkin) - HU06
 
