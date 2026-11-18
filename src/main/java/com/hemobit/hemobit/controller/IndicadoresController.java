@@ -87,7 +87,20 @@ public class IndicadoresController {
         resposta.put("estatisticas", estatisticas);
         return ResponseEntity.ok(resposta);
     }
-
+        @GetMapping("/probabilidade-desabastecimento")
+    public ResponseEntity> getProbabilidadeDesabastecimento() {
+        Map<String, Object> resposta = new LinkedHashMap<>();
+        double lambda = 4.5; 
+        Map<String, Double> probabilidades = new LinkedHashMap<>();
+        for (int k = 0; k <= 8; k++) {
+            double prob = estatisticaService.calcularProbabilidadePoisson(lambda, k);
+            probabilidades.put(k + " requisições", Math.round(prob * 1000.0) / 10.0);
+            }
+            resposta.put("indicador", "Probabilidade de Demanda Diária (Poisson)");
+            resposta.put("taxaMediaLambda", lambda);
+            resposta.put("probabilidadesPercentual", probabilidades);
+            return ResponseEntity.ok(resposta);
+        }
     @GetMapping("/tempos-atendimento")
     public ResponseEntity<IndicadoresDTO> getTemposAtendimento() {
         List<Double> tempos = Arrays.asList(7.5, 22.5, 13.5, 33.0, 4.5, 27.0);
