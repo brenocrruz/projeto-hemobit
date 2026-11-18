@@ -26,7 +26,7 @@ public class IndicadoresController {
     }
 
     @GetMapping("/estoque-real")
-    public ResponseEntity<Map<String, Object>> getEstoqueReal() {
+    public ResponseEntity> getEstoqueReal() {
         LocalDate hoje = LocalDate.now();
         Map<TipoSanguineo, Long> totais = new EnumMap<>(TipoSanguineo.class);
         hemocomponenteRepository.contarEstoquePorTipo(StatusHemocomponente.DISPONIVEL, hoje)
@@ -49,7 +49,7 @@ public class IndicadoresController {
     }
 
     @GetMapping("/estoque-tipo")
-    public ResponseEntity<Map<String, Object>> getEstoquePorTipo() {
+    public ResponseEntity> getEstoquePorTipo() {
         Map<String, Object> resposta = new LinkedHashMap<>();
         Map<String, Long> estoque = new LinkedHashMap<>();
         estoque.put("O-", 150L);
@@ -70,7 +70,7 @@ public class IndicadoresController {
     }
 
     @GetMapping("/demanda-hospital")
-    public ResponseEntity<Map<String, Object>> getDemandaPorHospital() {
+    public ResponseEntity> getDemandaPorHospital() {
         Map<String, Object> resposta = new LinkedHashMap<>();
         Map<String, Long> demanda = new LinkedHashMap<>();
         demanda.put("Hospital 01", 120L);
@@ -92,5 +92,22 @@ public class IndicadoresController {
     public ResponseEntity<IndicadoresDTO> getTemposAtendimento() {
         List<Double> tempos = Arrays.asList(7.5, 22.5, 13.5, 33.0, 4.5, 27.0);
         return ResponseEntity.ok(estatisticaService.gerarRelatorioIndicador("Tempos de Atendimento (min)", tempos));
+    }
+
+    @GetMapping("/probabilidade-desabastecimento")
+    public ResponseEntity> getProbabilidadeDesabastecimento() {
+        Map<String, Object> resposta = new LinkedHashMap<>();
+        double lambda = 4.5; 
+
+        Map<String, Double> probabilidades = new LinkedHashMap<>();
+        for (int k = 0; k <= 8; k++) {
+            double prob = estatisticaService.calcularProbabilidadePoisson(lambda, k);
+            probabilidades.put(k + " requisições", Math.round(prob * 1000.0) / 10.0); 
+        }
+
+        resposta.put("indicador", "Probabilidade de Demanda Diária (Poisson)");
+        resposta.put("taxaMediaLambda", lambda);
+        resposta.put("probabilidadesPercentual", probabilidades);
+        return ResponseEntity.ok(resposta);
     }
 }
