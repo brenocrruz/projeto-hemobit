@@ -66,12 +66,15 @@ taxa de descarte (%) = bolsas vencidas ÷ total de bolsas do tipo × 100
 
 Os exemplos abaixo são **ilustrativos** e correspondem aos testes automatizados de `EstatisticaUtilTest`.
 
-**Exemplo A — risco alto.** Demanda de 100 bolsas em 10 dias, horizonte de 3 dias:
-λ = 100 ÷ 10 × 3 = **10**. Com estoque S = 8: P(D > 8) = 1 − P(D ≤ 8) ≈ **66,7%** → risco ALTO.
+**Exemplo A — risco alto.** Demanda de 100 bolsas em 30 dias, horizonte de 3 dias:
+λ = 100 ÷ 30 × 3 = **10**. Com estoque S = 8: P(D > 8) = 1 − P(D ≤ 8) ≈ **66,7%** → risco ALTO.
 
 **Exemplo B — sem estoque.** λ = 2 e S = 0: P(D > 0) = 1 − e^(−2) ≈ **86,5%**.
 
-**Exemplo C — descarte.** 14 bolsas vencidas em 200: 14 ÷ 200 × 100 = **7%**.
+**Exemplo C — demanda projetada.** Demanda de 100 bolsas em 10 dias, horizonte de 3 dias:
+λ = 100 ÷ 10 × 3 = **30 bolsas esperadas**. O valor λ é a média da demanda no horizonte, não uma probabilidade. A probabilidade de falta depende também do estoque S e deve ser calculada pela cauda da distribuição de Poisson.
+
+**Exemplo D — descarte.** 14 bolsas vencidas em 200: 14 ÷ 200 × 100 = **7%**.
 
 ## 5. Resultados com os dados do projeto
 
@@ -92,7 +95,8 @@ Regras de decisão propostas, para serem aplicadas sobre os números da seção 
 | Risco **ALTO** | Priorizar coleta e reposição do tipo; atender primeiro solicitações de emergência e urgência; reavaliar pedidos de rotina. |
 | Risco **MÉDIO** | Programar reposição dentro do horizonte e acompanhar o estoque diariamente. |
 | Risco **BAIXO** | Manter o estoque atual; atenção ao descarte, pois estoque excessivo aumenta perdas. |
-| Descarte elevado | Reforçar a política FEFO (primeiro a vencer, primeiro a sair) e revisar o volume de coleta daquele tipo. |
+| Descarte ≥ 10% (limiar operacional sugerido) | Reforçar a política FEFO (primeiro a vencer, primeiro a sair) e revisar o volume de coleta daquele tipo. |
+| Há bolsas vencidas/descartadas, mesmo abaixo de 10% | Conferir a aplicação de FEFO e a rotina de monitoramento de validade. |
 
 ### Achados
 
@@ -102,14 +106,25 @@ Regras de decisão propostas, para serem aplicadas sobre os números da seção 
 2. _Exemplo de formato:_ "A taxa de descarte de ___ é ___%. Recomendamos ___."
 3. _..._
 
-## 7. Limitações
+## 7. Interpretação gerencial do painel
+
+O painel `/painel-estatistico.html` apresenta, para CH, CP e PFC, o estoque válido, a demanda diária estimada, λ para os próximos 3 dias, a probabilidade de desabastecimento, o nível de risco e a taxa de descarte. A seção **Leitura gerencial e ações sugeridas** transforma os níveis em ações operacionais:
+
+- **ALTO (≥ 50%)**: tratar a reposição como prioridade e revisar a sequência de atendimento conforme a prioridade operacional registrada.
+- **MÉDIO (20% a < 50%)**: programar reposição no horizonte e acompanhar diariamente.
+- **BAIXO (< 20%)**: manter acompanhamento, evitando aumentar o estoque sem necessidade.
+- **Descarte ≥ 10%**: investigar FEFO e dimensionamento da coleta. O limite de 10% é uma referência gerencial proposta para o projeto, não um padrão clínico ou regulatório.
+
+Os campos da seção 5 devem ser preenchidos após executar a aplicação com a base disponível. Não há valores fixos publicados neste documento porque os indicadores dependem dos registros atuais do banco.
+
+## 8. Limitações
 
 - O modelo de Poisson supõe pedidos independentes e com intensidade constante. Como uma solicitação pode pedir várias bolsas de uma vez, a variação real da demanda tende a ser maior que a do modelo, e o risco pode estar **subestimado**.
 - A estimativa de demanda usa só os últimos 30 dias; períodos com pouco histórico geram resultados instáveis.
 - Dados sintéticos: os números servem para demonstrar o método, não para decisão clínica.
 - O sistema não substitui protocolos clínicos nem decide indicação de transfusão.
 
-## 8. Onde está no código
+## 9. Onde está no código
 
 | Parte | Arquivo |
 |---|---|
