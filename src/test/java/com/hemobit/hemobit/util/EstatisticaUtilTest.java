@@ -25,5 +25,11 @@ class EstatisticaUtilTest {
     @Test
     void lambdaDoHorizonte() {
         assertEquals(30.0, EstatisticaUtil.lambdaHorizonte(100, 10, 3), 0.0001);
+        assertEquals(10.0, EstatisticaUtil.lambdaHorizonte(100, 30, 3), 0.0001);
+    }
+
+    @Test
+    void demandaSemHistoricoNaoGeraLambda() {
+        assertEquals(0.0, EstatisticaUtil.lambdaHorizonte(100, 0, 3), 0.0001);
     }
 }
