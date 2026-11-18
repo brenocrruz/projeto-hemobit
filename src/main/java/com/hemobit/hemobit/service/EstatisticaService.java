@@ -63,4 +63,16 @@ public class EstatisticaService {
                 frequencias
         );
     }
+    public double calcularProbabilidadePoisson(double lambda, int k) {
+        return (Math.pow(lambda, k) * Math.exp(-lambda)) / fatorial(k);
+    }
+
+    private double fatorial(int n) {
+        if (n <= 1) return 1;
+        double resultado = 1;
+        for (int i = 2; i <= n; i++) {
+            resultado *= i;
+        }
+        return resultado;
+    }
 }
