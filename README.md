@@ -454,6 +454,17 @@ O painel único está disponível em **`/painel-estatistico.html`** e reúne os 
 NETEM=1 ROTULO=docker-local scripts/benchmark-rede.sh http://localhost:8080
 ```
 
+### Evidências de Validação (U2 - RSD)
+
+* **Painel de telemetria em tempo real (`/rede` via WebSocket):**
+  ![Painel de Rede em Tempo Real](./docs/evidencias/rsd-painel-rede.png)
+
+* **Resiliência e fallback suave (contingência HTTP polling):**
+  ![Fallback do Painel de Rede](./docs/evidencias/rsd-fallback-rede.png)
+
+* **Isolamento das 3 redes (Nginx sem acesso direto ao PostgreSQL):**
+  ![Isolamento de Rede](./docs/evidencias/rsd-isolamento-rede.png)
+
 ---
 
 ## 📦 Entregas — Infraestrutura de Software (SO)
