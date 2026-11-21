@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  COBERTURA_MINIMA_LINHAS: 0
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,5 +20,45 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
-    - name: Build and Run Tests with Maven
-      run: mvn clean test
+    - name: Build, testes e cobertura com Maven
+      run: mvn -B clean verify
+    - name: Resumo e meta de cobertura
+      run: |
+        CSV=target/site/jacoco/jacoco.csv
+        test -f "$CSV" || { echo "Relatório do JaCoCo não encontrado"; exit 1; }
+        awk -F, 'NR>1 {im+=$4; ic+=$5; bm+=$6; bc+=$7; lm+=$8; lc+=$9}
+          END {
+            lt = lc + lm; bt = bc + bm; it = ic + im
+            printf "LINHAS=%.1f\nBRANCHES=%.1f\nINSTRUCOES=%.1f\nLINHAS_COB=%d\nLINHAS_TOTAL=%d\n",
+              (lt ? 100*lc/lt : 0), (bt ? 100*bc/bt : 0), (it ? 100*ic/it : 0), lc, lt
+          }' "$CSV" > cobertura.env
+        source cobertura.env
+        {
+          echo "### Cobertura de testes (JaCoCo)"
+          echo ""
+          echo "| Métrica | Cobertura |"
+          echo "|---|---|"
+          echo "| Linhas | ${LINHAS}% (${LINHAS_COB} de ${LINHAS_TOTAL}) |"
+          echo "| Branches | ${BRANCHES}% |"
+          echo "| Instruções | ${INSTRUCOES}% |"
+          echo ""
+          echo "Meta mínima de linhas: ${COBERTURA_MINIMA_LINHAS}%"
+        } >> "$GITHUB_STEP_SUMMARY"
+        echo "Cobertura de linhas: ${LINHAS}% (meta mínima ${COBERTURA_MINIMA_LINHAS}%)"
+        awk -v atual="$LINHAS" -v minimo="$COBERTURA_MINIMA_LINHAS" 'BEGIN { exit (atual + 0 < minimo + 0) }' \
+          || { echo "Cobertura de linhas abaixo da meta mínima"; exit 1; }
+    - name: Publicar relatório de cobertura
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: relatorio-jacoco
+        path: target/site/jacoco
+        if-no-files-found: ignore
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: actions/checkout@v4
+    - name: Construir a imagem de produção
+      run: docker build -t hemobit:ci .

@@ -65,16 +65,89 @@ public class Hemocomponente {
         this.localizacaoAtual = localizacaoAtual;
     }
 
+    public static Hemocomponente registrar(String codigo, TipoHemocomponente tipo, double quantidade,
+                                           LocalDate dataProducao, LocalDate dataValidade, Doacao doacao,
+                                           Localidade localizacaoAtual, LocalDate hoje) {
+        String codigoNormalizado = normalizarCodigo(codigo);
+        validarDados(tipo, quantidade, dataProducao, dataValidade);
+        if (dataValidade.isBefore(hoje)) {
+            throw new IllegalArgumentException("Não é permitido cadastrar bolsas com data de validade vencida!");
+        }
+        if (doacao == null) {
+            throw new IllegalArgumentException("Informe a doação de origem da bolsa.");
+        }
+        Hemocomponente bolsa = new Hemocomponente(tipo, quantidade, dataProducao, dataValidade, doacao,
+                localizacaoAtual);
+        bolsa.codigo = codigoNormalizado;
+        return bolsa;
+    }
+
+    public static String normalizarCodigo(String codigo) {
+        return CodigoBolsa.de(codigo).valor();
+    }
+
+    public void atribuirCodigo(String novoCodigo) {
+        this.codigo = normalizarCodigo(novoCodigo);
+    }
+
+    public void corrigirDados(TipoHemocomponente novoTipo, double novaQuantidade, LocalDate novaProducao,
+                              LocalDate novaValidade, LocalDate hoje) {
+        validarDados(novoTipo, novaQuantidade, novaProducao, novaValidade);
+        if (!novaValidade.equals(this.dataValidade) && novaValidade.isBefore(hoje)) {
+            throw new IllegalArgumentException("Não é permitido cadastrar bolsas com data de validade vencida!");
+        }
+        this.tipo = novoTipo;
+        this.quantidade = novaQuantidade;
+        this.dataProducao = novaProducao;
+        this.dataValidade = novaValidade;
+    }
+
+    public boolean estaVencida(LocalDate hoje) {
+        return dataValidade.isBefore(hoje);
+    }
+
+    public boolean estaDisponivel(LocalDate hoje) {
+        return status == StatusHemocomponente.DISPONIVEL && !estaVencida(hoje);
+    }
+
+    public void reservarPara(Solicitacao solicitacao, LocalDate hoje) {
+        if (solicitacao == null) {
+            throw new IllegalArgumentException("Informe a solicitação que reserva a bolsa.");
+        }
+        if (!estaDisponivel(hoje)) {
+            throw new IllegalStateException("A bolsa " + codigo + " não está disponível para reserva.");
+        }
+        this.status = StatusHemocomponente.RESERVADO;
+        this.solicitacao = solicitacao;
+    }
+
+    public void marcarComoVencida(LocalDate hoje) {
+        if (status != StatusHemocomponente.DISPONIVEL) {
+            throw new IllegalStateException("Só bolsas disponíveis podem ser marcadas como vencidas.");
+        }
+        if (!estaVencida(hoje)) {
+            throw new IllegalStateException("A bolsa " + codigo + " ainda está dentro da validade.");
+        }
+        this.status = StatusHemocomponente.VENCIDO;
+    }
+
+    private static void validarDados(TipoHemocomponente tipo, double quantidade, LocalDate dataProducao,
+                                     LocalDate dataValidade) {
+        if (tipo == null) {
+            throw new IllegalArgumentException("Informe o tipo do hemocomponente.");
+        }
+        PeriodoDeValidade.de(dataProducao, dataValidade);
+        if (quantidade <= 0) {
+            throw new IllegalArgumentException("Quantidade deve ser maior que zero.");
+        }
+    }
+
     public Long getId() {
         return id;
     }
 
     public String getCodigo() {
         return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
     }
 
     public TipoSanguineo getTipoSanguineo() {
@@ -88,64 +161,32 @@ public class Hemocomponente {
         return tipo;
     }
 
-    public void setTipo(TipoHemocomponente tipo) {
-        this.tipo = tipo;
-    }
-
     public double getQuantidade() {
         return quantidade;
-    }
-
-    public void setQuantidade(double quantidade) {
-        this.quantidade = quantidade;
     }
 
     public LocalDate getDataProducao() {
         return dataProducao;
     }
 
-    public void setDataProducao(LocalDate dataProducao) {
-        this.dataProducao = dataProducao;
-    }
-
     public LocalDate getDataValidade() {
         return dataValidade;
-    }
-
-    public void setDataValidade(LocalDate dataValidade) {
-        this.dataValidade = dataValidade;
     }
 
     public StatusHemocomponente getStatus() {
         return status;
     }
 
-    public void setStatus(StatusHemocomponente status) {
-        this.status = status;
-    }
-
     public Doacao getDoacao() {
         return doacao;
-    }
-
-    public void setDoacao(Doacao doacao) {
-        this.doacao = doacao;
     }
 
     public Localidade getLocalizacaoAtual() {
         return localizacaoAtual;
     }
 
-    public void setLocalizacaoAtual(Localidade localizacaoAtual) {
-        this.localizacaoAtual = localizacaoAtual;
-    }
-
     public Solicitacao getSolicitacao() {
         return solicitacao;
-    }
-
-    public void setSolicitacao(Solicitacao solicitacao) {
-        this.solicitacao = solicitacao;
     }
 
     @Override

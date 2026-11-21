@@ -235,8 +235,8 @@ class HemocomponenteEstoqueServiceTest {
                        StatusHemocomponente status, int diasParaVencer) {
         Hemocomponente bolsa = new Hemocomponente(tipo, 300, LocalDate.now().minusDays(20),
                 LocalDate.now().plusDays(diasParaVencer), (Doacao) doacoes.get(doacaoId), null);
-        bolsa.setCodigo(codigo);
-        bolsa.setStatus(status);
+        bolsa.atribuirCodigo(codigo);
+        RepositoriosEmMemoria.definirCampo(bolsa, "status", status);
         RepositoriosEmMemoria.definirId(bolsa, id);
         bolsas.put(id, bolsa);
     }

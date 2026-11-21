@@ -1,0 +1,20 @@
+flowchart TB
+  CAP["<b>Captação</b><br/>Doador, Doação,<br/>Unidade de Coleta"]
+  EST["<b>Estoque</b> (core)<br/>Bolsa, Validade,<br/>Status da bolsa"]
+  REQ["<b>Requisição</b> (core)<br/>Pedido do hospital,<br/>Atendimento"]
+  EXP["<b>Expedição</b><br/>Transporte, Rota,<br/>Veículo"]
+  MON["<b>Monitoramento</b><br/>Telemetria, Alertas<br/>da cadeia fria"]
+  IND["<b>Indicadores</b><br/>Painéis EST e RSD"]
+  SEN(["Sensores / simulador<br/>(externo)"])
+
+  CAP -->|"Cliente-Fornecedor<br/>DoacaoRegistrada"| EST
+  REQ -->|"Cliente-Fornecedor<br/>reservar bolsas"| EST
+  EST <-.->|"Kernel compartilhado<br/>TipoSanguineo + compatibilidade ABO/Rh"| REQ
+  REQ -->|"Cliente-Fornecedor<br/>RequisicaoAtendida"| EXP
+  EST -->|"Conformista<br/>status da bolsa"| EXP
+  EXP -->|"Cliente-Fornecedor<br/>TransporteIniciado"| MON
+  SEN -->|"Camada anticorrupção<br/>leitura bruta → LeituraTelemetria"| MON
+  EST -->|"Conformista<br/>(linguagem publicada)"| IND
+  REQ --> IND
+  EXP --> IND
+  MON --> IND
