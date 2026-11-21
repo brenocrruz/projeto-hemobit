@@ -125,7 +125,7 @@ class HemocomponenteAcervoServiceTest {
     private void bolsa(long id, int diasParaVencer) {
         Hemocomponente bolsa = new Hemocomponente(TipoHemocomponente.CONCENTRADO_HEMACIAS, 300,
                 LocalDate.now().minusDays(30), LocalDate.now().plusDays(diasParaVencer), null, null);
-        bolsa.setCodigo("B" + id);
+        bolsa.atribuirCodigo("B" + id);
         RepositoriosEmMemoria.definirId(bolsa, id);
         bolsas.put(id, bolsa);
     }

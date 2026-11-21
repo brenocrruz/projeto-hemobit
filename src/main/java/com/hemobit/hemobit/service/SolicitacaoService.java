@@ -64,14 +64,13 @@ public class SolicitacaoService {
 
     @Transactional
     public Solicitacao criar(SolicitacaoRequestDTO dto) {
-        validar(dto);
         if (dto.getUnidadeSaudeId() == null) {
             throw new IllegalArgumentException("Solicitação precisa estar vinculada a uma unidade de saúde.");
         }
         UnidadeSaude unidade = unidadeSaudeRepository.findById(dto.getUnidadeSaudeId())
                 .orElseThrow(() -> new IllegalArgumentException("Unidade de saúde não encontrada."));
 
-        Solicitacao solicitacao = new Solicitacao(unidade, dto.getTipoHemocomponente(),
+        Solicitacao solicitacao = Solicitacao.abrir(unidade, dto.getTipoHemocomponente(),
                 dto.getTipoSanguineo(), dto.getQuantidade(), dto.getPrioridade());
         Solicitacao salva = solicitacaoRepository.save(solicitacao);
         historicoRepository.save(new HistoricoSolicitacao(salva, null, StatusSolicitacao.PENDENTE, "sistema"));
@@ -81,15 +80,8 @@ public class SolicitacaoService {
     @Transactional
     public Solicitacao atualizar(Long id, SolicitacaoRequestDTO dto) {
         Solicitacao existente = buscarOuFalhar(id);
-        if (existente.getStatus() != StatusSolicitacao.PENDENTE) {
-            throw new IllegalStateException("Só é possível editar solicitações com status PENDENTE.");
-        }
-        validar(dto);
-
-        existente.setTipoHemocomponente(dto.getTipoHemocomponente());
-        existente.setTipoSanguineo(dto.getTipoSanguineo());
-        existente.setQuantidade(dto.getQuantidade());
-        existente.setPrioridade(dto.getPrioridade());
+        existente.alterarPedido(dto.getTipoHemocomponente(), dto.getTipoSanguineo(),
+                dto.getQuantidade(), dto.getPrioridade());
         return solicitacaoRepository.save(existente);
     }
 
@@ -111,82 +103,34 @@ public class SolicitacaoService {
         if (operador == null || operador.isBlank()) {
             throw new IllegalArgumentException("Informe o operador responsável pela alteração.");
         }
-
-        Solicitacao solicitacao = buscarOuFalhar(id);
-        StatusSolicitacao atual = solicitacao.getStatus();
-
-        if (atual.isFinalizada()) {
-            throw new IllegalStateException("Não é permitido alterar o status de solicitações já finalizadas.");
-        }
-        if (novoStatus == atual) {
-            throw new IllegalStateException("A solicitação já está com o status " + atual + ".");
-        }
         if (novoStatus == StatusSolicitacao.ATENDIDA) {
             return atender(id, operador);
         }
-        if (!transicaoPermitida(atual, novoStatus)) {
-            throw new IllegalStateException("Transição de status inválida: " + atual + " -> " + novoStatus + ".");
-        }
 
-        registrarMudanca(solicitacao, novoStatus, operador.trim());
+        Solicitacao solicitacao = buscarOuFalhar(id);
+        StatusSolicitacao anterior = solicitacao.mudarStatus(novoStatus);
+        registrarMudanca(solicitacao, anterior, operador.trim());
         return solicitacao;
     }
 
     @Transactional
     public Solicitacao atender(Long id, String operador) {
         Solicitacao solicitacao = buscarOuFalhar(id);
-        if (solicitacao.getStatus().isFinalizada()) {
-            throw new IllegalStateException("Não é permitido alterar o status de solicitações já finalizadas.");
-        }
-        if (solicitacao.getTipoSanguineo() == null) {
-            throw new IllegalStateException(
-                    "Solicitação sem tipo sanguíneo do paciente: edite o pedido antes de atender.");
-        }
-
-        int necessarias = (int) solicitacao.getQuantidade();
+        StatusSolicitacao anterior = solicitacao.getStatus();
         List<Hemocomponente> candidatas = hemocomponenteRepository.buscarParaReserva(
                 solicitacao.getTipoHemocomponente(), StatusHemocomponente.DISPONIVEL, LocalDate.now());
 
-        List<Hemocomponente> escolhidas = candidatas.stream()
-                .filter(h -> compatibilidadeService.compativel(
-                        solicitacao.getTipoSanguineo(), h.getDoacao().getDoador().getTipoSanguineo()))
-                .limit(necessarias)
-                .toList();
+        List<Hemocomponente> reservadas = solicitacao.atender(candidatas,
+                compatibilidadeService::compativel, LocalDate.now(), LocalDateTime.now());
 
-        if (escolhidas.size() < necessarias) {
-            throw new IllegalStateException("Estoque compatível insuficiente: solicitadas " + necessarias
-                    + " bolsa(s) de " + solicitacao.getTipoHemocomponente()
-                    + " para paciente " + solicitacao.getTipoSanguineo()
-                    + ", mas há apenas " + escolhidas.size() + " compatível(is) e dentro da validade.");
-        }
-
-        for (Hemocomponente bolsa : escolhidas) {
-            bolsa.setStatus(StatusHemocomponente.RESERVADO);
-            bolsa.setSolicitacao(solicitacao);
-        }
-        hemocomponenteRepository.saveAll(escolhidas);
-
-        solicitacao.setDataAtendimento(LocalDateTime.now());
-        registrarMudanca(solicitacao, StatusSolicitacao.ATENDIDA, nomeOperador(operador));
+        hemocomponenteRepository.saveAll(reservadas);
+        registrarMudanca(solicitacao, anterior, nomeOperador(operador));
         return solicitacao;
     }
 
-    private boolean transicaoPermitida(StatusSolicitacao atual, StatusSolicitacao novo) {
-        return switch (atual) {
-            case PENDENTE -> novo == StatusSolicitacao.EM_SEPARACAO
-                    || novo == StatusSolicitacao.CANCELADA
-                    || novo == StatusSolicitacao.NEGADA;
-            case EM_SEPARACAO -> novo == StatusSolicitacao.CANCELADA
-                    || novo == StatusSolicitacao.NEGADA;
-            default -> false;
-        };
-    }
-
-    private void registrarMudanca(Solicitacao solicitacao, StatusSolicitacao novo, String operador) {
-        StatusSolicitacao anterior = solicitacao.getStatus();
-        solicitacao.setStatus(novo);
+    private void registrarMudanca(Solicitacao solicitacao, StatusSolicitacao anterior, String operador) {
         solicitacaoRepository.save(solicitacao);
-        historicoRepository.save(new HistoricoSolicitacao(solicitacao, anterior, novo, operador));
+        historicoRepository.save(new HistoricoSolicitacao(solicitacao, anterior, solicitacao.getStatus(), operador));
     }
 
     private String nomeOperador(String operador) {
@@ -196,26 +140,5 @@ public class SolicitacaoService {
     private Solicitacao buscarOuFalhar(Long id) {
         return solicitacaoRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Solicitação não encontrada."));
-    }
-
-    private void validar(SolicitacaoRequestDTO dto) {
-        if (dto.getQuantidade() < 1) {
-            throw new IllegalArgumentException("A quantidade solicitada deve ser de no mínimo 1 bolsa.");
-        }
-        if (dto.getQuantidade() > 50) {
-            throw new IllegalArgumentException("A quantidade máxima por solicitação é 50.");
-        }
-        if (dto.getQuantidade() != Math.floor(dto.getQuantidade())) {
-            throw new IllegalArgumentException("A quantidade solicitada deve ser um número inteiro de bolsas.");
-        }
-        if (dto.getTipoHemocomponente() == null) {
-            throw new IllegalArgumentException("Informe o tipo de hemocomponente.");
-        }
-        if (dto.getTipoSanguineo() == null) {
-            throw new IllegalArgumentException("Informe o tipo sanguíneo do paciente.");
-        }
-        if (dto.getPrioridade() == null) {
-            throw new IllegalArgumentException("Informe a prioridade da solicitação.");
-        }
     }
 }

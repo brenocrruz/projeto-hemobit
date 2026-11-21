@@ -61,6 +61,16 @@ final class RepositoriosEmMemoria {
         }
     }
 
+    static void definirCampo(Object entidade, String nome, Object valor) {
+        try {
+            Field campo = entidade.getClass().getDeclaredField(nome);
+            campo.setAccessible(true);
+            campo.set(entidade, valor);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     private static Object salvar(Map<Long, Object> dados, Object entidade) throws ReflectiveOperationException {
         Field campo = campoId(entidade.getClass());
         campo.setAccessible(true);

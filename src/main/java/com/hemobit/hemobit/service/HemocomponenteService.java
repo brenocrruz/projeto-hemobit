@@ -19,7 +19,6 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.Optional;
@@ -75,9 +74,7 @@ public class HemocomponenteService {
             resumo.put(tipoSanguineo, 0L);
         }
         for (Hemocomponente h : hemocomponenteRepository.findAll()) {
-            if (h.getStatus() == StatusHemocomponente.DISPONIVEL
-                    && !h.getDataValidade().isBefore(hoje)
-                    && h.getTipoSanguineo() != null) {
+            if (h.estaDisponivel(hoje) && h.getTipoSanguineo() != null) {
                 resumo.merge(h.getTipoSanguineo(), 1L, Long::sum);
             }
         }
@@ -85,24 +82,7 @@ public class HemocomponenteService {
     }
 
     public HemocomponenteResponseDTO criar(HemocomponenteRequestDTO dto) {
-        if (dto.getCodigo() == null || dto.getCodigo().isBlank()) {
-            throw new IllegalArgumentException("Informe o código da bolsa.");
-        }
-        if (dto.getTipo() == null) {
-            throw new IllegalArgumentException("Informe o tipo do hemocomponente.");
-        }
-        if (dto.getDataProducao() == null || dto.getDataValidade() == null) {
-            throw new IllegalArgumentException("Informe as datas de produção e de validade.");
-        }
-        if (dto.getDataValidade().isBefore(dto.getDataProducao())) {
-            throw new IllegalArgumentException("Data de validade não pode ser anterior à data de produção.");
-        }
-        if (dto.getDataValidade().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Não é permitido cadastrar bolsas com data de validade vencida!");
-        }
-        if (dto.getQuantidade() <= 0) {
-            throw new IllegalArgumentException("Quantidade deve ser maior que zero.");
-        }
+        String codigo = Hemocomponente.normalizarCodigo(dto.getCodigo());
         if (dto.getDoacaoId() == null) {
             throw new IllegalArgumentException("Informe a doação de origem da bolsa.");
         }
@@ -121,16 +101,13 @@ public class HemocomponenteService {
             throw new IllegalArgumentException("O tipo sanguíneo informado não confere com o da doação selecionada.");
         }
 
-        String codigo = dto.getCodigo().trim().toUpperCase(Locale.ROOT);
-        if (hemocomponenteRepository.existsByCodigo(codigo)) {
-            throw new IllegalStateException("Já existe uma bolsa cadastrada com o código " + codigo + ".");
-        }
+        Hemocomponente hemocomponente = Hemocomponente.registrar(codigo, dto.getTipo(), dto.getQuantidade(),
+                dto.getDataProducao(), dto.getDataValidade(), doacao, localizacaoAtual, LocalDate.now());
 
-        Hemocomponente hemocomponente = new Hemocomponente(
-                dto.getTipo(), dto.getQuantidade(), dto.getDataProducao(),
-                dto.getDataValidade(), doacao, localizacaoAtual
-        );
-        hemocomponente.setCodigo(codigo);
+        if (hemocomponenteRepository.existsByCodigo(hemocomponente.getCodigo())) {
+            throw new IllegalStateException(
+                    "Já existe uma bolsa cadastrada com o código " + hemocomponente.getCodigo() + ".");
+        }
 
         return new HemocomponenteResponseDTO(hemocomponenteRepository.save(hemocomponente));
     }
@@ -143,27 +120,8 @@ public class HemocomponenteService {
         Hemocomponente existente = hemocomponenteRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Hemocomponente não encontrado."));
 
-        if (dto.getTipo() == null) {
-            throw new IllegalArgumentException("Informe o tipo do hemocomponente.");
-        }
-        if (dto.getDataProducao() == null || dto.getDataValidade() == null) {
-            throw new IllegalArgumentException("Informe as datas de produção e de validade.");
-        }
-        if (dto.getDataValidade().isBefore(dto.getDataProducao())) {
-            throw new IllegalArgumentException("Data de validade não pode ser anterior à data de produção.");
-        }
-        if (!dto.getDataValidade().equals(existente.getDataValidade())
-                && dto.getDataValidade().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Não é permitido cadastrar bolsas com data de validade vencida!");
-        }
-        if (dto.getQuantidade() <= 0) {
-            throw new IllegalArgumentException("Quantidade deve ser maior que zero.");
-        }
-
-        existente.setTipo(dto.getTipo());
-        existente.setQuantidade(dto.getQuantidade());
-        existente.setDataProducao(dto.getDataProducao());
-        existente.setDataValidade(dto.getDataValidade());
+        existente.corrigirDados(dto.getTipo(), dto.getQuantidade(), dto.getDataProducao(),
+                dto.getDataValidade(), LocalDate.now());
 
         return new HemocomponenteResponseDTO(hemocomponenteRepository.save(existente));
     }

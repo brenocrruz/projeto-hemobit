@@ -1,0 +1,14 @@
+flowchart TB
+  subgraph AP["Apresentação"]
+    A1["Controllers REST e telas Thymeleaf"]
+  end
+  subgraph NG["Negócio"]
+    N1["Aplicação: casos de uso<br/>(orquestram, sem regra)"]
+    N2["Domínio: agregados, objetos de valor,<br/>regras e portas dos repositórios"]
+  end
+  subgraph DA["Dados"]
+    D1["Repositórios JPA, PostgreSQL,<br/>integrações (telemetria)"]
+  end
+  A1 --> N1 --> N2
+  D1 -. "implementa as portas" .-> N2
+  N1 --> D1
