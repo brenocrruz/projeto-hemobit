@@ -1,0 +1,22 @@
+sequenceDiagram
+  participant R as Requisição (orquestradora)
+  participant E as Estoque
+  participant X as Expedição
+  R->>R: iniciar atendimento (PENDENTE → EM_SEPARACAO)
+  R->>E: reservar bolsas (compatíveis, FEFO)
+  alt estoque compatível insuficiente
+    E-->>R: recusa (nada reservado)
+    R->>R: NEGADA (sem compensação)
+  else bolsas reservadas
+    E-->>R: BolsaReservada
+    R->>X: planejar transporte
+    alt transporte planejado
+      X-->>R: TransporteAgendado
+      R->>R: ATENDIDA (registra data)
+    else sem veículo ou rota
+      X-->>R: falha
+      R->>E: compensar: liberar reservas
+      E-->>R: BolsaLiberada
+      R->>R: NEGADA (motivo: sem transporte)
+    end
+  end

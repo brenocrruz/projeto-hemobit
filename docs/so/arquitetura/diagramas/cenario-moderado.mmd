@@ -1,0 +1,6 @@
+flowchart TB
+  U["400 usuários<br/>25 veículos"] --> LB["Balanceador"]
+  LB --> A1["Instância 1"]
+  LB --> A2["Instância 2<br/>(N+1)"]
+  A1 --> D[("Postgres<br/>Basic-1gb<br/>10 GB")]
+  A2 --> D

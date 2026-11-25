@@ -231,7 +231,7 @@ O Hemobit é um projeto integrador: cada disciplina contribui com uma parte esse
 | **Programação Orientada a Objetos (POO)** | Constrói a aplicação web em Java/Spring Boot, modela o domínio e implementa as regras de negócio. | [Modelo de Domínio](./docs/poo/modelo-dominio.md) |
 | **Algoritmos e Estruturas de Dados (AED)** | Projeta e implementa os algoritmos de roteirização, compatibilidade ABO/Rh e priorização FEFO. | [Escopo do Grafo](./docs/aed/escopo-grafo.md) |
 | **Estatística e Probabilidade (EST)** | Transforma os dados de estoque, demanda e operação em indicadores e análises. | Em desenvolvimento |
-| **Infraestrutura de Software (SO)** | Garante desempenho, concorrência, CI/CD e operação em nuvem. | [Pipeline CI/CD](./.github/workflows/ci.yml) |
+| **Infraestrutura de Software (SO)** | Garante desempenho, concorrência, CI/CD e operação em nuvem. | [Pipeline CI/CD](./.github/workflows/ci.yml) · [Planejamento da remodelagem](./docs/so/arquitetura/Hemobit-planejamento-remodelagem.pdf) |
 | **Infraestrutura de Comunicação (RSD)** | Define a arquitetura de comunicação entre unidades e a telemetria dos veículos. | [Contratos de API](./docs/rsd/contratos-api.md) · [Benchmarking](./docs/rsd/benchmarking.md) · [Plano de implantação](./docs/rsd/plano-implantacao.md) |
 
 ---
@@ -570,11 +570,21 @@ O projeto possui deploy contínuo configurado para a nuvem, garantindo que cada 
 **3. Processo de Rollback**
 Para reverter para uma versão anterior em caso de falha crítica em produção, acesse o painel do Render, navegue até a aba **Deploys**, encontre a versão estável anterior e clique em **Rollback**.
 
-## 🧭 Planejamento da refatoração (DDD, camadas, TDD e SDD)
+### 🟢 Unidade 2 Desafios PI - Parte 2 (Em Grupo) - Planejamento da remodelagem
+
+Planejamento do **Hemobit** com DDD (subdomínios, bounded contexts, glossário e mapa de contextos), modelo tático do contexto core, arquitetura em três camadas, projeção com microsserviços e três cenários de carga com orçamento.
+
+- [Documento final (PDF)](./docs/so/arquitetura/Hemobit-planejamento-remodelagem.pdf)
+- [Seção A e C (domínio e camadas)](./docs/so/arquitetura/planejamento-parcial-A-C.md) · [Seção B (modelo tático)](./docs/so/arquitetura/secao-B-modelo-tatico.md) · [Seção D (microsserviços)](./docs/so/arquitetura/secao-D-microsservicos.md) · [Seção E (cenários e orçamento)](./docs/so/arquitetura/secao-E-cenarios-orcamento.md) · [Uso de IA](./docs/so/arquitetura/secao-F-uso-de-ia.md)
+- [Planilha de orçamento](./docs/so/arquitetura/orcamento-hemobit.xlsx)
+- ADRs: [0001 · Decomposição](./docs/so/arquitetura/adr/0001-decomposicao.md) · [0002 · Monólito modular na Parte 3](./docs/so/arquitetura/adr/0002-monolito-modular-na-parte-3.md)
+- Diagramas: [`docs/so/arquitetura/diagramas`](./docs/so/arquitetura/diagramas)
+
+### 🧭 Refatoração para DDD, camadas, TDD e SDD
 
 Plano para a entrega de 26/11 e a entrega final de 01/12: modelagem rica do domínio, arquitetura em camadas e Clean Architecture, cobertura de testes atual e planejada, e especificações SDD.
 
-- [Planejamento da refatoração](./docs/poo/planejamento-refatoracao.md)
+- [Planejamento da refatoração](./docs/so/planejamento-refatoracao.md)
 - [Especificações SDD](./docs/specs/README.md)
 - Cobertura de testes (JaCoCo): publicada no resumo de cada execução do CI e no artefato `relatorio-jacoco`.
 

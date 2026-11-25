@@ -1,6 +1,6 @@
 # Modelo de Domínio — Hemobit
 
-Documento de referência do modelo de domínio da aplicação Hemobit (Rota Vital — 3º semestre, ADS, CESAR School), construído em Java/Spring Boot com persistência em PostgreSQL via JPA/Hibernate.
+Documento de referência do modelo de domínio da aplicação Hemobit (3º semestre, ADS, CESAR School), construído em Java/Spring Boot com persistência em PostgreSQL via JPA/Hibernate.
 
 ## Status de implementação
 

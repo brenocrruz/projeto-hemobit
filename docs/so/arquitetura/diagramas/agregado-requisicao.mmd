@@ -1,0 +1,56 @@
+classDiagram
+  class Solicitacao {
+    <<raiz do agregado>>
+    -Long id
+    -StatusSolicitacao status
+    -TipoHemocomponente tipoHemocomponente
+    -TipoSanguineo tipoSanguineo
+    -double quantidade
+    -Prioridade prioridade
+    -LocalDateTime dataHora
+    -LocalDateTime dataAtendimento
+    +abrir(unidade, tipo, sangue, quantidade, prioridade)$ Solicitacao
+    +alterarPedido(tipo, sangue, quantidade, prioridade)
+    +mudarStatus(novoStatus) StatusSolicitacao
+    +atender(candidatas, compativel, hoje, agora) List~Hemocomponente~
+    +estaFinalizada() boolean
+  }
+  class QuantidadeDeBolsas {
+    <<objeto de valor>>
+    int valor (1 a 50)
+  }
+  class StatusSolicitacao {
+    <<objeto de valor>>
+    PENDENTE
+    EM_SEPARACAO
+    ATENDIDA
+    CANCELADA
+    NEGADA
+    +podeIrPara(novo) boolean
+  }
+  class Prioridade {
+    <<objeto de valor>>
+    ROTINA
+    EMERGENCIA
+  }
+  class HistoricoSolicitacao {
+    <<entidade>>
+    statusAnterior
+    statusNovo
+    operador
+    dataHora
+  }
+  class UnidadeSaude {
+    <<outro agregado>>
+    referenciada por identidade
+  }
+  class Hemocomponente {
+    <<agregado do Estoque>>
+    reservada pelo atendimento
+  }
+  Solicitacao *-- QuantidadeDeBolsas
+  Solicitacao *-- StatusSolicitacao
+  Solicitacao *-- Prioridade
+  Solicitacao "1" o-- "0..*" HistoricoSolicitacao
+  Solicitacao --> UnidadeSaude : hospital solicitante
+  Solicitacao ..> Hemocomponente : reserva (via Estoque)
