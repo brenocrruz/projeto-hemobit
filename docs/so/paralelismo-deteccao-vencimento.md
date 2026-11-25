@@ -1,6 +1,6 @@
 # Paralelismo na Detecção de Hemocomponentes Próximos do Vencimento
 
-Disciplina: Infraestrutura de Software — Projeto Integrador Rota Vital (Hemobit)
+Disciplina: Infraestrutura de Software — Projeto Integrador Hemobit
 
 ## 1. Justificativa
 

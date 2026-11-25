@@ -1,0 +1,16 @@
+flowchart TB
+  UI["Navegador / telas"] --> GW["API Gateway<br/>(Nginx)"]
+  GW --> REQ["Serviço Requisição<br/>(BD próprio)"]
+  GW --> EST["Serviço Estoque + Captação<br/>(BD próprio)"]
+  GW --> EXP["Serviço Expedição<br/>(BD próprio)"]
+  GW --> IND["Serviço Indicadores<br/>(leitura)"]
+  REQ -- "REST: reservar bolsas" --> EST
+  BUS[["Fila de eventos<br/>(broker)"]]
+  REQ -- "RequisicaoAtendida" --> BUS
+  EST -- "BolsaReservada / BolsaVencida" --> BUS
+  EXP -- "TransporteIniciado" --> BUS
+  BUS --> EXP
+  BUS --> MON["Serviço Monitoramento<br/>(BD próprio)"]
+  BUS --> IND
+  SEN(["Sensores"]) -- "ACL" --> MON
+  MON -- "TemperaturaForaDaFaixa" --> BUS
