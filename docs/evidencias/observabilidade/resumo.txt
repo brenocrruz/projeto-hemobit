@@ -2,8 +2,8 @@
 Maven verify: 156 testes, sem falhas, erros ou testes ignorados.
 Prometheus: hemobit, node-exporter, cadvisor e prometheus em UP.
 Actuator: health, info, metrics e prometheus responderam internamente. Nginx devolveu HTTP 404 para /actuator/prometheus.
-Rodada de carga: 2026-11-26T13:47:30.6659791-03:00 até 2026-11-26T13:47:55.7464075-03:00.
-HTTP 200 no estoque: 31. HTTP 404 na rota inexistente: 4 (caso de erro controlado).
+Rodada principal de carga: 2026-11-26T13:47:03.1405552-03:00 até 2026-11-26T13:54:03.9120829-03:00.
+HTTP 200 no estoque: 525. HTTP 404 na rota inexistente: 53 (caso de erro controlado).
 Log Loki e trace Tempo correlacionados por traceId fa904cf52e55f6af6cbe7c2e27627cfc.
 Spans: hemobit.estoque.agregar · http get /api/indicadores/estoque-real · hemobit.estoque.consultar.
 Grafana: papel Viewer e acesso aos dois dashboards verificados localmente. E7 remoto pendente.

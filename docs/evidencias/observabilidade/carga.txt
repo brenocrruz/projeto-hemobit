@@ -1,1 +1,4 @@
 Inicio: 2026-11-26T13:47:03.1405552-03:00
+Fim: 2026-11-26T13:54:03.9120829-03:00
+HTTP 200 no estoque: 525
+HTTP 404 na rota inexistente: 53
