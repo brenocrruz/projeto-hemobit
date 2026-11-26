@@ -1,4 +1,4 @@
-# Rota Vital: planejamento da remodelagem (versão parcial: seções A e C)
+# Hemobit: planejamento da remodelagem (versão parcial: seções A e C)
 
 **Squad:** Grupo 5, ADS, CESAR School · **Repositório:** https://github.com/brenocrruz/projeto-hemobit
 **Integrantes:** Breno Luiz de Lima Cruz, Davi Magno Campelo do Nascimento, Lauan Goncalves dos Santos, Letícia Gomes da Silva, Lucas Felipe Barreto Cavalcante, Lucas Filipe de Lima Segundo, Mateus Valerino Barros de Santana
@@ -9,7 +9,7 @@
 
 ### A.1 Subdomínios
 
-O Rota Vital distribui hemocomponentes de hemocentros para hospitais. O que diferencia o sistema é decidir **qual bolsa atende qual paciente, com segurança e sem desperdício**, e entregá-la com a cadeia fria íntegra.
+O Hemobit distribui hemocomponentes de hemocentros para hospitais. O que diferencia o sistema é decidir **qual bolsa atende qual paciente, com segurança e sem desperdício**, e entregá-la com a cadeia fria íntegra.
 
 | Subdomínio | Classe | Justificativa |
 |---|---|---|
@@ -99,7 +99,7 @@ Os nomes em código estão entre parênteses quando diferem do termo de negócio
 
 ![Camadas](diagramas/camadas.png)
 
-| Camada | O que contém | Exemplos no Rota Vital |
+| Camada | O que contém | Exemplos no Hemobit |
 |---|---|---|
 | **Apresentação** | Controllers REST, telas Thymeleaf, DTOs de entrada e saída, tratamento de erros HTTP. Converte requisição em chamada de caso de uso e resposta em JSON ou tela. | `SolicitacaoController`, `HemocomponenteController`, página `/atendimento` |
 | **Negócio, aplicação** | Casos de uso: um método por intenção do usuário. Busca os agregados, chama o domínio, salva e registra histórico. Não decide regra de negócio. | `AtenderRequisicao`, `RegistrarBolsa` (hoje `SolicitacaoService` e `HemocomponenteService`) |
@@ -178,6 +178,6 @@ Os nomes entre colchetes mostram a tradução entre o termo de negócio e o nome
 | 2. Aplicação | Um container com a aplicação Spring Boot, por trás do Nginx (no compose, três redes: pública, aplicação e banco). |
 | 3. Dados | Um container (ou serviço) PostgreSQL, em rede interna sem rota para fora. |
 
-**Diferença na prática:** temos três camadas lógicas, mas uma única unidade de deploy para elas, a imagem Docker da aplicação. Separar em camadas é uma decisão de código; separar em tiers é uma decisão de infraestrutura. O banco já é um tier à parte, e as três camadas lógicas só virariam tiers diferentes se o Rota Vital fosse decomposto em serviços (seção D).
+**Diferença na prática:** temos três camadas lógicas, mas uma única unidade de deploy para elas, a imagem Docker da aplicação. Separar em camadas é uma decisão de código; separar em tiers é uma decisão de infraestrutura. O banco já é um tier à parte, e as três camadas lógicas só virariam tiers diferentes se o Hemobit fosse decomposto em serviços (seção D).
 
 *Pendente para a versão final: confirmar com o grupo que o banco do Render é o PostgreSQL gerenciado e ajustar a tabela acima.*

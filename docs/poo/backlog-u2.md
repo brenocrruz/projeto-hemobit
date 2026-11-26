@@ -1,6 +1,6 @@
 # Backlog Revisado — Unidade 2 (POO)
 
-Projeto Integrador Rota Vital (Hemobit) — ADS, CESAR School
+Projeto Integrador Hemobit — ADS, CESAR School
 Disciplina: Programação Orientada a Objetos (camada de aplicação)
 Card Jira: PI3E4-28 — W10 - Backlog revisado (POO)
 
