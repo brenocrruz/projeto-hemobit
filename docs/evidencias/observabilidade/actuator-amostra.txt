@@ -1,0 +1,15 @@
+2026-11-26T13:52:30.7001051-03:00
+GET http://localhost:8081/actuator/prometheus (rede Docker)
+hemobit_estoque_consultas_total{application="hemobit"} 442.0
+hemobit_estoque_consulta_duracao_seconds_count{application="hemobit"} 442
+hemobit_estoque_consulta_duracao_seconds_sum{application="hemobit"} 1.408371175
+http_server_requests_seconds_count{application="hemobit",error="none",exception="none",method="GET",outcome="CLIENT_ERROR",status="404",uri="/**"} 45
+http_server_requests_seconds_count{application="hemobit",error="none",exception="none",method="GET",outcome="SUCCESS",status="200",uri="/api/indicadores/estoque-real"} 442
+http_server_requests_seconds_bucket{application="hemobit",error="none",exception="none",method="GET",outcome="CLIENT_ERROR",status="404",uri="/**",le="0.001"} 0
+http_server_requests_seconds_bucket{application="hemobit",error="none",exception="none",method="GET",outcome="CLIENT_ERROR",status="404",uri="/**",le="0.001048576"} 0
+jvm_memory_used_bytes{application="hemobit",area="heap",id="G1 Eden Space"} 5.767168E7
+jvm_memory_used_bytes{application="hemobit",area="heap",id="G1 Old Gen"} 4.6841808E7
+jvm_threads_live_threads{application="hemobit"} 61.0
+process_cpu_usage{application="hemobit"} 0.004618256853689693
+process_uptime_seconds{application="hemobit"} 345.999
+hikaricp_connections_active{application="hemobit",pool="HikariPool-1"} 0.0

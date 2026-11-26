@@ -17,7 +17,10 @@ import static org.mockito.Mockito.*;
 class IndicadoresControllerTest {
     private final HemocomponenteRepository repository = mock(HemocomponenteRepository.class);
     private final IndicadoresController controller =
-            new IndicadoresController(new EstatisticaService(), repository);
+            new IndicadoresController(new EstatisticaService(),
+                    new com.hemobit.hemobit.observabilidade.EstoqueObservado(repository,
+                            io.micrometer.observation.ObservationRegistry.NOOP,
+                            new io.micrometer.core.instrument.simple.SimpleMeterRegistry()));
 
     @Test
     void retornaOitoGruposZeradosQuandoEstoqueVazio() {

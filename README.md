@@ -153,7 +153,7 @@ cd projeto-hemobit
 ```bash
 cp .env.example .env
 ```
-4. Abra o arquivo .env e preencha as variáveis POSTGRES_PASSWORD e SPRING_DATASOURCE_PASSWORD com a senha do banco (ex: hemobit123).:
+4. Abra o arquivo .env, preencha POSTGRES_PASSWORD e SPRING_DATASOURCE_PASSWORD com a mesma senha do banco e defina uma senha exclusiva em GRAFANA_ADMIN_PASSWORD.
 5. Suba os containers com o comando:
 ```bash
 docker compose up -d --build
@@ -667,3 +667,7 @@ Em conformidade com as diretrizes do projeto, declaramos o uso de IA (modelos de
 ## 📄 Licença
 
 Projeto acadêmico desenvolvido para a **CESAR School** — sem fins comerciais. Uso exclusivo de **dados sintéticos**.
+
+## Observabilidade
+
+[Execução, métricas, logs, traces e acesso Viewer](docs/observabilidade.md) · [Relatório PDF](docs/relatorio-observabilidade.pdf) · [Evidências](docs/evidencias/observabilidade).

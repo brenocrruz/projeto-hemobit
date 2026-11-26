@@ -2,6 +2,8 @@
 #   publica   (10.0.1.0/24) -> Nginx, única porta publicada no host
 #   aplicacao (10.0.2.0/24) -> API REST + simulador de telemetria
 #   banco     (10.0.3.0/28) -> PostgreSQL, rede interna sem rota para fora
+name: hemobit-observabilidade
+
 services:
   db:
     image: postgres:16-alpine
@@ -25,7 +27,13 @@ services:
 
   app:
     build: .
+    volumes:
+      - hemobit_logs:/var/log/hemobit
     environment:
+      SPRING_PROFILES_ACTIVE: observabilidade
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+      SPRING_H2_CONSOLE_ENABLED: "false"
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
@@ -45,6 +53,7 @@ services:
         ipv4_address: 10.0.2.10
       banco:
         ipv4_address: 10.0.3.11
+      observabilidade:
     depends_on:
       db:
         condition: service_healthy
@@ -52,7 +61,7 @@ services:
   nginx:
     build: ./infra/nginx
     ports:
-      - "8080:80"
+      - "127.0.0.1:${HEMOBIT_PORT:-8080}:80"
     # NET_ADMIN permite ao benchmarking aplicar tc netem na interface Nginx -> API.
     cap_add:
       - NET_ADMIN
@@ -67,7 +76,77 @@ services:
       app:
         condition: service_healthy
 
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    volumes:
+      - ./infra/observabilidade/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "127.0.0.1:${PROMETHEUS_PORT:-9090}:9090"
+    networks: [observabilidade, painel]
+
+  grafana:
+    image: grafana/grafana:12.1.1
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?defina GRAFANA_ADMIN_PASSWORD no .env}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+      GF_SERVER_ROOT_URL: ${GRAFANA_ROOT_URL:-http://localhost:3000}
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "127.0.0.1:${GRAFANA_PORT:-3000}:3000"
+    networks: [painel, observabilidade]
+
+  node-exporter:
+    image: prom/node-exporter:v1.9.1
+    pid: host
+    command: ["--path.rootfs=/host"]
+    volumes:
+      - /:/host:ro
+    networks: [observabilidade]
+
+  cadvisor:
+    image: ghcr.io/google/cadvisor:v0.60.5
+    privileged: true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+    networks: [observabilidade]
+
+  loki:
+    image: grafana/loki:3.5.3
+    command: ["-config.file=/etc/loki/local-config.yaml"]
+    volumes:
+      - ./infra/observabilidade/loki.yml:/etc/loki/local-config.yaml:ro
+      - loki_data:/loki
+    networks: [observabilidade]
+
+  alloy:
+    image: grafana/alloy:v1.10.0
+    command: ["run", "--storage.path=/var/lib/alloy/data", "/etc/alloy/config.alloy"]
+    volumes:
+      - ./infra/observabilidade/config.alloy:/etc/alloy/config.alloy:ro
+      - hemobit_logs:/var/log/hemobit:ro
+      - alloy_data:/var/lib/alloy/data
+    networks: [observabilidade]
+
+  tempo:
+    image: grafana/tempo:2.8.2
+    command: ["-config.file=/etc/tempo.yml"]
+    volumes:
+      - ./infra/observabilidade/tempo.yml:/etc/tempo.yml:ro
+      - tempo_data:/var/tempo
+    networks: [observabilidade]
+
 networks:
+  observabilidade:
+    internal: true
+  painel:
   publica:
     ipam:
       config:
@@ -85,3 +164,9 @@ networks:
 
 volumes:
   postgres_data:
+  prometheus_data:
+  grafana_data:
+  loki_data:
+  tempo_data:
+  alloy_data:
+  hemobit_logs:
