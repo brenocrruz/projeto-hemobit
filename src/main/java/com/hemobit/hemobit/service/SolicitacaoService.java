@@ -10,6 +10,7 @@ import com.hemobit.hemobit.domain.Solicitacao;
 import com.hemobit.hemobit.domain.StatusHemocomponente;
 import com.hemobit.hemobit.domain.StatusSolicitacao;
 import com.hemobit.hemobit.domain.UnidadeSaude;
+import com.hemobit.hemobit.domain.TipoSanguineo;
 import com.hemobit.hemobit.dto.SolicitacaoRequestDTO;
 import com.hemobit.hemobit.repository.HemocomponenteRepository;
 import com.hemobit.hemobit.repository.HistoricoSolicitacaoRepository;
@@ -133,14 +134,16 @@ public class SolicitacaoService {
             hashEstoque.inserir(h);
         }
 
-        // Recupera as bolsas do tipo exato da solicitação via Hash
-        List<Hemocomponente> candidatas = new ArrayList<>(hashEstoque.buscarPorTipo(solicitacao.getTipoSanguineo()));
-        
-        // 3. FILTRO DE COMPATIBILIDADE ABO/Rh
+        // 3. BUSCA NO HASH E FILTRO DE COMPATIBILIDADE ABO/Rh (CORRIGIDO)
         List<Hemocomponente> compativeis = new ArrayList<>();
-        for (Hemocomponente h : candidatas) {
-            if (MatrizCompatibilidade.isCompativel(solicitacao.getTipoSanguineo().ordinal(), h.getTipoSanguineo().ordinal())) {
-                compativeis.add(h);
+        int receptorIndex = solicitacao.getTipoSanguineo().ordinal();
+        
+        // Percorre os 8 tipos sanguíneos possíveis de doadores
+        for (TipoSanguineo tipoDoador : TipoSanguineo.values()) {
+            // Verifica na matriz se esse doador é compatível com o receptor
+            if (MatrizCompatibilidade.isCompativel(receptorIndex, tipoDoador.ordinal())) {
+                // Se for compatível, busca no Hash as bolsas desse doador e adiciona à lista
+                compativeis.addAll(hashEstoque.buscarPorTipo(tipoDoador));
             }
         }
 
