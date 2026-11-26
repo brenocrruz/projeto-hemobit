@@ -1,0 +1,13 @@
+2026-11-26T13:52:30.7001051-03:00
+docker compose -p hemobit-observabilidade ps -a
+SERVICE         STATUS
+alloy           Up 3 minutes
+app             Up 5 minutes (healthy)
+cadvisor        Up 5 minutes (healthy)
+db              Up 10 minutes (healthy)
+grafana         Up 10 minutes
+loki            Up 10 minutes
+nginx           Up 5 minutes
+node-exporter   Up 10 minutes
+prometheus      Up About a minute
+tempo           Up 10 minutes

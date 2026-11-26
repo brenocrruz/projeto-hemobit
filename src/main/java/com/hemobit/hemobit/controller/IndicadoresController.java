@@ -3,7 +3,7 @@ package com.hemobit.hemobit.controller;
 import com.hemobit.hemobit.dto.IndicadoresDTO;
 import com.hemobit.hemobit.domain.StatusHemocomponente;
 import com.hemobit.hemobit.domain.TipoSanguineo;
-import com.hemobit.hemobit.repository.HemocomponenteRepository;
+import com.hemobit.hemobit.observabilidade.EstoqueObservado;
 import com.hemobit.hemobit.service.EstatisticaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,20 +17,19 @@ import java.time.LocalDate;
 public class IndicadoresController {
 
     private final EstatisticaService estatisticaService;
-    private final HemocomponenteRepository hemocomponenteRepository;
+    private final EstoqueObservado estoqueObservado;
 
     public IndicadoresController(EstatisticaService estatisticaService,
-                                 HemocomponenteRepository hemocomponenteRepository) {
+                                 EstoqueObservado estoqueObservado) {
         this.estatisticaService = estatisticaService;
-        this.hemocomponenteRepository = hemocomponenteRepository;
+        this.estoqueObservado = estoqueObservado;
     }
 
     @GetMapping("/estoque-real")
     public ResponseEntity<Map<String, Object>> getEstoqueReal() {
         LocalDate hoje = LocalDate.now();
         Map<TipoSanguineo, Long> totais = new EnumMap<>(TipoSanguineo.class);
-        hemocomponenteRepository.contarEstoquePorTipo(StatusHemocomponente.DISPONIVEL, hoje)
-                .forEach(item -> totais.put(item.getTipoSanguineo(), item.getTotal()));
+        estoqueObservado.consultar(hoje, item -> totais.put(item.getTipoSanguineo(), item.getTotal()));
 
         Map<String, Long> estoque = new LinkedHashMap<>();
         for (TipoSanguineo tipo : TipoSanguineo.values()) {

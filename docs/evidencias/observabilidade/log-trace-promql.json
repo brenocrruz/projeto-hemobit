@@ -1,0 +1,119 @@
+{
+  "traceId": "fa904cf52e55f6af6cbe7c2e27627cfc",
+  "promql": [
+    {
+      "result": [
+        {
+          "metric": {
+            "__name__": "up",
+            "instance": "cadvisor:8080",
+            "job": "cadvisor"
+          },
+          "value": [
+            1795712008.297,
+            "1"
+          ]
+        },
+        {
+          "metric": {
+            "__name__": "up",
+            "instance": "node-exporter:9100",
+            "job": "node-exporter"
+          },
+          "value": [
+            1795712008.297,
+            "1"
+          ]
+        },
+        {
+          "metric": {
+            "__name__": "up",
+            "instance": "prometheus:9090",
+            "job": "prometheus"
+          },
+          "value": [
+            1795712008.297,
+            "1"
+          ]
+        },
+        {
+          "metric": {
+            "__name__": "up",
+            "instance": "app:8081",
+            "job": "hemobit"
+          },
+          "value": [
+            1795712008.297,
+            "1"
+          ]
+        }
+      ],
+      "expr": "up"
+    },
+    {
+      "result": [
+        {
+          "metric": {},
+          "value": [
+            1795712008.316,
+            "11"
+          ]
+        }
+      ],
+      "expr": "count(container_memory_working_set_bytes{name!=\"\"})"
+    },
+    {
+      "result": [
+        {
+          "metric": {},
+          "value": [
+            1795712008.331,
+            "11"
+          ]
+        }
+      ],
+      "expr": "count(container_cpu_usage_seconds_total{name!=\"\"})"
+    },
+    {
+      "result": [
+        {
+          "metric": {
+            "__name__": "hemobit_estoque_consultas_total",
+            "application": "hemobit",
+            "instance": "app:8081",
+            "job": "hemobit"
+          },
+          "value": [
+            1795712008.343,
+            "507"
+          ]
+        }
+      ],
+      "expr": "hemobit_estoque_consultas_total{application=\"hemobit\"}"
+    },
+    {
+      "result": [
+        {
+          "metric": {
+            "__name__": "hemobit_estoque_consulta_duracao_seconds_count",
+            "application": "hemobit",
+            "instance": "app:8081",
+            "job": "hemobit"
+          },
+          "value": [
+            1795712008.357,
+            "507"
+          ]
+        }
+      ],
+      "expr": "hemobit_estoque_consulta_duracao_seconds_count{application=\"hemobit\"}"
+    }
+  ],
+  "log": "2026-11-26T16:52:37.082Z  INFO 1 --- [hemobit] [http-nio-8080-exec-1] [traceId=fa904cf52e55f6af6cbe7c2e27627cfc spanId=dc16b8b5806cc5ae] c.h.h.observabilidade.EstoqueObservado   : Consulta ao estoque disponivel concluida",
+  "capturado": "2026-11-26T13:53:28.3597540-03:00",
+  "spans": [
+    "hemobit.estoque.agregar",
+    "hemobit.estoque.consultar",
+    "http get /api/indicadores/estoque-real"
+  ]
+}

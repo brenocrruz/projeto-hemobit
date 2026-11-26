@@ -1,0 +1,26 @@
+[
+  {
+    "job": "cadvisor",
+    "health": "up",
+    "scrapeUrl": "http://cadvisor:8080/metrics",
+    "lastError": ""
+  },
+  {
+    "job": "hemobit",
+    "health": "up",
+    "scrapeUrl": "http://app:8081/actuator/prometheus",
+    "lastError": ""
+  },
+  {
+    "job": "node-exporter",
+    "health": "up",
+    "scrapeUrl": "http://node-exporter:9100/metrics",
+    "lastError": ""
+  },
+  {
+    "job": "prometheus",
+    "health": "up",
+    "scrapeUrl": "http://prometheus:9090/metrics",
+    "lastError": ""
+  }
+]
