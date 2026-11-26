@@ -229,7 +229,7 @@ O Hemobit é um projeto integrador: cada disciplina contribui com uma parte esse
 | Disciplina | Papel no Projeto | Artefatos |
 |------------|------------------|-----------|
 | **Programação Orientada a Objetos (POO)** | Constrói a aplicação web em Java/Spring Boot, modela o domínio e implementa as regras de negócio. | [Modelo de Domínio](./docs/poo/modelo-dominio.md) |
-| **Algoritmos e Estruturas de Dados (AED)** | Projeta e implementa os algoritmos de roteirização, compatibilidade ABO/Rh e priorização FEFO. | [Escopo do Grafo](./docs/aed/escopo-grafo.md) |
+| **Algoritmos e Estruturas de Dados (AED)** | Projeta e implementa os algoritmos de roteirização, compatibilidade ABO/Rh e priorização FEFO. | [Escopo do Grafo](./docs/aed/escopo-grafo.md) · [Algoritmos em C](./src/main/c/) · [Algoritmos em Java](./src/main/java/com/hemobit/hemobit/aed/) · [Tradução Comentada (C/C++ ↔ Java)](./docs/aed/traducao/) |
 | **Estatística e Probabilidade (EST)** | Transforma os dados de estoque, demanda e operação em indicadores e análises. | Em desenvolvimento |
 | **Infraestrutura de Software (SO)** | Garante desempenho, concorrência, CI/CD e operação em nuvem. | [Pipeline CI/CD](./.github/workflows/ci.yml) · [Planejamento da remodelagem](./docs/so/arquitetura/Hemobit-planejamento-remodelagem.pdf) |
 | **Infraestrutura de Comunicação (RSD)** | Define a arquitetura de comunicação entre unidades e a telemetria dos veículos. | [Contratos de API](./docs/rsd/contratos-api.md) · [Benchmarking](./docs/rsd/benchmarking.md) · [Plano de implantação](./docs/rsd/plano-implantacao.md) |
@@ -420,6 +420,52 @@ O Hemobit é um projeto integrador: cada disciplina contribui com uma parte esse
 - [Dados e roteiro de demonstração](docs/poo/demo-entrega-04.md)
 
 ---
+
+## 📦 Entregas — Algoritmos e Estruturas de Dados (AED)
+
+> As entregas abaixo são referentes à disciplina de **Algoritmos e Estruturas de Dados**. Os artefatos das demais disciplinas estão listados na seção **Disciplinas Integradas**.
+
+### 🟢 Unidade 2 — Implementação e Integração de Algoritmos
+
+**Data:** 26/11/2026
+
+Esta entrega teve como objetivo dotar o sistema Rota Vital de inteligência algorítmica, implementando desde buscas e ordenações clássicas até heurísticas de roteirização e compatibilidade sanguínea, integrando todos esses algoritmos ao fluxo de atendimento do sistema.
+
+#### 📌 Algoritmos Implementados
+
+Conforme os requisitos da disciplina, **todos os algoritmos foram implementados manualmente em duas linguagens (C e Java)** e documentados.
+
+**1. Algoritmos de Busca (Aula 06)**
+- **Busca Sequencial:** Implementada para varredura completa de vetores.
+- **Busca Binária:** Implementada para vetores ordenados, otimizando o tempo de busca.
+- **Busca por Espalhamento (Hash):** Implementada com **Sondagem Linear** para tratamento de colisões.
+- **Integração no Sistema:** A tabela Hash é utilizada no `SolicitacaoService` para indexar o estoque disponível e realizar a busca rápida por tipo sanguíneo no momento da requisição.
+
+**2. Algoritmos de Ordenação (Aula 07)**
+- **Bubble Sort, Selection Sort e Insertion Sort:** Implementados e testados.
+- **Integração no Sistema:** O **Insertion Sort** é o coração da lógica **FEFO (First Expired, First Out)**. Ele é aplicado no `SolicitacaoService` para ordenar as bolsas compatíveis do sistema pela data de validade mais próxima, garantindo que a bolsa que vence primeiro seja alocada.
+
+**3. Algoritmos Específicos do Sistema**
+- **Compatibilidade ABO/Rh:** Implementação manual via matriz 8x8 booleana. A matriz é consultada pelo sistema para validar se o tipo sanguíneo do doador é compatível com o do receptor antes da alocação.
+- **Roteirização (Vizinho Mais Próximo):** Implementação da heurística que, partindo de um ponto inicial (Hemocentro), calcula a rota de entrega escolhendo sempre o destino não visitado com a menor distância. O resultado é impresso no console durante o fluxo de atendimento para simular o despacho.
+
+#### 🧪 Testes Automatizados (JUnit)
+- Criação de testes unitários para garantir o funcionamento correto de todas as buscas, ordenações, compatibilidade sanguínea e da heurística de roteirização.
+- **Integração:** Testes no `SolicitacaoService` garantem que o fluxo completo (Busca por Hash -> Filtro de Compatibilidade -> Priorização FEFO -> Rota) funcione de ponta a ponta.
+
+#### 🔀 Estrutura de Arquivos e Tradução Comentada
+Em estrita conformidade com as regras da disciplina, o código não se limitou ao Java. Foram entregues:
+
+- **Implementações em C:** [`src/main/c/`](./src/main/c/)
+- **Implementações equivalentes em Java:** [`src/main/java/com/hemobit/hemobit/aed/`](./src/main/java/com/hemobit/hemobit/aed/)
+- **Tradução Comentada (C/C++ ↔ Java):** [`docs/aed/traducao/`](./docs/aed/traducao/) (Documentos explicando as diferenças de alocação de memória, ponteiros vs referências e adaptações de estruturas).
+- **Análise de Complexidade:** Cada algoritmo possui sua complexidade de tempo (melhor, médio e pior caso) e espaço declarada e justificada com base no código real.
+
+#### 🎥 Screencasts
+*(Adicione aqui os links dos vídeos se houver, ou remova esta seção se não for exigido para AED)*
+
+#### 🖼️ Print da tela
+*(Se você tiver um print do console do Spring Boot mostrando a mensagem "Calculando rota de entrega...", você pode adicionar aqui, ex: `./docs/aed/evidencias/console-fefo.png`)*
 
 ---
 
