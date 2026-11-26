@@ -1,5 +1,9 @@
 package com.hemobit.hemobit.service;
 
+import com.hemobit.hemobit.aed.sistema.Fefo;
+import com.hemobit.hemobit.aed.sistema.IndexadorHashEstoque;
+import com.hemobit.hemobit.aed.sistema.MatrizCompatibilidade;
+import com.hemobit.hemobit.aed.sistema.VizinhoMaisProximo;
 import com.hemobit.hemobit.domain.Hemocomponente;
 import com.hemobit.hemobit.domain.HistoricoSolicitacao;
 import com.hemobit.hemobit.domain.Solicitacao;
@@ -17,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -117,13 +122,53 @@ public class SolicitacaoService {
     public Solicitacao atender(Long id, String operador) {
         Solicitacao solicitacao = buscarOuFalhar(id);
         StatusSolicitacao anterior = solicitacao.getStatus();
-        List<Hemocomponente> candidatas = hemocomponenteRepository.buscarParaReserva(
+        
+        // 1. Busca todas as bolsas disponíveis no banco
+        List<Hemocomponente> todasDisponiveis = hemocomponenteRepository.buscarParaReserva(
                 solicitacao.getTipoHemocomponente(), StatusHemocomponente.DISPONIVEL, LocalDate.now());
 
-        List<Hemocomponente> reservadas = solicitacao.atender(candidatas,
+        // 2. INDEXAÇÃO POR HASH
+        IndexadorHashEstoque hashEstoque = new IndexadorHashEstoque();
+        for (Hemocomponente h : todasDisponiveis) {
+            hashEstoque.inserir(h);
+        }
+
+        // Recupera as bolsas do tipo exato da solicitação via Hash
+        List<Hemocomponente> candidatas = new ArrayList<>(hashEstoque.buscarPorTipo(solicitacao.getTipoSanguineo()));
+        
+        // 3. FILTRO DE COMPATIBILIDADE ABO/Rh
+        List<Hemocomponente> compativeis = new ArrayList<>();
+        for (Hemocomponente h : candidatas) {
+            if (MatrizCompatibilidade.isCompativel(solicitacao.getTipoSanguineo().ordinal(), h.getTipoSanguineo().ordinal())) {
+                compativeis.add(h);
+            }
+        }
+
+        // 4. PRIORIZAÇÃO FEFO (Insertion Sort)
+        Fefo.Bolsa[] vetorFefo = new Fefo.Bolsa[compativeis.size()];
+        for (int i = 0; i < compativeis.size(); i++) {
+            Hemocomponente h = compativeis.get(i);
+            int diasParaVencer = (int) java.time.temporal.ChronoUnit.DAYS.between(LocalDate.now(), h.getDataValidade());
+            vetorFefo[i] = new Fefo.Bolsa(h.getId().intValue(), diasParaVencer, h);
+        }
+
+        Fefo.ordenarFEFO(vetorFefo);
+
+        List<Hemocomponente> bolsasPriorizadas = new ArrayList<>();
+        for (Fefo.Bolsa b : vetorFefo) {
+            bolsasPriorizadas.add(b.hemocomponenteOriginal);
+        }
+
+        // 5. DOMÍNIO (Aplica a quantidade e marca como reservada)
+        List<Hemocomponente> reservadas = solicitacao.atender(bolsasPriorizadas,
                 compatibilidadeService::compativel, LocalDate.now(), LocalDateTime.now());
 
         hemocomponenteRepository.saveAll(reservadas);
+
+        // 6. ROTEIRIZAÇÃO (Vizinho Mais Próximo)
+        System.out.println("Calculando rota de entrega para a unidade: " + solicitacao.getUnidadeSaude().getNome());
+        VizinhoMaisProximo.calcularRota(0); // Ponto 0 = Hemocentro
+
         registrarMudanca(solicitacao, anterior, nomeOperador(operador));
         return solicitacao;
     }
